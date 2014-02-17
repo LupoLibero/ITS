@@ -11,6 +11,8 @@
 		"modules": null,
 		"attachments": null,
 		"showdown": null,
-		"base64": null
+		"base64": null,
+        "session": null,
+        "users": null
 	}
 }

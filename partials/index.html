@@ -35,16 +35,16 @@
             </ul>
 
             <!-- Account -->
-            <ul class="nav navbar-nav navbar-right" ng-show="userIsConnected()">
+            <ul class="nav navbar-nav navbar-right" ng-if="userIsConnected()">
                 <li><a href="#">{{ user.name }}</a></li>
-                <button class="btn btn-default navbar-btn" ng-click="user.logout()">Logout</button>
+                <button class="btn btn-default navbar-btn" ng-click="logout()">Logout</button>
             </ul>
 
             <!-- Login Form -->
-            <form class="form-group navbar-form navbar-right" role="login" ng-hide="userIsConnected()">
-                <input  type="text"     class="form-control" placeholder="Email">
-                <input  type="password" class="form-control" placeholder="Password">
-                <button type="submit"   class="btn btn-default" ng-click="user.login()">Sign In</button>
+            <form class="form-group navbar-form navbar-right" role="login" ng-if="!userIsConnected()" ng-submit="login()">
+                <input  type="text"     class="form-control"   ng-model="loginform.login" placeholder="Email">
+                <input  type="password" class="form-control"   ng-model="loginform.password" placeholder="Password">
+                <button type="submit"   class="btn btn-default">Sign In</button>
                 <button type="button"   class="btn btn-primary">Sign Up</button>
             </form>
 
@@ -52,26 +52,11 @@
     </nav><!-- END: Navigation top Bar -->
 
     <div class="container">
-        <div style="padding-top: 0px;">
-            <div ng-controller="NotificationCtrl" id="alert-box" ng-show="alert.level" class="alert alert-{{alert.level}}">{{ alert.message }}</div>
-            <div>{{ jsonp }}</div>
-
-            <div ng-show="langSrv.elementsNotTranslated" class="alert alert-warning">
-                Translation not fully available ({{ elements_not_translated }} elements missing)
-            </div>
-            <div ng-show="langSrv.langNotAvailable" class="alert alert-warning">
-                You favorite language is not available for this document.
-                The content is displayed with the original language. If you want you could help in translating this document.</div>
-            <div ng-view ng-cloak></div>
-
-            <footer>
-                <p>&copy; Company 2012</p>
-            </footer>
-            <!--</div>-->
-        <hr/>
-        </div>
     </div>
 
+    <script src="modules.js"                                         ></script>
+    <script src="../static/vendor/jquery/dist/jquery.min.js"         ></script>
+    <script src="../static/vendor/sizzle/dist/sizzle.min.js"         ></script>
     <script src="../static/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../static/vendor/angular/angular.min.js"            ></script>
     <script src="../static/vendor/angular-route/angular-route.min.js"></script>
