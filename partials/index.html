@@ -1,9 +1,80 @@
-<!DOCTYPE html>
-<html ng-app="app" lang="en">
+﻿<!DOCTYPE html>
+<html ng-app="its">
 <head>
-    <meta charset="UTF-8">
-    <title></title>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width"/>
+
+    <title>ITS</title>
+
+    <link rel="stylesheet" href="../static/vendor/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../static/vendor/bootstrap/dist/css/bootstrap-theme.min.css"/>
 </head>
 <body>
+    <!-- Navigation top Bar -->
+    <nav role="navigation" class="navbar navbar-inverse navbar-static-top" ng-controller="NavBarCtrl">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#/">Brand</a>
+
+            <!-- Links -->
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Link</a></li>
+                <li class="active"><a href="#">Link</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        Dropdown <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">Action</a></li>
+                        <li><a href="#">Another action</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- Account -->
+            <ul class="nav navbar-nav navbar-right" ng-show="userIsConnected()">
+                <li><a href="#">{{ user.name }}</a></li>
+                <button class="btn btn-default navbar-btn" ng-click="user.logout()">Logout</button>
+            </ul>
+
+            <!-- Login Form -->
+            <form class="form-group navbar-form navbar-right" role="login" ng-hide="userIsConnected()">
+                <input  type="text"     class="form-control" placeholder="Email">
+                <input  type="password" class="form-control" placeholder="Password">
+                <button type="submit"   class="btn btn-default" ng-click="user.login()">Sign In</button>
+                <button type="button"   class="btn btn-primary">Sign Up</button>
+            </form>
+
+        </div>
+    </nav><!-- END: Navigation top Bar -->
+
+    <div class="container">
+        <div style="padding-top: 0px;">
+            <div ng-controller="NotificationCtrl" id="alert-box" ng-show="alert.level" class="alert alert-{{alert.level}}">{{ alert.message }}</div>
+            <div>{{ jsonp }}</div>
+
+            <div ng-show="langSrv.elementsNotTranslated" class="alert alert-warning">
+                Translation not fully available ({{ elements_not_translated }} elements missing)
+            </div>
+            <div ng-show="langSrv.langNotAvailable" class="alert alert-warning">
+                You favorite language is not available for this document.
+                The content is displayed with the original language. If you want you could help in translating this document.</div>
+            <div ng-view ng-cloak></div>
+
+            <footer>
+                <p>&copy; Company 2012</p>
+            </footer>
+            <!--</div>-->
+        <hr/>
+        </div>
+    </div>
+
+    <script src="../static/vendor/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../static/vendor/angular/angular.min.js"            ></script>
+    <script src="../static/vendor/angular-route/angular-route.min.js"></script>
+    <script src="../static/js/main.js"                               ></script>
 </body>
 </html>

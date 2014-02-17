@@ -4,9 +4,15 @@ module.exports = (grunt) ->
   grunt.initConfig {
     watch: {
       coffee: {
-        files: ['static/coffee/*.coffee']
+        files: ['static/coffee/{,*/}*.coffee']
         tasks: [
           'coffee:dist'
+          'shell:kansoPush'
+        ]
+      }
+      html: {
+        files: ['./partials/{,*/}*.html']
+        tasks: [
           'shell:kansoPush'
         ]
       }
@@ -17,9 +23,9 @@ module.exports = (grunt) ->
         bare: true
       dist: {
         files:
-          'static/main.js': [
+          'static/js/main.js': [
             'static/coffee/main.coffee'
-            'static/coffee/*.coffee'
+            'static/coffee/{,*/}*.coffee'
           ]
       }
     }
