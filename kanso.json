@@ -1,0 +1,16 @@
+{
+	"name": "lupolibero-its",
+	"version": "0.0.1",
+	"description": "Lupo Libero's Issue Tracking System",
+	"load": "lib/app",
+	"modules": ["lib"],
+	"attachments": ["static", "partials"],
+	"dependencies": {
+		"db": null,
+		"properties": null,
+		"modules": null,
+		"attachments": null,
+		"showdown": null,
+		"base64": null
+	}
+}

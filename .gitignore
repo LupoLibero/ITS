@@ -1,0 +1,7 @@
+/node_modules/
+*.*~
+Thumbs.db
+#*#
+/packages/
+.DS_STORE
+/static/vendor/

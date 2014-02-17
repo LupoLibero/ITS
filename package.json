@@ -1,0 +1,33 @@
+{
+  "name": "ITS",
+  "version": "0.0.1",
+  "description": "An issue tracker system for Lupo Libero",
+  "main": "index.js",
+  "dependencies": {
+    "grunt-contrib-coffee": "~0.10.0",
+    "grunt": "~0.4.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "load-grunt-tasks": "~0.3.0",
+    "grunt-shell": "~0.6.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "grunt karma"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LupoLibero/ITS.git"
+  },
+  "keywords": [
+    "ITS"
+  ],
+  "author": [
+    "Sylvain Duchesne",
+    "Jonathan Da Silva"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LupoLibero/ITS/issues"
+  },
+  "homepage": "https://github.com/LupoLibero/ITS"
+}
