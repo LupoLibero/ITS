@@ -15,23 +15,23 @@
     <!-- Navigation top Bar -->
     <nav role="navigation" class="navbar navbar-inverse navbar-static-top" ng-controller="NavBarCtrl">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#/">Brand</a>
+            <a class="navbar-brand" href="#/">CoLib</a>
 
             <!-- Links -->
             <ul class="nav navbar-nav">
-                <li actual-link><a href="#/">Link</a></li>
-                <li actual-link><a href="#/">Link</a></li>
+                <li actual-link><a href="#/">Home</a></li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        Dropdown <b class="caret"></b>
+                        Tickets <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">Action</a></li>
-                        <li><a href="#">Another action</a></li>
+                        <li><a href="#">Roadmap</a></li>
+                        <li><a href="#">New Tickets</a></li>
                         <li class="divider"></li>
                         <li><a href="#">Separated link</a></li>
                     </ul>
                 </li>
+                <li actual-link><a href="#/blog">Blog</a></li>
             </ul>
 
             <!-- Account -->
@@ -52,6 +52,21 @@
     </nav><!-- END: Navigation top Bar -->
 
     <div class="container">
+        <div  id="alert-box" ng-show="alert.level" class="alert alert-{{alert.level}}">{{ alert.message }}</div>
+        <div>{{ jsonp }}</div>
+
+        <div ng-show="langSrv.elementsNotTranslated" class="alert alert-warning">
+            Translation not fully available ({{ elements_not_translated }} elements missing)
+        </div>
+        <div ng-show="langSrv.langNotAvailable" class="alert alert-warning">
+            You favorite language is not available for this document.
+            The content is displayed with the original language. If you want you could help in translating this document.</div>
+        <div ng-view></div>
+
+        <footer>
+            <p>&copy; Company 2012</p>
+        </footer>
+        <hr/>
     </div>
 
     <script src="modules.js"                                         ></script>
