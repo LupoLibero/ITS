@@ -1,0 +1,38 @@
+<h2>Roadmap</h2>
+<a href="" ng-click="newTicketPopup()">New ticket</a>
+<div>
+  <table-filter list="columns.component.list" label="columns.component.label" filter="columns.filter" item="component"></table-filter>
+  <table-filter list="columns.category.list"  label="columns.category.label"  filter="columns.filter" item="category" ></table-filter>
+  <table-filter list="columns.status.list"    label="columns.status.label"    filter="columns.filter" item="status"   ></table-filter>
+</div>
+
+
+<table class="table table-striped">
+  <tr>
+    <th>#id</th>
+    <th>  Component </th>
+    <th>  Category  </th>
+    <th>   Status   </th>
+    <th> Resolution </th>
+    <th>   Rank     </th>
+    <th></th>
+    <th style="width: 150px">Status</th>
+  </tr>
+  <tr ng-repeat="ticket in ticketList | filter: columns.filter">
+    <td><a ng-href="{{ url.ticket(ticket.project_id, ticket.id) }}">{{ ticket.id }}</a></td>
+    <td>{{ ticket.component }}</td>
+    <td>{{ ticket.category  }}</td>
+    <td>{{  ticket.status   }}</td>
+    <td>
+      <a ng-href="{{url.ticket(ticket.project_id, ticket.id)}}">{{ ticket.title }}</a>
+    </td>
+    <td>{{ticket.rank}}</td>
+    <td><strong ng-show="ticket.user_vote">+1</strong><a ng-hide="ticket.user_vote" ng-click="ticket.user_vote = true">+1</a><span ng-show="ticket.user_vote"> (<a ng-click="ticket.user_vote = false">cancel</a>)</span></td>
+    <td>
+      <div class="progress">
+        <div title="Done and funded: {{ ticket.contributions.global.done_and_funded }}" data-toggle="tooltip" class="bar bar-warning" style="width: {{ ticket.contributions.global.done_and_funded / (ticket.contributions.global.worklog + ticket.contributions.global.funded_not_done) * 100 }}%"></div>
+        <div title="Done but not funded: {{ ticket.contributions.global.done_not_funded }}" data-toggle="tooltip" class="bar bar-danger" style="width: {{ ticket.contributions.global.done_not_funded / (ticket.contributions.global.worklog + ticket.contributions.global.funded_not_done) * 100 }}%"></div>
+        <div title="Funded but not done: {{ ticket.contributions.global.funded_not_done }}" data-toggle="tooltip" class="bar bar-success" style="width: {{ ticket.contributions.global.funded_not_done / (ticket.contributions.global.worklog + ticket.contributions.global.funded_not_done) * 100 }}%"></div>
+      </div>
+    </td>
+</table>
