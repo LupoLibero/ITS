@@ -8,5 +8,16 @@ ng.config( ($routeProvider)->
       templateUrl: 'partials/project/list.html'
       controller:  'ProjectListCtrl'
     })
+    .when('/project/:id', {
+      templateUrl: 'partials/project/show.html'
+      controller:  'ProjectCtrl'
+      resolve: {
+        project: (Project, $route) ->
+          id = $route.current.params.id
+          return Project.get({
+            id:id
+          })
+      }
+    })
     .otherwise({redirectTo: '/'})
 )
