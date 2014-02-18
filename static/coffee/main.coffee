@@ -1,6 +1,8 @@
 ng = angular.module('its', ['ngRoute', 'ngCouchDB'])
 
-ng.constant('dbUrl', 'http://127.0.0.1:5984/')
+ng.value('name', 'lupolibero-its')
+ng.value('dbUrl', 'http://127.0.0.1:5984/lupolibero')
+ng.value('lng', 'en')
 
 ng.config( ($routeProvider)->
   $routeProvider
@@ -14,8 +16,8 @@ ng.config( ($routeProvider)->
       resolve: {
         project: (Project, $route) ->
           id = $route.current.params.id
-          return Project.get({
-            id:id
+          Project.get({
+            id: 'project-'+id
           })
       }
     })
