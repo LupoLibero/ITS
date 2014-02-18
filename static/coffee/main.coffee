@@ -21,5 +21,19 @@ ng.config( ($routeProvider)->
           })
       }
     })
+    .when('/project/:id/ticket', {
+      templateUrl: 'partials/ticket/list.html'
+      controller:  'TicketCtrl'
+      resolve: {
+        tickets: (Ticket, $route) ->
+          id = $route.current.params.id
+          return Ticket.view({
+            view: 'all'
+            descending: true
+            startkey: [id,"\ufff0"]
+            endkey: [id,0]
+          })
+      }
+    })
     .otherwise({redirectTo: '/'})
 )
