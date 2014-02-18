@@ -9,6 +9,10 @@ ng.config( ($routeProvider)->
     .when('/', {
       templateUrl: 'partials/project/list.html'
       controller:  'ProjectListCtrl'
+      resolve: {
+        projects: (Project)->
+          return Project.all()
+      }
     })
     .when('/project/:id', {
       templateUrl: 'partials/project/show.html'
