@@ -1,6 +1,8 @@
-MALDesk
-=======
+## ITS ##
 
-An application that let you manage your Anime/Manga list account on your PC, MAC and Linux
-
-Actualy in developpement.
+Installation steps:
+- install Kanso
+- "git clone ..."
+- "kanso install"
+- "kanso push http://localhost:5984/lupolibero"
+- visit http://localhost:5984/lupolibero/_design/lupolibero-its/_rewrite/
