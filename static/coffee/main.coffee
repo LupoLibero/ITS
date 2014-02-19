@@ -31,8 +31,7 @@ ng.config( ($routeProvider)->
       resolve: {
         tickets: (Ticket, $route) ->
           id = $route.current.params.id
-          return Ticket.view({
-            view: 'all'
+          return Ticket.all({
             descending: true
             startkey: [id,"\ufff0"]
             endkey: [id,0]
