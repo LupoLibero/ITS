@@ -14,14 +14,13 @@ ng.controller('NavBarCtrl', ($scope, login) ->
       ->
         $scope.user = {}
     )
-  
 
   # login User
   $scope.login = ->
     user     = $scope.loginform.user
     password = $scope.loginform.password
-    if login isnt '' and password isnt ''
-      login.signin(user, password).then(
+    if user isnt undefined and password isnt undefined
+      login.signIn(user, password).then(
          (data)-> #Success
           $scope.user = data
           $scope.loginform.password = ''

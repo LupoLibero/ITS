@@ -1,17 +1,24 @@
-ng.factory('login', ($q) ->
+ng.factory('login', ($q, User) ->
   return {
-    user: {}
+    actualUser: {}
 
     session: require('session')
 
-    signin: (login, password) ->
+    signIn: (user, password) ->
       defer = $q.defer()
       _this = this
-      this.session.login(login, password, (err, response) ->
-        if not err
-          _this.user = response
-          defer.resolve(response)
-        else
+      User.get({
+        id: 'user-' + user
+      }).then(
+        (data) -> #Success
+          _this.session.login(user, password, (err, response) ->
+            if not err
+              _this.actualUser = response
+              defer.resolve(response)
+            else
+              defer.reject(err)
+          )
+        ,(err) -> #Error
           defer.reject(err)
       )
       return defer.promise
@@ -21,7 +28,7 @@ ng.factory('login', ($q) ->
       _this = this
       this.session.logout( (err, response) ->
         if not err
-          _this.user = {
+          _this.actualUser = {
             name: response.name
             role: response.role
           }
@@ -37,7 +44,7 @@ ng.factory('login', ($q) ->
       this.session.info( (err, info)->
         if not err
           info = info.userCtx
-          _this.user = info
+          _this.actualUser = info
           defer.resolve(info)
         else
           defer.reject(err)
@@ -45,6 +52,7 @@ ng.factory('login', ($q) ->
       return defer.promise
 
     isConnect: ->
-      return this.user.name? and this.user.name != ''
+      return this.actualUser.name? and this.actualUser.name != ''
+
   }
 )
