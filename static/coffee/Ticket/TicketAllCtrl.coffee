@@ -3,8 +3,8 @@ ng.controller('TicketAllCtrl', ($scope, tickets, $modal, login) ->
 
   $scope.newTicketPopup = ->
     if login.isConnect()
-      modalNewTicket = $modal({
-        templateUrl: '../static/ticket/new.html'
+      modalNewTicket = $modal.open({
+        templateUrl: '../partials/ticket/new.html'
         controller:  'NewTicketCtrl'
       })
     else
