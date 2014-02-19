@@ -26,6 +26,7 @@ module.exports = (grunt) ->
           'static/js/main.js': [
             'static/coffee/main.coffee'
             'static/coffee/{,*/}*.coffee'
+            'static/coffee/{,*/}*Ctrl.coffee'
           ]
       }
     }
