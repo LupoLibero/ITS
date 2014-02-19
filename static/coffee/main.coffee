@@ -20,7 +20,7 @@ ng.config( ($routeProvider)->
       resolve: {
         project: (Project, $route) ->
           id = $route.current.params.id
-          Project.get({
+          return Project.get({
             id: 'project-'+id
           })
       }
