@@ -1,43 +1,46 @@
-ng.controller('NavBarCtrl', ($scope) ->
-  # Module
-  session = require('session')
-
+ng.controller('NavBarCtrl', ($scope, login, $modal) ->
   # User Object
-  $scope.user= {}
-  $scope.loginform=
-    login:    ''
-    password: ''
+  $scope.loginform = {}
+  $scope.user      = {}
+
+  login.getInfo().then(
+    (user) ->
+      $scope.user = user
+  )
 
   # LogOut User
   $scope.logout = ->
-    console.log "logout"
-    session.logout()
-    $scope.user.name = null
+    login.logout().then(
+      ->
+        $scope.user = {}
+    )
 
-  # Login User
+  # login User
   $scope.login = ->
-    console.log "login"
-    login    = $scope.loginform.login
+    user     = $scope.loginform.user
     password = $scope.loginform.password
-    if login isnt '' and password isnt ''
-      session.login(login, password, (err, response) ->
-        $scope.loginform.password = ''
-        if response isnt undefined
-          $scope.loginform.login = ''
+    if user isnt undefined and password isnt undefined
+      login.signIn(user, password).then(
+         (data)-> #Success
+          $scope.user = data
+          $scope.loginform.password = ''
+          $scope.loginform.user = ''
+        , -> #Error
+          $scope.loginform.password = ''
       )
 
   $scope.userIsConnected = ->
-    return $scope.user.name? and $scope.user.name isnt null
+    return login.isConnect()
 
-  # Get the current session
-  session.info( (err, info)->
-    if not err
-      $scope.user = info
-  )
 
-  # On Session change
-  session.on('change', (user) ->
-    $scope.user = user
-    $scope.$apply()
-  )
+  $scope.signup = ->
+    modalSignUp = $modal.open({
+      templateUrl: '../partials/signup.html'
+      controller:  'SignUpCtrl'
+    })
+
+    modalSignUp.result.then(
+      (data) ->
+        $scope.user.name = data.name
+    )
 )
