@@ -3,6 +3,7 @@ ng.factory('login', ($q, User) ->
     actualUser: {}
 
     session: require('session')
+    users: require('users')
 
     signIn: (user, password) ->
       defer = $q.defer()
@@ -20,6 +21,26 @@ ng.factory('login', ($q, User) ->
           )
         ,(err) -> #Error
           defer.reject(err)
+      )
+      return defer.promise
+
+    signUp: (user, password) ->
+      defer = $q.defer()
+      _this = this
+      this.users.create(user, password, {}, (err, response) ->
+          if err
+            defer.reject(err)
+          else
+            add = new User
+            add.id = user
+            add.username = user
+            add.$save().then(
+              ()->
+                _this.signIn(user, password).then(
+                  (data) ->
+                    defer.resolve(data)
+                )
+            )
       )
       return defer.promise
 

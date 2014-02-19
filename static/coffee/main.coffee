@@ -1,4 +1,4 @@
-ng = angular.module('its', ['ngRoute', 'ngCouchDB'])
+ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap'])
 
 ng.value('name', 'lupolibero-its')
 ng.value('dbUrl', 'http://127.0.0.1:5984/lupolibero')

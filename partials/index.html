@@ -58,7 +58,7 @@
                     <input  type="text"     class="form-control"   ng-model="loginform.user" placeholder="Email">
                     <input  type="password" class="form-control"   ng-model="loginform.password" placeholder="Password">
                     <button type="submit"   class="btn btn-default">Sign In</button>
-                    <button type="button"   class="btn btn-primary">Sign Up</button>
+                    <button type="button"   class="btn btn-primary" ng-click="signup()">Sign Up</button>
                 </form>
 
             </div> <!-- END: Content NavBar -->
@@ -85,14 +85,18 @@
     </div>
 
     <script src="modules.js"                                                       ></script>
-    <script src="../static/vendor/jquery/dist/jquery.min.js"                       ></script>
-    <script src="../static/vendor/sizzle/dist/sizzle.min.js"                       ></script>
-    <script src="../static/vendor/bootstrap/dist/js/bootstrap.min.js"              ></script>
-    <script src="../static/vendor/angular/angular.min.js"                          ></script>
-    <script src="../static/vendor/angular-ui/ui-bootstrap-0.1.0.min.js"            ></script>
-    <script src="../static/vendor/angular-translate/angular-translate.min.js"      ></script>
-    <script src="../static/vendor/angular-route/angular-route.min.js"              ></script>
-    <script src="../static/vendor/angular-resource/angular-resource.min.js"        ></script>
+    <!-- BootStrap -->
+    <script src="../static/vendor/jquery/dist/jquery.js"                           ></script>
+    <script src="../static/vendor/sizzle/dist/sizzle.js"                           ></script>
+    <script src="../static/vendor/bootstrap/dist/js/bootstrap.js"                  ></script>
+    <!-- Angular -->
+    <script src="../static/vendor/angular/angular.js"                              ></script>
+    <script src="../static/vendor/angular-route/angular-route.js"                  ></script>
+    <script src="../static/vendor/angular-resource/angular-resource.js"            ></script>
+    <script src="../static/vendor/angular-sanitize/angular-sanitize.js"            ></script>
+    <!-- Angular Modules -->
+    <script src="../static/vendor/angular-bootstrap/ui-bootstrap-tpls.js"          ></script>
+    <script src="../static/vendor/angular-translate/angular-translate.js"          ></script>
     <script src="../static/vendor/angular-couchdb/couch.js"                        ></script>
     <script src="../static/js/main.js"                                             ></script>
 </body>

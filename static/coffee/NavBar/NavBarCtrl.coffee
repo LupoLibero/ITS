@@ -1,4 +1,4 @@
-ng.controller('NavBarCtrl', ($scope, login) ->
+ng.controller('NavBarCtrl', ($scope, login, $modal) ->
   # User Object
   $scope.loginform = {}
   $scope.user      = {}
@@ -31,4 +31,16 @@ ng.controller('NavBarCtrl', ($scope, login) ->
 
   $scope.userIsConnected = ->
     return login.isConnect()
+
+
+  $scope.signup = ->
+    modalSignUp = $modal.open({
+      templateUrl: '../partials/signup.html'
+      controller:  'SignUpCtrl'
+    })
+
+    modalSignUp.result.then(
+      (data) ->
+        $scope.user.name = data.name
+    )
 )
