@@ -8,12 +8,13 @@ ng.controller('NavBarCtrl', ($scope, login) ->
       $scope.user = user
   )
 
-
   # LogOut User
   $scope.logout = ->
     login.logout().then(
-    ) ->
-      $scope.user = {}
+      ->
+        $scope.user = {}
+    )
+  
 
   # login User
   $scope.login = ->
