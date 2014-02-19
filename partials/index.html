@@ -66,16 +66,9 @@
         </div>
     </nav><!-- END: Navigation top Bar -->
 
-    <div class="container">
-        <div  id="alert-box" ng-show="alert.level" class="alert alert-{{alert.level}}">{{ alert.message }}</div>
-        <div>{{ jsonp }}</div>
+    <div class="container" ng-controller="ContainerCtrl">
+        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.message}}</alert>
 
-        <div ng-show="langSrv.elementsNotTranslated" class="alert alert-warning">
-            Translation not fully available ({{ elements_not_translated }} elements missing)
-        </div>
-        <div ng-show="langSrv.langNotAvailable" class="alert alert-warning">
-            You favorite language is not available for this document.
-            The content is displayed with the original language. If you want you could help in translating this document.</div>
         <div ng-view></div>
 
         <footer>
