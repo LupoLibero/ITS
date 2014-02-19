@@ -27,7 +27,7 @@ ng.config( ($routeProvider)->
     })
     .when('/project/:id/ticket', {
       templateUrl: 'partials/ticket/list.html'
-      controller:  'TicketCtrl'
+      controller:  'TicketAllCtrl'
       resolve: {
         tickets: (Ticket, $route) ->
           id = $route.current.params.id

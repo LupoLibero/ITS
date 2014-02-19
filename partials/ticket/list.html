@@ -10,7 +10,6 @@
 <table class="table table-striped">
   <tr>
     <th>#id</th>
-    <th>  Component </th>
     <th>  Category  </th>
     <th>   Status   </th>
     <th> Resolution </th>
@@ -20,7 +19,6 @@
   </tr>
   <tr ng-repeat="ticket in ticketList | filter: columns.filter">
     <td><a ng-href="{{ url.ticket(ticket.project_id, ticket.id) }}">{{ ticket.id }}</a></td>
-    <td>{{ ticket.component }}</td>
     <td>{{ ticket.category  }}</td>
     <td>{{  ticket.status   }}</td>
     <td>
