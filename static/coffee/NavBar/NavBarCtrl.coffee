@@ -27,6 +27,7 @@ ng.controller('NavBarCtrl', ($scope, login, $modal) ->
           $scope.loginform.user = ''
         , -> #Error
           $scope.loginform.password = ''
+          $scope.addAlert('The username or/and password are/is not correct', 'danger')
       )
 
   $scope.userIsConnected = ->
