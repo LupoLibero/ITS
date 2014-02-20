@@ -36,6 +36,11 @@ ng.config( ($routeProvider)->
             startkey: [id,"\ufff0"]
             endkey: [id,0]
           })
+        project: (Project, $route) ->
+          id = $route.current.params.id
+          return Project.get({
+            id: 'project-' + id
+          })
       }
     })
     .otherwise({redirectTo: '/'})

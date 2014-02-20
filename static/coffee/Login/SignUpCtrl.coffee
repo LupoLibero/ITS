@@ -35,7 +35,6 @@ ng.controller('SignUpCtrl', ($scope, $modalInstance, login) ->
     else
       $scope.setAlert('Please fill all the fields!')
 
-
   $scope.cancel = ->
     $modalInstance.dismiss('cancel')
 
