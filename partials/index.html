@@ -67,7 +67,7 @@
     </nav><!-- END: Navigation top Bar -->
 
     <div class="container" ng-controller="ContainerCtrl">
-        <alert ng-repeat="alert in alerts" type="alert.type" close="closeAlert($index)">{{alert.message}}</alert>
+        <alert ng-repeat="alert in notif.alerts" type="alert.type" close="notif.closeAlert($index)">{{alert.message}}</alert>
 
         <div ng-view></div>
 
