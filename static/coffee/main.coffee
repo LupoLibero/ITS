@@ -1,10 +1,13 @@
-ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap'])
+ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap', 'pascalprecht.translate'])
 
 ng.value('name', 'lupolibero-its')
 ng.value('dbUrl', 'http://127.0.0.1:5984/lupolibero')
-ng.value('lng', 'en')
 
-ng.config( ($routeProvider)->
+ng.config( ($routeProvider, $translateProvider)->
+  # Translations
+  $translateProvider.useLoader('translation')
+
+  # Routes
   $routeProvider
     .when('/', {
       templateUrl: 'partials/project/list.html'
