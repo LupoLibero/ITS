@@ -1,4 +1,4 @@
-ng.controller('TicketAllCtrl', ($scope, tickets, project, $modal, login, notification) ->
+ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notification) ->
   $scope.ticketList = tickets
 
   $scope.newTicketPopup = ->
