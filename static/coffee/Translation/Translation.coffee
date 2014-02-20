@@ -6,7 +6,6 @@ ng.factory('translation', ($q, $http, dbUrl)->
         data = data.data
         delete data._id
         delete data._rev
-        console.log data
         defer.resolve(data)
       ,(err) -> # Error
         defer.reject(err)
