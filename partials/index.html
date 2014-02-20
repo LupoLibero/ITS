@@ -67,6 +67,12 @@
     </nav><!-- END: Navigation top Bar -->
 
     <div class="container" ng-controller="ContainerCtrl">
+        <ol class="breadcrumb">
+          <li ng-repeat="piece in breadcrumb" ng-class="{active: $last}">
+            <a ng-if="!$last" ng-href="#{{piece.link}}">{{piece.value |capitalize}}</a>
+            <span ng-if="$last">{{piece.value |capitalize}}</span>
+          </li>
+        </ol>
         <alert ng-repeat="alert in notif.alerts" type="alert.type" close="notif.closeAlert($index)">{{alert.message}}</alert>
 
         <div ng-view></div>

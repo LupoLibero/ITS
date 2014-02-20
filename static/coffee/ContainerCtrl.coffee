@@ -1,4 +1,4 @@
-ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate) ->
+ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $location) ->
   $scope.notif = notification
 
   # Translate
@@ -7,5 +7,24 @@ ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate) ->
   $rootScope.$on('$translateChangeError', () ->
     $translate.use('en')
     notification.addAlert("Your favorite language is not available. The content is displayed with the original language.")
+  )
+
+  # BreadCrumb
+  $rootScope.$on('$locationChangeSuccess', ->
+    path = $location.path()
+    # Remove the hash if present
+    path = path.replace('#', '')
+    breadcrumb = path.split('/').splice(1)
+
+    result = []
+    link   = ''
+    for piece in breadcrumb
+      link += '/' + piece
+      add=
+        link: link
+        value: piece
+      result.push(add)
+
+    $scope.breadcrumb = result
   )
 )
