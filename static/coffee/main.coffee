@@ -4,7 +4,9 @@ ng.value('name', 'lupolibero-its')
 ng.value('dbUrl', 'http://127.0.0.1:5984/lupolibero')
 ng.value('lng', 'en')
 
-ng.config( ($routeProvider)->
+ng.config( ($routeProvider, $locationProvider)->
+  # $locationProvider.html5Mode(true)
+
   $routeProvider
     .when('/', {
       templateUrl: 'partials/project/list.html'
@@ -41,6 +43,60 @@ ng.config( ($routeProvider)->
           return Project.get({
             id: 'project-' + id
           })
+      }
+    })
+    .when('/project/:id/ticket/:ticketid', {
+      templateUrl: 'partials/ticket/show.html'
+      controller:  'TicketCtrl'
+      resolve: {
+        ticket: (Ticket, $route) ->
+          ticketid  = $route.current.params.ticketid
+          projectid = $route.current.params.id
+          id = projectid.toUpperCase() + '#' + ticketid
+          return Ticket.get({
+            id: 'ticket-' + id
+          })
+        project: (Project, $route) ->
+          id = $route.current.params.id
+          return Project.get({
+            id: 'project-' + id
+          })
+        categories: ($http, dbUrl, $q) ->
+          defer = $q.defer()
+          $http.get(dbUrl + '/categories').then(
+            (data) -> #Success
+              data = data.data
+              delete data._id
+              delete data._rev
+              defer.resolve(data)
+            ,(err) -> #Error
+              defer.resolve(err)
+          )
+          return defer.promise
+        statuses: ($http, dbUrl, $q) ->
+          defer = $q.defer()
+          $http.get(dbUrl + '/statuses').then(
+            (data) -> #Success
+              data = data.data
+              delete data._id
+              delete data._rev
+              defer.resolve(data)
+            ,(err) -> #Error
+              defer.resolve(err)
+          )
+          return defer.promise
+        resolutions: ($http, dbUrl, $q) ->
+          defer = $q.defer()
+          $http.get(dbUrl + '/resolutions').then(
+            (data) -> #Success
+              data = data.data
+              delete data._id
+              delete data._rev
+              defer.resolve(data)
+            ,(err) -> #Error
+              defer.resolve(err)
+          )
+          return defer.promise
       }
     })
     .otherwise({redirectTo: '/'})
