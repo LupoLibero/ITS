@@ -32,9 +32,9 @@
 
                 <!-- Links -->
                 <ul class="nav navbar-nav" id="bs-example-navbar-collapse-1">
-                    <li actual-link><a href="#/">Home</a></li>
+                    <li actual-link><a href="#/" translate>Home</a></li>
                     <li class="dropdown">
-                        <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" translate>
                             Tickets <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
@@ -57,8 +57,8 @@
                 <form class="form-group navbar-form navbar-right" role="login" ng-if="!userIsConnected()" ng-submit="login()">
                     <input  type="text"     class="form-control"   ng-model="loginform.user" placeholder="Email">
                     <input  type="password" class="form-control"   ng-model="loginform.password" placeholder="Password">
-                    <button type="submit"   class="btn btn-default">Sign In</button>
-                    <button type="button"   class="btn btn-primary" ng-click="signup()">Sign Up</button>
+                    <button type="submit"   class="btn btn-default" translate>Sign In</button>
+                    <button type="button"   class="btn btn-primary" ng-click="signup()" translate>Sign Up</button>
                 </form>
 
             </div> <!-- END: Content NavBar -->
@@ -67,7 +67,7 @@
     </nav><!-- END: Navigation top Bar -->
 
     <div class="container" ng-controller="ContainerCtrl">
-        <alert ng-repeat="alert in notif.alerts" type="alert.type" close="notif.closeAlert($index)">{{alert.message}}</alert>
+        <alert ng-repeat="alert in notif.alerts" type="alert.type" close="notif.closeAlert($index)" translate>{{alert.message}}</alert>
 
         <div ng-view></div>
 
