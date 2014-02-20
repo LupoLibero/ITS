@@ -7,6 +7,8 @@ ng.factory('notification', ()->
         message:  message
         type:     type
 
+      if this.alerts.length == 2
+        this.alerts.splice(1,1)
       for alert, i in this.alerts
         if alert.message == add.message
           this.alerts.splice(i,1)
