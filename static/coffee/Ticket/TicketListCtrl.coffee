@@ -1,5 +1,6 @@
 ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notification) ->
   $scope.ticketList = tickets
+  $scope.project    = project
 
   $scope.newTicketPopup = ->
     if login.isConnect()
