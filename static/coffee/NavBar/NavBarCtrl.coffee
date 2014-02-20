@@ -1,4 +1,4 @@
-ng.controller('NavBarCtrl', ($scope, login, $modal) ->
+ng.controller('NavBarCtrl', ($scope, login, $modal, notification) ->
   # User Object
   $scope.loginform = {}
   $scope.user      = {}
@@ -27,8 +27,10 @@ ng.controller('NavBarCtrl', ($scope, login, $modal) ->
           $scope.loginform.user = ''
         , -> #Error
           $scope.loginform.password = ''
-          $scope.addAlert('The username or/and password are/is not correct', 'danger')
+          notification.addAlert('The username or/and password are/is not correct', 'danger')
       )
+    else
+      notification.addAlert('Please fill both of the fields!', 'danger')
 
   $scope.userIsConnected = ->
     return login.isConnect()

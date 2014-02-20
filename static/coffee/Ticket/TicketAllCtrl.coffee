@@ -1,4 +1,4 @@
-ng.controller('TicketAllCtrl', ($scope, tickets, project, $modal, login) ->
+ng.controller('TicketAllCtrl', ($scope, tickets, project, $modal, login, notification) ->
   $scope.ticketList = tickets
 
   $scope.newTicketPopup = ->
@@ -27,10 +27,9 @@ ng.controller('TicketAllCtrl', ($scope, tickets, project, $modal, login) ->
       modalNewTicket.result.then( (data) ->
         data.rank = 1
         $scope.ticketList.push(data)
-        $scope.addAlert('You ticket is create!', 'success')
+        notification.addAlert('You ticket is create!', 'success')
       )
 
-
     else
-      $scope.addAlert('You need to be connected for doing that!', 'danger')
+      notification.addAlert('You need to be connected for doing that!', 'danger')
 )
