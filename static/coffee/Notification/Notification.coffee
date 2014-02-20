@@ -7,14 +7,12 @@ ng.factory('notification', ()->
         message:  message
         type:     type
 
-      found = false
-      for alert in this.alerts
+      for alert, i in this.alerts
         if alert.message == add.message
-          found = true
+          this.alerts.splice(i,1)
           break
 
-      if not found
-        this.alerts.push(add)
+      this.alerts.unshift(add)
 
     closeAlert: (index) ->
       this.alerts.splice(index, 1)
