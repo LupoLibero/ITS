@@ -9,7 +9,7 @@ ng.config( ($routeProvider, $translateProvider)->
 
   # Routes
   $routeProvider
-    .when('/', {
+    .when('/project', {
       templateUrl: 'partials/project/list.html'
       controller:  'ProjectListCtrl'
       resolve: {
@@ -46,5 +46,5 @@ ng.config( ($routeProvider, $translateProvider)->
           })
       }
     })
-    .otherwise({redirectTo: '/'})
+    .otherwise({redirectTo: '/project'})
 )

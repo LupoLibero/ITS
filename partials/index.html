@@ -24,7 +24,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Lupo Libero</a>
+                <a class="navbar-brand" href="#/project">Lupo Libero</a>
             </div>
 
             <!-- Content -->
@@ -32,7 +32,7 @@
 
                 <!-- Links -->
                 <ul class="nav navbar-nav" id="bs-example-navbar-collapse-1">
-                    <li actual-link><a href="#/" translate>Home</a></li>
+                    <li actual-link><a href="#/project" translate>Home</a></li>
                     <li class="dropdown">
                         <a href="" class="dropdown-toggle" data-toggle="dropdown" translate>
                             Tickets <b class="caret"></b>
@@ -67,6 +67,12 @@
     </nav><!-- END: Navigation top Bar -->
 
     <div class="container" ng-controller="ContainerCtrl">
+        <ol class="breadcrumb">
+          <li ng-repeat="piece in breadcrumb" ng-class="{active: $last}">
+            <a ng-if="!$last" ng-href="#{{piece.link}}">{{piece.value |capitalize}}</a>
+            <span ng-if="$last">{{piece.value |capitalize}}</span>
+          </li>
+        </ol>
         <alert ng-repeat="alert in notif.alerts" type="alert.type" close="notif.closeAlert($index)">{{alert.message}}</alert>
 
         <div ng-view></div>
