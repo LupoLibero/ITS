@@ -1,0 +1,57 @@
+﻿<h2>{{ project.name }}</h2>
+<h3>
+  <select ng-model="ticket.category" ng-options="key as value for (key, value) in categories"></select>
+    </div>
+  {{ ticket.id }}:
+  <input ng-model="ticket.title" placeholder="{{locale.title}}">
+</h3>
+<hr>
+<div class="row">
+  <div class="col-xs-9">
+    <div class="row">
+      <h3>Details</h3>
+      <div class="col-xs-6">
+        <strong>Status: </strong>
+        <select ng-model="ticket.status" ng-options="key as value for (key, value) in statuses"></select>
+      </div>
+      <div class="col-xs-6">
+        <strong>Created at: </strong>
+        <span>{{ticket.created_at |date}}</span>
+      </div>
+      <div class="col-xs-6">
+        <strong>Last Update: </strong>
+        <span>{{ticket.last_edit |date |default:'Never updated'}}</span>
+      </div>
+      <div class="col-xs-6">
+        <strong>Resolution: </strong>
+        <select ng-model="ticket.resolution" ng-options="key as value for (key, value) in resolutions"></select>
+      </div>
+    </div>
+    <hr>
+    <textarea class="input-block-level" ng-model="ticket.desc"></textarea>
+    <hr>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xs-9">
+    <tabset>
+      <tab heading="Comments">
+        Comment list
+        <div class="row-fluid" ng-repeat="comment in comments">
+          <div class="span2">{{comment.created_at|date}}<br/><user-link name="comment.user"/></div>
+          <div class="span9">{{comment.message}}</div>
+          <div class="span1">
+            <button ng-show="comment.user == login.actualUser.id">Edit</button>
+          </div>
+        </div>
+        <div>
+          <form ng-submit="newComment()">
+            <textarea ng-disabled="login.isNotConnect()" ng-model="newComment.message"></textarea><br/>
+            <button ng-disabled="login.isNotConnect()" type="submit">Submit</button>
+          </form>
+        </div>
+      </tab>
+    </tabset>
+  </div>
+</div>
+

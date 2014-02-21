@@ -1,5 +1,6 @@
-ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $location) ->
-  $scope.notif = notification
+ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $location,? url) ->
+  $rootScope.url = url
+  $scope.notif   = notification
 
   # Translate
   $translate.use(window.navigator.language)

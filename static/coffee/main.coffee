@@ -3,11 +3,17 @@ ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap', 'pascalprech
 ng.value('name', 'lupolibero-its')
 ng.value('dbUrl', 'http://127.0.0.1:5984/lupolibero')
 
+<<<<<<< HEAD
 ng.config( ($routeProvider, $translateProvider)->
   # Translations
   $translateProvider.useLoader('translation')
 
   # Routes
+=======
+ng.config( ($routeProvider, $locationProvider)->
+  # $locationProvider.html5Mode(true)
+
+>>>>>>> 0.1-DisplayTicket
   $routeProvider
     .when('/project', {
       templateUrl: 'partials/project/list.html'
@@ -46,5 +52,37 @@ ng.config( ($routeProvider, $translateProvider)->
           })
       }
     })
+<<<<<<< HEAD
     .otherwise({redirectTo: '/project'})
+=======
+    .when('/project/:id/ticket/:ticketid', {
+      templateUrl: 'partials/ticket/show.html'
+      controller:  'TicketCtrl'
+      resolve: {
+        ticket: (Ticket, $route) ->
+          ticketid  = $route.current.params.ticketid
+          projectid = $route.current.params.id
+          id = projectid.toUpperCase() + '#' + ticketid
+          return Ticket.get({
+            id: 'ticket-' + id
+          })
+        project: (Project, $route) ->
+          id = $route.current.params.id
+          return Project.get({
+            id: 'project-' + id
+          })
+        config: ($http, dbUrl, $q, name) ->
+          defer = $q.defer()
+          $http.get(dbUrl+'/_design/'+name+'/_view/config').then(
+            (data) -> #Success
+              data = data.data.rows
+              defer.resolve(data)
+            ,(err) -> #Error
+              defer.resolve(err)
+          )
+          return defer.promise
+      }
+    })
+    .otherwise({redirectTo: '/'})
+>>>>>>> 0.1-DisplayTicket
 )

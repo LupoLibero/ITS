@@ -18,11 +18,11 @@
     <th style="width: 150px">Status</th>
   </tr>
   <tr ng-repeat="ticket in ticketList | filter: columns.filter">
-    <td><a ng-href="{{ url.ticket(ticket.project_id, ticket.id) }}">{{ ticket.id }}</a></td>
+    <td><a ng-href="{{ url.ticket(project.id, ticket.id) }}">{{ ticket.id }}</a></td>
     <td translate>{{ ticket.category  }}</td>
     <td>{{  ticket.status   }}</td>
     <td>
-      <a ng-href="{{url.ticket(ticket.project_id, ticket.id)}}">{{ ticket.title }}</a>
+      <a ng-href="{{ url.ticket(project.id, ticket.id) }}">{{ ticket.title }}</a>
     </td>
     <td>{{ticket.rank}}</td>
     <td><strong ng-show="ticket.user_vote">+1</strong><a ng-hide="ticket.user_vote" ng-click="ticket.user_vote = true">+1</a><span ng-show="ticket.user_vote"> (<a ng-click="ticket.user_vote = false">cancel</a>)</span></td>

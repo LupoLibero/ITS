@@ -1,5 +1,6 @@
 ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notification) ->
   $scope.ticketList = tickets
+  $scope.project    = project
 
   $scope.newTicketPopup = ->
     if login.isConnect()
@@ -7,11 +8,11 @@ ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notifi
         templateUrl: '../partials/ticket/new.html'
         controller:  'NewTicketCtrl'
         resolve: {
-          categories: ($q, $http, dbUrl) ->
+          categories: ($q, $http, dbUrl, name) ->
             defer = $q.defer()
-            $http.get(dbUrl + '/categories').then(
+            $http.get(dbUrl+'/_design/'+name+'/_view/config?key="categories"').then(
               (data) -> #Success
-                data = data.data
+                data = data.data.rows[0].value
                 defer.resolve(data)
               ,(err) -> #Error
                 defer.reject(err)
