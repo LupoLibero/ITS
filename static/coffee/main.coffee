@@ -61,37 +61,11 @@ ng.config( ($routeProvider, $locationProvider)->
           return Project.get({
             id: 'project-' + id
           })
-        categories: ($http, dbUrl, $q) ->
+        config: ($http, dbUrl, $q, name) ->
           defer = $q.defer()
-          $http.get(dbUrl + '/categories').then(
+          $http.get(dbUrl+'/_design/'+name+'/_view/config').then(
             (data) -> #Success
-              data = data.data
-              delete data._id
-              delete data._rev
-              defer.resolve(data)
-            ,(err) -> #Error
-              defer.resolve(err)
-          )
-          return defer.promise
-        statuses: ($http, dbUrl, $q) ->
-          defer = $q.defer()
-          $http.get(dbUrl + '/statuses').then(
-            (data) -> #Success
-              data = data.data
-              delete data._id
-              delete data._rev
-              defer.resolve(data)
-            ,(err) -> #Error
-              defer.resolve(err)
-          )
-          return defer.promise
-        resolutions: ($http, dbUrl, $q) ->
-          defer = $q.defer()
-          $http.get(dbUrl + '/resolutions').then(
-            (data) -> #Success
-              data = data.data
-              delete data._id
-              delete data._rev
+              data = data.data.rows
               defer.resolve(data)
             ,(err) -> #Error
               defer.resolve(err)
