@@ -76,5 +76,5 @@ ng.config( ($routeProvider, $translateProvider)->
           return defer.promise
       }
     })
-    .otherwise({redirectTo: '/'})
+    .otherwise({redirectTo: '/project'})
 )
