@@ -3,17 +3,13 @@ ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap', 'pascalprech
 ng.value('name', 'lupolibero-its')
 ng.value('dbUrl', 'http://127.0.0.1:5984/lupolibero')
 
-<<<<<<< HEAD
 ng.config( ($routeProvider, $translateProvider)->
+  # $locationProvider.html5Mode(true)
+
   # Translations
   $translateProvider.useLoader('translation')
 
   # Routes
-=======
-ng.config( ($routeProvider, $locationProvider)->
-  # $locationProvider.html5Mode(true)
-
->>>>>>> 0.1-DisplayTicket
   $routeProvider
     .when('/project', {
       templateUrl: 'partials/project/list.html'
@@ -52,9 +48,6 @@ ng.config( ($routeProvider, $locationProvider)->
           })
       }
     })
-<<<<<<< HEAD
-    .otherwise({redirectTo: '/project'})
-=======
     .when('/project/:id/ticket/:ticketid', {
       templateUrl: 'partials/ticket/show.html'
       controller:  'TicketCtrl'
@@ -84,5 +77,4 @@ ng.config( ($routeProvider, $locationProvider)->
       }
     })
     .otherwise({redirectTo: '/'})
->>>>>>> 0.1-DisplayTicket
 )

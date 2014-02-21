@@ -1,4 +1,4 @@
-ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $location,? url) ->
+ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $location, url) ->
   $rootScope.url = url
   $scope.notif   = notification
 
