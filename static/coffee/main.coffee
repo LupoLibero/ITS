@@ -1,7 +1,7 @@
 ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap', 'pascalprecht.translate'])
 
 ng.value('name', 'lupolibero-its')
-ng.value('dbUrl', 'http://127.0.0.1:5984/lupolibero')
+ng.value('dbUrl', '/lupolibero')
 
 ng.config( ($routeProvider, $translateProvider)->
   # $locationProvider.html5Mode(true)
