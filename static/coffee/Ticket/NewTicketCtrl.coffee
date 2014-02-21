@@ -6,9 +6,6 @@ ng.controller('NewTicketCtrl', ($modalInstance, $scope, categories, project, mod
   $scope.ticket=
     title:     ''
     category:  ''
-  # Delete unused fields
-  delete $scope.categories._id
-  delete $scope.categories._rev
   # Notification system
   $scope.notif = modalNotification
 
