@@ -11,7 +11,7 @@ ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $l
   )
 
   # BreadCrumb
-  $rootScope.$on('$locationChangeSuccess', ->
+  $rootScope.$on('$routeChangeSuccess', ->
     path = $location.path()
     # Remove the hash if present
     path = path.replace('#', '')
