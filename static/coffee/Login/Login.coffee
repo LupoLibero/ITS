@@ -1,4 +1,4 @@
-ng.factory('login', ($q, User) ->
+ng.factory('login', ($q, User, $rootScope) ->
   return {
     actualUser: {}
 
@@ -15,6 +15,7 @@ ng.factory('login', ($q, User) ->
           _this.session.login(user, password, (err, response) ->
             if not err
               _this.actualUser = response
+              $rootScope.$broadcast('SignIn')
               defer.resolve(response)
             else
               defer.reject(err)
@@ -44,7 +45,7 @@ ng.factory('login', ($q, User) ->
       )
       return defer.promise
 
-    logout: ->
+    signOut: ->
       defer = $q.defer()
       _this = this
       this.session.logout( (err, response) ->
@@ -53,6 +54,7 @@ ng.factory('login', ($q, User) ->
             name: response.name
             role: response.role
           }
+          $rootScope.$broadcast('SignOut')
           defer.resolve(response)
         else
           defer.reject(err)

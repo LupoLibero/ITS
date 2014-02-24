@@ -10,7 +10,7 @@ ng.controller('NavBarCtrl', ($scope, login, $modal, notification) ->
 
   # LogOut User
   $scope.logout = ->
-    login.logout().then(
+    login.signOut().then(
       ->
         $scope.user = {}
     )
