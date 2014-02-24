@@ -30,13 +30,13 @@ ng.config( ($routeProvider, $translateProvider)->
           })
       }
     })
-    .when('/project/:id/ticket', {
-      templateUrl: 'partials/ticket/list.html'
-      controller:  'TicketListCtrl'
+    .when('/project/:id/demand', {
+      templateUrl: 'partials/demand/list.html'
+      controller:  'DemandListCtrl'
       resolve: {
-        tickets: (Ticket, $route) ->
+        demands: (Demand, $route) ->
           id = $route.current.params.id
-          return Ticket.all({
+          return Demand.all({
             descending: true
             startkey: [id,"\ufff0"]
             endkey: [id,0]
@@ -58,16 +58,16 @@ ng.config( ($routeProvider, $translateProvider)->
           return defer.promise
       }
     })
-    .when('/project/:id/ticket/:ticketid', {
-      templateUrl: 'partials/ticket/show.html'
-      controller:  'TicketCtrl'
+    .when('/project/:id/demand/:demandID', {
+      templateUrl: 'partials/demand/show.html'
+      controller:  'DemandCtrl'
       resolve: {
-        ticket: (Ticket, $route) ->
-          ticketid  = $route.current.params.ticketid
+        demand: (Demand, $route) ->
+          demandID  = $route.current.params.demandID
           projectid = $route.current.params.id
-          id = projectid.toUpperCase() + '#' + ticketid
-          return Ticket.get({
-            id: 'ticket-' + id
+          id = projectid.toUpperCase() + '#' + demandID
+          return Demand.get({
+            id: 'demand-' + id
           })
         project: (Project, $route) ->
           id = $route.current.params.id

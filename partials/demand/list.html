@@ -1,5 +1,5 @@
 <h2>Roadmap</h2>
-<a href="" ng-click="newTicketPopup()">New ticket</a>
+<a href="" ng-click="newDemandPopup()">New demand</a>
 <div>
   <table-filter list="columns.component.list" label="columns.component.label" filter="columns.filter" item="component"></table-filter>
   <table-filter list="columns.category.list"  label="columns.category.label"  filter="columns.filter" item="category" ></table-filter>
@@ -17,14 +17,14 @@
     <th>   Rank     </th>
     <th></th>
   </tr>
-  <tr ng-repeat="ticket in ticketList | filter: columns.filter">
-    <td><a ng-href="{{ url.ticket(project.id, ticket.id) }}">{{ ticket.id }}</a></td>
-    <td> <a ng-href="{{ url.ticket(project.id, ticket.id) }}">{{ ticket.title }}</a> </td>
-    <td translate>{{ getCategory(ticket.category)  }}</td>
-    <td>{{  getStatus(ticket.status)   }}</td>
-    <td>{{  getResolution(ticket.resolution) |default:'No resolution'   }}</td>
-    <td>{{ ticket.rank }}</td>
+  <tr ng-repeat="demand in demandList | filter: columns.filter">
+    <td><a ng-href="{{ url.demand(project.id, demand.id) }}">{{ demand.id }}</a></td>
+    <td> <a ng-href="{{ url.demand(project.id, demand.id) }}">{{ demand.title }}</a> </td>
+    <td translate>{{ getCategory(demand.category)  }}</td>
+    <td>{{  getStatus(demand.status)   }}</td>
+    <td>{{  getResolution(demand.resolution) |default:'No resolution'   }}</td>
+    <td>{{ demand.rank }}</td>
     <td>
-      <button ng-click="vote($index)" class="btn btn-default" ng-model="ticket.check" btn-checkbox>+1</button>
+      <button ng-click="vote($index)" class="btn btn-default" ng-model="demand.check" btn-checkbox>+1</button>
     </td>
 </table>

@@ -1,6 +1,6 @@
-ng.controller('TicketCtrl', ($scope, project, ticket, config) ->
+ng.controller('DemandCtrl', ($scope, project, demand, config) ->
   $scope.project     = project
-  $scope.ticket      = ticket
+  $scope.demand      = demand
   $scope.categories  = config[0].value
   $scope.resolutions = config[1].value
   $scope.statuses    = config[2].value
