@@ -9,7 +9,7 @@
 
 <table class="table table-striped">
   <tr>
-    <th>#id</th>
+    <th>    #id     </th>
     <th>  Summary   </th>
     <th>  Category  </th>
     <th>   Status   </th>
@@ -25,6 +25,6 @@
     <td>{{  getResolution(ticket.resolution) |default:'No resolution'   }}</td>
     <td>{{ ticket.rank }}</td>
     <td>
-      <button class="btn btn-default" ng-model="ticket.check" btn-checkbox>+1</button>
+      <button ng-click="vote($index)" class="btn btn-default" ng-model="ticket.check" btn-checkbox>+1</button>
     </td>
 </table>
