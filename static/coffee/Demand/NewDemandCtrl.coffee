@@ -1,4 +1,4 @@
-ng.controller('NewDemandCtrl', ($modalInstance, $scope, categories, project, modalNotification, Demand, login) ->
+ng.controller('NewDemandCtrl', ($modalInstance, $scope, notification, categories, project, Demand, login) ->
 
   # Initialize
   $scope.focusSecondField   = false
@@ -8,7 +8,7 @@ ng.controller('NewDemandCtrl', ($modalInstance, $scope, categories, project, mod
     title:     ''
     category:  ''
   # Notification system
-  $scope.notif = modalNotification
+  $scope.notif = notification
 
   $scope.press = ($event) ->
     if $event.keyCode == 13

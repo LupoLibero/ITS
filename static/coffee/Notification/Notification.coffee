@@ -3,6 +3,10 @@ ng.factory('notification', ($timeout) ->
     alerts: []
     displayTime: 5000
 
+    setAlert: (message, type)->
+      this.alerts = []
+      this.addAlert(message, type)
+
     addAlert: (message, type) ->
       add=
         message:  message

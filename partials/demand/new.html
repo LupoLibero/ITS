@@ -3,7 +3,7 @@
   <h3>New Demand</h3>
 </div>
 <div class="modal-body">
-  <alert type="notif.alert.type" close="notif.closeAlert()" ng-show="notif.displayAlert()">{{notif.alert.message}}</alert>
+  <alert ng-repeat="alert in notif.alerts" type="alert.type" close="notif.closeAlert($index)">{{alert.message}}</alert>
   <form ng-submit="save()">
     <textarea style="width: 100%;" ng-model="demand.title" ng-keypress="press($event)"></textarea>
     <select size="6" focus="focusSecondField" ng-model="demand.category" ng-options="key as value for (key, value) in categories" ng-show="secondField()"></select>
