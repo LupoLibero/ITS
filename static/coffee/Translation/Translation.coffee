@@ -8,6 +8,8 @@ ng.factory('translation', ($q, $http, dbUrl)->
         delete data._rev
         defer.resolve(data)
       ,(err) -> # Error
+        if options.key == 'en'
+          defer.resolve({})
         defer.reject(err)
     )
     return defer.promise
