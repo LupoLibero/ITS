@@ -9,28 +9,22 @@
 
 <table class="table table-striped">
   <tr>
-    <th>#id</th>
+    <th>    #id     </th>
+    <th>  Summary   </th>
     <th>  Category  </th>
     <th>   Status   </th>
     <th> Resolution </th>
     <th>   Rank     </th>
     <th></th>
-    <th style="width: 150px">Status</th>
   </tr>
   <tr ng-repeat="ticket in ticketList | filter: columns.filter">
     <td><a ng-href="{{ url.ticket(project.id, ticket.id) }}">{{ ticket.id }}</a></td>
-    <td translate>{{ ticket.category  }}</td>
-    <td>{{  ticket.status   }}</td>
+    <td> <a ng-href="{{ url.ticket(project.id, ticket.id) }}">{{ ticket.title }}</a> </td>
+    <td translate>{{ getCategory(ticket.category)  }}</td>
+    <td>{{  getStatus(ticket.status)   }}</td>
+    <td>{{  getResolution(ticket.resolution) |default:'No resolution'   }}</td>
+    <td>{{ ticket.rank }}</td>
     <td>
-      <a ng-href="{{ url.ticket(project.id, ticket.id) }}">{{ ticket.title }}</a>
-    </td>
-    <td>{{ticket.rank}}</td>
-    <td><strong ng-show="ticket.user_vote">+1</strong><a ng-hide="ticket.user_vote" ng-click="ticket.user_vote = true">+1</a><span ng-show="ticket.user_vote"> (<a ng-click="ticket.user_vote = false">cancel</a>)</span></td>
-    <td>
-      <div class="progress">
-        <div title="Done and funded: {{ ticket.contributions.global.done_and_funded }}" data-toggle="tooltip" class="bar bar-warning" style="width: {{ ticket.contributions.global.done_and_funded / (ticket.contributions.global.worklog + ticket.contributions.global.funded_not_done) * 100 }}%"></div>
-        <div title="Done but not funded: {{ ticket.contributions.global.done_not_funded }}" data-toggle="tooltip" class="bar bar-danger" style="width: {{ ticket.contributions.global.done_not_funded / (ticket.contributions.global.worklog + ticket.contributions.global.funded_not_done) * 100 }}%"></div>
-        <div title="Funded but not done: {{ ticket.contributions.global.funded_not_done }}" data-toggle="tooltip" class="bar bar-success" style="width: {{ ticket.contributions.global.funded_not_done / (ticket.contributions.global.worklog + ticket.contributions.global.funded_not_done) * 100 }}%"></div>
-      </div>
+      <button ng-click="vote($index)" class="btn btn-default" ng-model="ticket.check" btn-checkbox>+1</button>
     </td>
 </table>
