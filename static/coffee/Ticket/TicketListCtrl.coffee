@@ -21,6 +21,7 @@ ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notifi
 
       modalNewTicket.result.then( (data) ->
         data.rank = 1
+        data.check = true
         $scope.ticketList.push(data)
         notification.addAlert('You ticket is create!', 'success')
       )

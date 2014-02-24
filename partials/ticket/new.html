@@ -6,11 +6,9 @@
   <alert type="notif.alert.type" close="notif.closeAlert()" ng-show="notif.displayAlert()">{{notif.alert.message}}</alert>
   <form ng-submit="save()">
     <textarea style="width: 100%;" ng-model="ticket.title" ng-keypress="press($event)"></textarea>
-    <select name="category" ng-model="ticket.category" ng-show="showCategory()">
-      <option ng-repeat="(key, value) in categories" value="{{key}}">{{value}}</option>
-    </select>
+    <select multiple focus="focusSecondField" ng-model="ticket.category" ng-options="key as value for (key, value) in categories" ng-show="secondField()"></select>
     <div>
-      <input type="submit" class="btn btn-primary" value="Sign Up">
+      <input type="submit" class="btn btn-primary" value="New Ticket">
       <button ng-click="cancel()" class="btn btn-default">Cancel</button>
     </div>
   </form>

@@ -1,7 +1,8 @@
 ng.controller('NewTicketCtrl', ($modalInstance, $scope, categories, project, modalNotification, Ticket, login) ->
 
   # Initialize
-  $scope.secondField = false
+  $scope.focusSecondField   = false
+  $scope.displaySecondField = false
   $scope.categories = categories
   $scope.ticket=
     title:     ''
@@ -12,10 +13,11 @@ ng.controller('NewTicketCtrl', ($modalInstance, $scope, categories, project, mod
   $scope.press = ($event) ->
     if $event.keyCode == 13
       $event.preventDefault()
-      $scope.secondField = true
+      $scope.displaySecondField = true
+      $scope.focusSecondField   = true
 
-  $scope.showCategory = ->
-    return $scope.secondField
+  $scope.secondField = ->
+    return $scope.displaySecondField
 
   $scope.save = ->
     if $scope.ticket.title != '' and $scope.ticket.category != ''
