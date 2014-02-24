@@ -40,8 +40,9 @@ ng.controller('NewTicketCtrl', ($modalInstance, $scope, categories, project, mod
             title:       $scope.ticket.title
             category:    $scope.ticket.category
             created_at:  new Date().toISOString()
-            votes:       [author]
+            votes:       {}
           })
+          ticket.votes[author] = true
           ticket.$save().then(
             (data) -> #Success
               $modalInstance.close(data)
