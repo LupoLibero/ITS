@@ -1,7 +1,7 @@
-ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notification) ->
-  $scope.ticketList = tickets
+ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notification, config) ->
   $scope.project    = project
 
+  # Create a new ticket
   $scope.newTicketPopup = ->
     if login.isConnect()
       modalNewTicket = $modal.open({
@@ -10,13 +10,7 @@ ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notifi
         resolve: {
           categories: ($q, $http, dbUrl, name) ->
             defer = $q.defer()
-            $http.get(dbUrl+'/_design/'+name+'/_view/config?key="categories"').then(
-              (data) -> #Success
-                data = data.data.rows[0].value
-                defer.resolve(data)
-              ,(err) -> #Error
-                defer.reject(err)
-            )
+            defer.resolve(config[0].value)
             return defer.promise
           project: ($q) ->
             defer = $q.defer()
@@ -33,4 +27,26 @@ ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notifi
 
     else
       notification.addAlert('You need to be connected for doing that!', 'danger')
+
+  # Get the real value
+  $scope.getCategory = (key) ->
+    categories = config[0].value
+    if categories.hasOwnProperty(key)
+      return categories[key]
+    else
+      return key
+
+  $scope.getStatus = (key) ->
+    statuses = config[2].value
+    if statuses.hasOwnProperty(key)
+      return statuses[key]
+    else
+      return key
+
+  $scope.getResolution = (key) ->
+    resolutions = config[1].value
+    if resolutions.hasOwnProperty(key)
+      return statuses[key]
+    else
+      return key
 )

@@ -46,6 +46,16 @@ ng.config( ($routeProvider, $translateProvider)->
           return Project.get({
             id: 'project-' + id
           })
+        config: ($http, dbUrl, $q, name) ->
+          defer = $q.defer()
+          $http.get(dbUrl+'/_design/'+name+'/_view/config').then(
+            (data) -> #Success
+              data = data.data.rows
+              defer.resolve(data)
+            ,(err) -> #Error
+              defer.resolve(err)
+          )
+          return defer.promise
       }
     })
     .when('/project/:id/ticket/:ticketid', {
