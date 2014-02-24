@@ -1,14 +1,14 @@
 <div class="modal-header">
   <button type="button" class="close" aria-hidden="true" ng-click="cancel()">&times;</button>
-  <h3>New ticket</h3>
+  <h3>New Demand</h3>
 </div>
 <div class="modal-body">
   <alert type="notif.alert.type" close="notif.closeAlert()" ng-show="notif.displayAlert()">{{notif.alert.message}}</alert>
   <form ng-submit="save()">
-    <textarea style="width: 100%;" ng-model="ticket.title" ng-keypress="press($event)"></textarea>
-    <select size="6" focus="focusSecondField" ng-model="ticket.category" ng-options="key as value for (key, value) in categories" ng-show="secondField()"></select>
+    <textarea style="width: 100%;" ng-model="demand.title" ng-keypress="press($event)"></textarea>
+    <select size="6" focus="focusSecondField" ng-model="demand.category" ng-options="key as value for (key, value) in categories" ng-show="secondField()"></select>
     <div>
-      <input type="submit" class="btn btn-primary" value="New Ticket">
+      <input type="submit" class="btn btn-primary" value="New Demand">
       <button ng-click="cancel()" class="btn btn-default">Cancel</button>
     </div>
   </form>

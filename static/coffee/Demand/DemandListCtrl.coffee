@@ -1,22 +1,22 @@
-ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notification, config, $http, name, dbUrl) ->
+ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, notification, config, $http, name, dbUrl) ->
   $scope.project    = project
 
-  # Add tickets to the scope
-  $scope.ticketList = tickets
+  # Add demands to the scope
+  $scope.demandList = demands
 
   # Vote System
-  $scope.hasVote = (ticket) ->
-    if ticket.votes.hasOwnProperty(login.actualUser.name)
+  $scope.hasVote = (demand) ->
+    if demand.votes.hasOwnProperty(login.actualUser.name)
       return true
     else
       return false
 
   $scope.$on('CheckVote', ->
-    for ticket in $scope.ticketList
-      if $scope.hasVote(ticket)
-        ticket.check = true
+    for demand in $scope.demandList
+      if $scope.hasVote(demand)
+        demand.check = true
       else
-        ticket.check = false
+        demand.check = false
   )
 
   $scope.vote = ($index) ->
@@ -24,25 +24,25 @@ ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notifi
       notification.addAlert('You need to be connected for doing that!', 'danger')
 
     url = dbUrl + '/_design/' + name + '/_update/'
-    ticket = $scope.ticketList[$index]
-    id = ticket.id.replace('#', '%23')
-    if not $scope.hasVote(ticket)
-      $http.put(url + 'vote/ticket-' + id).then(
+    demand = $scope.demandList[$index]
+    id = demand.id.replace('#', '%23')
+    if not $scope.hasVote(demand)
+      $http.put(url + 'vote/demand-' + id).then(
         (data) -> #Success
-          ticket.check = true
-          ticket.rank  = ticket.rank+1
-          ticket.votes[login.actualUser.name] = true
+          demand.check = true
+          demand.rank  = demand.rank+1
+          demand.votes[login.actualUser.name] = true
         ,(err) -> #Error
-          ticket.check = false
+          demand.check = false
       )
     else
-      $http.put(url + 'cancelVote/ticket-' + id).then(
+      $http.put(url + 'cancelVote/demand-' + id).then(
         (data) -> #Success
-          ticket.check = false
-          ticket.rank  = ticket.rank-1
-          delete ticket.votes[login.actualUser.name]
+          demand.check = false
+          demand.rank  = demand.rank-1
+          delete demand.votes[login.actualUser.name]
         ,(err) -> #Error
-          ticket.check = true
+          demand.check = true
       )
 
   # Check at the begining
@@ -58,12 +58,12 @@ ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notifi
     $scope.$emit('CheckVote')
   )
 
-  # Create a new ticket
-  $scope.newTicketPopup = ->
+  # Create a new demand
+  $scope.newDemandPopup = ->
     if login.isConnect()
-      modalNewTicket = $modal.open({
-        templateUrl: '../partials/ticket/new.html'
-        controller:  'NewTicketCtrl'
+      modalNewDemand = $modal.open({
+        templateUrl: '../partials/demand/new.html'
+        controller:  'NewDemandCtrl'
         resolve: {
           categories: ($q, $http, dbUrl, name) ->
             defer = $q.defer()
@@ -76,10 +76,10 @@ ng.controller('TicketListCtrl', ($scope, tickets, project, $modal, login, notifi
         }
       })
 
-      modalNewTicket.result.then( (data) ->
+      modalNewDemand.result.then( (data) ->
         data.check = true
-        $scope.ticketList.push(data)
-        notification.addAlert('You ticket is create!', 'success')
+        $scope.demandList.push(data)
+        notification.addAlert('You demand is create!', 'success')
       )
 
     else

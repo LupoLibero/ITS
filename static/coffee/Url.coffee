@@ -10,9 +10,9 @@ ng.factory('url', ($location) ->
         return '#'
       return sufix
 
-    ticket: (project_id, ticket_id) ->
-      ticket_id = ticket_id.split('#')[1]
-      url = "/project/" + project_id + "/ticket/" + ticket_id
+    demand: (project_id, demand_id) ->
+      demand_id = demand_id.split('#')[1]
+      url = "/project/" + project_id + "/demand/" + demand_id
       return this.sufix() + url
 
   }
