@@ -2,21 +2,16 @@ module.exports = (grunt) ->
   require('load-grunt-tasks')(grunt)
 
   grunt.initConfig {
+    # Watcher
     watch: {
       coffee: {
         files: ['static/coffee/{,*/}*.coffee']
         tasks: [
           'coffee:dist'
-          'shell:kansoPush'
-        ]
-      }
-      html: {
-        files: ['./partials/{,*/}*.html']
-        tasks: [
-          'shell:kansoPush'
         ]
       }
     }
+    # Coffee
     coffee: {
       options:
         join: true
@@ -30,6 +25,7 @@ module.exports = (grunt) ->
           ]
       }
     }
+    # Kanso
     shell:{
       kansoPush:{
         options:
@@ -40,6 +36,5 @@ module.exports = (grunt) ->
   }
 
   grunt.registerTask('default', [
-    'shell:kansoPush'
     'watch'
   ])
