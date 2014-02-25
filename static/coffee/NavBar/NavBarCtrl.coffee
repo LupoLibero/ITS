@@ -29,7 +29,7 @@ ng.controller('NavBarCtrl', ($scope, login, $modal, notification) ->
 
     # SignIn
     login.signIn(user, password).then(
-        (data)-> #Success
+      (data)-> #Success
         $scope.user = data
         $scope.loginform.password = ''
         $scope.loginform.user = ''
