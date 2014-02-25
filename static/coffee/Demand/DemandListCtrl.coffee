@@ -36,7 +36,7 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config
           demand.rank  = demand.rank+1
           demand.votes[login.actualUser.name] = true
         else
-          demand.check = true
+          demand.check = false
           demand.rank  = demand.rank-1
           delete demand.votes[login.actualUser.name]
       ,(err) -> #Error
