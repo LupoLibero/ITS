@@ -1,7 +1,9 @@
 ng.controller('NavBarCtrl', ($scope, login, $modal, notification) ->
   # User Object
-  $scope.loginform = {}
-  $scope.user      = {}
+  $scope.loginform=
+    user:      ''
+    password:  ''
+  $scope.user = {}
 
   login.getInfo().then(
     (user) ->
@@ -19,22 +21,25 @@ ng.controller('NavBarCtrl', ($scope, login, $modal, notification) ->
   $scope.login = ->
     user     = $scope.loginform.user
     password = $scope.loginform.password
-    if user isnt undefined and password isnt undefined
-      login.signIn(user, password).then(
-         (data)-> #Success
-          $scope.user = data
-          $scope.loginform.password = ''
-          $scope.loginform.user = ''
-        , -> #Error
-          $scope.loginform.password = ''
-          notification.addAlert('The username or/and password are/is not correct', 'danger')
-      )
-    else
+
+    # If one field is empty
+    if user is '' or password is ''
       notification.addAlert('Please fill both of the fields!', 'danger')
+      return false
+
+    # SignIn
+    login.signIn(user, password).then(
+      (data)-> #Success
+        $scope.user = data
+        $scope.loginform.password = ''
+        $scope.loginform.user = ''
+      , -> #Error
+        $scope.loginform.password = ''
+        notification.addAlert('The username or/and password are/is not correct', 'danger')
+    )
 
   $scope.userIsConnected = ->
     return login.isConnect()
-
 
   $scope.signup = ->
     modalSignUp = $modal.open({

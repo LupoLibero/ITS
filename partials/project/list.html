@@ -1,6 +1,6 @@
 <h2>Project List</h2>
 <ul>
   <li ng-repeat="project in projectList">
-    <a ng-href="#/project/{{project.id}}">{{project.name}}</a>
+    <a ng-href="{{ url.project(project.id) }}">{{project.name}}</a>
   </li>
 </ul>

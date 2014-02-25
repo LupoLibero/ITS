@@ -1,12 +1,14 @@
 ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $location, url) ->
-  $rootScope.url = url
-  $scope.notif   = notification
+  # Some global definition because use everywhere
+  $rootScope.url   = url
+  $rootScope.notif = notification
 
-  # Translate
+  # Translate the interface in the language of the navigator
   $translate.use(window.navigator.language)
 
+  # If the language doesn't exist on the database
   $rootScope.$on('$translateChangeError', () ->
-    $translate.use('en')
+    $translate.use('en') # Use English
     notification.addAlert("Your favorite language is not available. The content is displayed with the original language.")
   )
 

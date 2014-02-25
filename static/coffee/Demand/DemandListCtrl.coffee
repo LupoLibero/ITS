@@ -1,49 +1,48 @@
-ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, notification, config, $http, name, dbUrl) ->
-  $scope.project    = project
+ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config, $http, name, dbUrl) ->
 
-  # Add demands to the scope
+  # Add demands and project to the scope
+  $scope.project    = project
   $scope.demandList = demands
 
-  # Vote System
+  # If the user has already vote for this demand
   $scope.hasVote = (demand) ->
-    if demand.votes.hasOwnProperty(login.actualUser.name)
-      return true
-    else
-      return false
+    return demand.votes.hasOwnProperty(login.actualUser.name)
 
+  # Event for checking all the votes into the scope
   $scope.$on('CheckVote', ->
     for demand in $scope.demandList
-      if $scope.hasVote(demand)
-        demand.check = true
-      else
-        demand.check = false
+      demand.check =  $scope.hasVote(demand)
   )
 
+  # Function call when a user vote
   $scope.vote = ($index) ->
-    if not login.isConnect()
-      notification.addAlert('You need to be connected for doing that!', 'danger')
+    demand = $scope.demandList[$index] # Get the demand
 
-    url = dbUrl + '/_design/' + name + '/_update/'
-    demand = $scope.demandList[$index]
+    if login.isNotConnect()
+      $scope.notif.addAlert('You need to be connected for doing that!', 'danger')
+      return true
+
     id = demand.id.replace('#', '%23')
+
     if not $scope.hasVote(demand)
-      $http.put(url + 'vote/demand-' + id).then(
-        (data) -> #Success
+      action = 'vote'
+    else
+      action = 'cancel_vote'
+
+    $http.put("#{dbUrl}/_design/#{name}/_update/#{action}/demand-#{id}").then(
+      (data) -> #Success
+        if action == 'vote'
           demand.check = true
           demand.rank  = demand.rank+1
           demand.votes[login.actualUser.name] = true
-        ,(err) -> #Error
-          demand.check = false
-      )
-    else
-      $http.put(url + 'cancel_vote/demand-' + id).then(
-        (data) -> #Success
-          demand.check = false
+        else
+          demand.check = true
           demand.rank  = demand.rank-1
           delete demand.votes[login.actualUser.name]
-        ,(err) -> #Error
-          demand.check = true
-      )
+      ,(err) -> #Error
+        $scope.notif.addAlert('An Error is send! Please try again.', 'danger')
+        demand.check = !demand.check # Cancel the interface
+    )
 
   # Check at the begining
   $scope.$emit('CheckVote')
@@ -60,30 +59,32 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, notifi
 
   # Create a new demand
   $scope.newDemandPopup = ->
-    if login.isConnect()
-      modalNewDemand = $modal.open({
-        templateUrl: '../partials/demand/new.html'
-        controller:  'NewDemandCtrl'
-        resolve: {
-          categories: ($q, $http, dbUrl, name) ->
-            defer = $q.defer()
-            defer.resolve(config[0].value)
-            return defer.promise
-          project: ($q) ->
-            defer = $q.defer()
-            defer.resolve(project)
-            return defer.promise
-        }
-      })
+    if login.isNotConnect() # If the user is not connect
+      $scope.notif.addAlert('You need to be connected for doing that!', 'danger')
+      return false
 
-      modalNewDemand.result.then( (data) ->
-        data.check = true
-        $scope.demandList.push(data)
-        notification.addAlert('You demand is create!', 'success')
-      )
+    # Create the popup
+    modalNewDemand = $modal.open({
+      templateUrl: '../partials/demand/new.html'
+      controller:  'NewDemandCtrl'
+      resolve: {
+        categories: ($q) ->
+          defer = $q.defer()
+          defer.resolve(config[0].value)
+          return defer.promise
+        project: ($q) ->
+          defer = $q.defer()
+          defer.resolve(project)
+          return defer.promise
+      }
+    })
 
-    else
-      notification.addAlert('You need to be connected for doing that!', 'danger')
+    # When the popup is close
+    modalNewDemand.result.then( (data) ->
+      data.check = true
+      $scope.demandList.push(data)
+      $scope.notif.addAlert('You demand is create!', 'success')
+    )
 
   # Get the real value
   $scope.getCategory = (key) ->
