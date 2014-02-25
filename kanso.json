@@ -12,6 +12,7 @@
 		"attachments": null,
 		"showdown": null,
 		"base64": null,
+                "couchtypes": null,
         "session": null,
         "users": null
 	}
