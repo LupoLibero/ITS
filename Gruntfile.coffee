@@ -38,7 +38,7 @@ module.exports = (grunt) ->
       options:
         frameworks: ['jasmine']
         runnerPort: 8800
-        browsers: ['PhantomJS', 'Firefox']
+        browsers: ['Chrome']
         reporters: ['dots']
         files: [
           'static/vendor/angular/angular.min.js'
@@ -49,6 +49,19 @@ module.exports = (grunt) ->
         ]
       unit: {
         autoWatch: true
+      }
+    }
+    protractor:{
+      options:
+        args:
+          seleniumServerJar: './node_modules/protractor/selenium/selenium-server-standalone-2.39.0.jar'
+          chromeDriver: './node_modules/protractor/selenium/chromedriver.exe'
+          chromeOnly: true
+          browser: 'Chrome'
+          specs: [
+            'test/e2e/*.js'
+          ]
+      e2e:{
       }
     }
   }
