@@ -74,10 +74,7 @@ ng.config( ($routeProvider, $translateProvider)->
           return Project.get({
             id: 'project-' + id
           })
-        comments: (Comment, $route) ->
-          demandID  = $route.current.params.demandID
-          projectid = $route.current.params.id
-          id = projectid.toUpperCase() + '#' + demandID
+        comments: (Comment) ->
           return Comment.all({
             descending: true
             limit:      10
