@@ -45,11 +45,12 @@ ng.controller('NewDemandCtrl', ($modalInstance, $scope, notification, categories
           category:    $scope.demand.category
           created_at:  new Date().getTime()
           votes:       {}
-          activity:    {}
+          activity:    []
         })
         demand.votes[author] = true
         demand.$save().then(
           (data) -> #Success
+            data.rank = 1
             $modalInstance.close(data)
           ,(err) -> #Error
             $scope.notif.setAlert('Error while saving please try again', 'danger')
