@@ -30,8 +30,8 @@ ng.controller('DemandCtrl', ($scope, project, demand, config, Comment, login, co
         new Comment({
           author:      login.actualUser.name
           message:     $scope.newComment.message
-          created_at:  new Date().toISOString()
           demand_id:   demand.id
+          created_at:  new Date().getTime()
           votes:       {}
         }).$save().then(
           (data) -> #Success

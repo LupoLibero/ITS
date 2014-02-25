@@ -41,8 +41,7 @@ ng.controller('NewDemandCtrl', ($modalInstance, $scope, notification, categories
             status:      "draft"
             title:       $scope.demand.title
             category:    $scope.demand.category
-            created_at:  new Date().toISOString()
-            rank:        1
+            created_at:  new Date().getTime()
             votes:       {}
           })
           demand.votes[author] = true
