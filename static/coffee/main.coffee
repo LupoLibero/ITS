@@ -74,6 +74,14 @@ ng.config( ($routeProvider, $translateProvider)->
           return Project.get({
             id: 'project-' + id
           })
+        comments: (Comment, $route) ->
+          demandID  = $route.current.params.demandID
+          projectid = $route.current.params.id
+          id = projectid.toUpperCase() + '#' + demandID
+          return Comment.all({
+            descending: true
+            limit:      10
+          })
         config: ($http, dbUrl, $q, name) ->
           defer = $q.defer()
           $http.get(dbUrl+'/_design/'+name+'/_view/config').then(

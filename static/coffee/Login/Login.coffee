@@ -32,10 +32,10 @@ ng.factory('login', ($q, User, $rootScope) ->
           if err
             defer.reject(err)
           else
-            add = new User
-            add.id = user
-            add.username = user
-            add.$save().then(
+            new User({
+              id: user
+              name: user
+            }).$save().then(
               ()->
                 _this.signIn(user, password).then(
                   (data) ->
@@ -76,6 +76,9 @@ ng.factory('login', ($q, User, $rootScope) ->
 
     isConnect: ->
       return this.actualUser.name? and this.actualUser.name != ''
+
+    isNotConnect: ->
+      return !this.isConnect()
 
   }
 )

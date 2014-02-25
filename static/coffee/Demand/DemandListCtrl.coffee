@@ -36,7 +36,7 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, notifi
           demand.check = false
       )
     else
-      $http.put(url + 'cancelVote/demand-' + id).then(
+      $http.put(url + 'cancel_vote/demand-' + id).then(
         (data) -> #Success
           demand.check = false
           demand.rank  = demand.rank-1

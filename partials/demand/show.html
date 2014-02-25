@@ -36,18 +36,22 @@
   <div class="col-xs-9">
     <tabset>
       <tab heading="Comments">
-        Comment list
-        <div class="row-fluid" ng-repeat="comment in comments">
-          <div class="span2">{{comment.created_at|date}}<br/><user-link name="comment.user"/></div>
-          <div class="span9">{{comment.message}}</div>
-          <div class="span1">
-            <button ng-show="comment.user == login.actualUser.id">Edit</button>
+        <div class="row" ng-repeat="comment in comments">
+          <div class="col-xs-2">
+            <p>{{ comment.created_at | date }}</p>
+            <p>{{ comment.author }}</p>
+          </div>
+          <div class="col-xs-10">{{ comment.message }}</div>
+
+          <div class="col-xs-10">
+            <button ng-click="votedown($index)" class="btn btn-link" style="color:red;">{{ comment.votedown }}<i class="glyphicon glyphicon-chevron-down"></i></button>
+            <button ng-click="voteup($index)" class="btn btn-link" style="color:green;"><i class="glyphicon glyphicon-chevron-up"></i>{{ comment.voteup }}</button>
           </div>
         </div>
-        <div>
-          <form ng-submit="newComment()">
-            <textarea ng-disabled="login.isNotConnect()" ng-model="newComment.message"></textarea><br/>
-            <button ng-disabled="login.isNotConnect()" type="submit">Submit</button>
+        <div class="row">
+          <form ng-submit="addComment()">
+            <textarea ng-model="newComment.message"></textarea><br/>
+            <button type="submit">Submit</button>
           </form>
         </div>
       </tab>
