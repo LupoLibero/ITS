@@ -53,6 +53,8 @@ ng.controller('DemandCtrl', ($scope, project, demand, config, Comment, login, co
     $scope.vote($index, 'down')
 
   $scope.vote = ($index, sens) ->
+    comment = $scope.comments[$index] # Get the comment
+
     if login.isNotConnect()
       $scope.notif.addAlert('You need to be connect!', 'danger')
       return false
@@ -61,11 +63,10 @@ ng.controller('DemandCtrl', ($scope, project, demand, config, Comment, login, co
       $scope.notif.addAlert('You have already vote for this comment', 'danger')
       return false
 
-    if comment.user != login.actualUser.name
+    if comment.author == login.actualUser.name
       $scope.notif.addAlert('You can vote you own comment', 'danger')
       return false
 
-    comment = $scope.comments[$index] # Get the comment
     url = "#{dbUrl}/_design/#{name}/_update"
 
     $http.put("#{url}/vote_comment_#{sens}/#{comment._id}").then(
