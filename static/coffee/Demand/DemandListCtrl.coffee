@@ -22,7 +22,6 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config
       $scope.notif.addAlert('You need to be connected for doing that!', 'danger')
       return true
 
-    url = dbUrl + "/_design/#{name}/_update"
     id = demand.id.replace('#', '%23')
 
     if not $scope.hasVote(demand)
@@ -30,7 +29,7 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config
     else
       action = 'cancel_vote'
 
-    $http.put("#{url}/#{action}/demand-#{id}").then(
+    $http.put("#{dbUrl}/_design/#{name}/_update/#{action}/demand-#{id}").then(
       (data) -> #Success
         if action == 'vote'
           demand.check = true

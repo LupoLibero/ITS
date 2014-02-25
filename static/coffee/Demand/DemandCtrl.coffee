@@ -67,9 +67,7 @@ ng.controller('DemandCtrl', ($scope, project, demand, config, Comment, login, co
       $scope.notif.addAlert('You can vote you own comment', 'danger')
       return false
 
-    url = "#{dbUrl}/_design/#{name}/_update"
-
-    $http.put("#{url}/vote_comment_#{sens}/#{comment._id}").then(
+    $http.put("#{dbUrl}/_design/#{name}/_update/vote_comment_#{sens}/#{comment._id}").then(
       (data) -> #Success
         if sens == 'up'
           $scope.comments[$index].votes[login.actualUser.name] = true
