@@ -45,6 +45,7 @@ ng.controller('NewDemandCtrl', ($modalInstance, $scope, notification, categories
           category:    $scope.demand.category
           created_at:  new Date().getTime()
           votes:       {}
+          activity:    {}
         })
         demand.votes[author] = true
         demand.$save().then(
