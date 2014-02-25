@@ -30,8 +30,8 @@ ng.controller('DemandCtrl', ($scope, project, demand, config, Comment, login, co
         new Comment({
           author:      login.actualUser.name
           message:     $scope.newComment.message
-          created_at:  new Date().toISOString()
-          demand_id:   demand.id
+          created_at:  new Date().getTime()
+          parent_id:   demand._id
           votes:       {}
         }).$save().then(
           (data) -> #Success
@@ -54,9 +54,8 @@ ng.controller('DemandCtrl', ($scope, project, demand, config, Comment, login, co
       comment = $scope.comments[index]
       if not comment.votes.hasOwnProperty(login.actualUser.name) or comment.user != login.actualUser.name
         url = dbUrl + '/_design/' + name + '/_update/'
-        id  = comment._id
         if sens == 'up'
-          $http.put(url + 'vote_comment_up/' + id).then(
+          $http.put(url + 'vote_comment_up/' + comment._id).then(
             (data) -> #Success
               $scope.comments[index].votes[login.actualUser.name] = true
               $scope.comments[index].voteup++
