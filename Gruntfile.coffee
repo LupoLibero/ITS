@@ -33,6 +33,24 @@ module.exports = (grunt) ->
         command: 'kanso push http://admin:admin@127.0.0.1:5984/lupolibero'
       }
     }
+    # Testing
+    karma: {
+      options:
+        frameworks: ['jasmine']
+        runnerPort: 8800
+        browsers: ['PhantomJS', 'Firefox']
+        reporters: ['dots']
+        files: [
+          'static/vendor/angular/angular.min.js'
+          'static/vendor/{,*/}*.min.js'
+          'static/coffee/main.coffee'
+          'static/coffee/{,*/}*.coffee'
+          'test/unit/{,*/}*.coffee'
+        ]
+      unit: {
+        autoWatch: true
+      }
+    }
   }
 
   grunt.registerTask('default', [
