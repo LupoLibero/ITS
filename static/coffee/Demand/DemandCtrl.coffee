@@ -6,10 +6,11 @@ ng.controller('DemandCtrl', ($scope, project, demand, config, Comment, login, co
   $scope.statuses    = config[2].value
   $scope.comments    = comments
 
-  # Comments
+  # Initialize new comment form
   $scope.newComment=
     message: ''
 
+  # For each comment count the number of voteup and down
   angular.forEach($scope.comments, (comment)->
     voteup   = 0
     votedown = 0
@@ -23,7 +24,7 @@ ng.controller('DemandCtrl', ($scope, project, demand, config, Comment, login, co
     comment.votedown = votedown
   )
 
-
+  # Create a new comment with the form
   $scope.addComment = ->
     if $scope.newComment.message != ''
       if login.isConnect()
@@ -40,38 +41,42 @@ ng.controller('DemandCtrl', ($scope, project, demand, config, Comment, login, co
             $scope.comments.unshift(data)
             $scope.newComment.message = ''
           ,(err) -> #Error
-            console.log "error comment"
+            $scope.notif('Impossible to submit your comment! Please try again', 'danger')
         )
 
-  $scope.voteup = (index) ->
-    $scope.vote(index, 'up')
+  # When click on a up vote button
+  $scope.voteup = ($$index) ->
+    $scope.vote($$index, 'up')
 
-  $scope.votedown = (index) ->
-    $scope.vote(index, 'down')
+  # When click on a up vote button
+  $scope.votedown = ($index) ->
+    $scope.vote($index, 'down')
 
-  $scope.vote = (index, sens) ->
-    if login.isConnect()
-      comment = $scope.comments[index]
-      if not comment.votes.hasOwnProperty(login.actualUser.name) or comment.user != login.actualUser.name
-        url = dbUrl + '/_design/' + name + '/_update/'
+  $scope.vote = ($index, sens) ->
+    if login.isNotConnect()
+      $scope.notif.addAlert('You need to be connect!', 'danger')
+      return false
+
+    if comment.votes.hasOwnProperty(login.actualUser.name)
+      $scope.notif.addAlert('You have already vote for this comment', 'danger')
+      return false
+
+    if comment.user != login.actualUser.name
+      $scope.notif.addAlert('You can vote you own comment', 'danger')
+      return false
+
+    comment = $scope.comments[$index] # Get the comment
+    url = "#{dbUrl}/_design/#{name}/_update"
+
+    $http.put("#{url}/vote_comment_#{sens}/#{comment._id}").then(
+      (data) -> #Success
         if sens == 'up'
-          $http.put(url + 'vote_comment_up/' + comment._id).then(
-            (data) -> #Success
-              $scope.comments[index].votes[login.actualUser.name] = true
-              $scope.comments[index].voteup++
-            ,(err) -> #Error
-              console.log err
-          )
+          $scope.comments[$index].votes[login.actualUser.name] = true
+          $scope.comments[$index].voteup++
         else
-          $http.put(url + 'vote_comment_down/' + id).then(
-            (data) -> #Success
-              $scope.comments[index].votes[login.actualUser.name] = false
-              $scope.comments[index].votedown++
-            ,(err) -> #Error
-              console.log err
-          )
-      else
-      console.log "already vote"
-    else
-      console.log "need to be connect"
+          $scope.comments[$index].votes[login.actualUser.name] = false
+          $scope.comments[$index].votedown++
+      ,(err) -> #Error
+        $scope.notif.addAlert('An error has occur when trying to make you vote!', 'danger')
+    )
 )
