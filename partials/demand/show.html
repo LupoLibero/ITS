@@ -1,7 +1,7 @@
 ﻿<h2>{{ project.name }}</h2>
 {{ tab }}
 <tabset>
-  <tab heading="Information" active="tab == 'information'" select="changeTo('information')">
+  <tab heading="Information" ng-click="loadInformation()">
     <h3>
       <select ng-model="demand.category" ng-options="key as value for (key, value) in categories"></select>
         </div>
@@ -36,16 +36,18 @@
       </div>
     </div>
   </tab>
-  <tab heading="History" select="loadHistory()" active="tab == 'history'">
-    <accordion close-others="oneAtATime" close-others="true">
-      <accordion-group ng-repeat="history in histories">
-        <accordion-heading>
-          <h5>Change on {{ history.0 }}</h5>
-          <p>by {{ history.1 }} the {{ history.2 |date }}</p>
-        </accordion-heading>
-        {{ history.3 }}
-      </accordion-group>
-    </accordion>
+  <tab heading="History" ng-click="loadHistory()" active="historyTab">
+    <div ng-controller="HistoryCtrl">
+      <accordion close-others="oneAtATime" close-others="true">
+        <accordion-group ng-repeat="history in histories">
+          <accordion-heading>
+            <h5>Change on {{ history.0 }}</h5>
+            <p>by {{ history.1 }} the {{ history.2 |date }}</p>
+          </accordion-heading>
+          {{ history.3 }}
+        </accordion-group>
+      </accordion>
+    </div>
   </tab>
 </tabset>
 <div class="row">

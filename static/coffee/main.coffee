@@ -58,7 +58,7 @@ ng.config( ($routeProvider, $translateProvider)->
           return defer.promise
       }
     })
-    .when('/project/:id/demand/:demandID', {
+    .when('/project/:id/demand/:demandID/:onglet?', {
       templateUrl: 'partials/demand/show.html'
       controller:  'DemandCtrl'
       resolve: {
@@ -89,6 +89,19 @@ ng.config( ($routeProvider, $translateProvider)->
               defer.resolve(err)
           )
           return defer.promise
+        histories: ($q, Activity, $route) ->
+          if not $route.current.params.onglet
+            return false
+
+          demandID  = $route.current.params.demandID
+          projectid = $route.current.params.id
+          id = "demand-" + projectid.toUpperCase() + '#' + demandID
+
+          return Activity.all({
+            descending: true
+            startkey: [id,"\ufff0"]
+            endkey: [id,0]
+          })
       }
     })
     .otherwise({redirectTo: '/project'})
