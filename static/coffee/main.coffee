@@ -14,6 +14,7 @@ ng.config( ($routeProvider, $translateProvider)->
     .when('/project', {
       templateUrl: 'partials/project/list.html'
       controller:  'ProjectListCtrl'
+      name:        'project.list'
       resolve: {
         projects: (Project)->
           return Project.all()
@@ -22,6 +23,7 @@ ng.config( ($routeProvider, $translateProvider)->
     .when('/project/:id', {
       templateUrl: 'partials/project/show.html'
       controller:  'ProjectCtrl'
+      name:        'project.show'
       resolve: {
         project: (Project, $route) ->
           id = $route.current.params.id
@@ -33,6 +35,7 @@ ng.config( ($routeProvider, $translateProvider)->
     .when('/project/:id/demand', {
       templateUrl: 'partials/demand/list.html'
       controller:  'DemandListCtrl'
+      name:        'demand.list'
       resolve: {
         demands: (Demand, $route) ->
           id = $route.current.params.id
@@ -58,19 +61,20 @@ ng.config( ($routeProvider, $translateProvider)->
           return defer.promise
       }
     })
-    .when('/project/:id/demand/:demandID/:onglet?', {
+    .when('/project/:project_id/demand/:demand_id/:onglet?', {
       templateUrl: 'partials/demand/show.html'
       controller:  'DemandCtrl'
+      name:        'demand.show'
       resolve: {
         demand: (Demand, $route) ->
-          demandID  = $route.current.params.demandID
-          projectid = $route.current.params.id
+          demandID  = $route.current.params.demand_id
+          projectid = $route.current.params.project_id
           id = projectid.toUpperCase() + '#' + demandID
           return Demand.get({
             id: 'demand-' + id
           })
         project: (Project, $route) ->
-          id = $route.current.params.id
+          id = $route.current.params.project_id
           return Project.get({
             id: 'project-' + id
           })
@@ -93,8 +97,8 @@ ng.config( ($routeProvider, $translateProvider)->
           if not $route.current.params.onglet
             return false
 
-          demandID  = $route.current.params.demandID
-          projectid = $route.current.params.id
+          demandID  = $route.current.params.demand_id
+          projectid = $route.current.params.project_id
           id = "demand-" + projectid.toUpperCase() + '#' + demandID
 
           return Activity.all({
