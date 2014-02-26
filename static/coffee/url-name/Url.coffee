@@ -17,11 +17,14 @@ ng.factory('url', ($location, $route) ->
       return ''
 
     inject: (params, route) ->
+      if route == ""
+        return ""
+
       url = route
       for param in this.getRouteParams(route)
         name = this.getParamName(param)
         if not params.hasOwnProperty(name) && !this.isOptional(param)
-          throw "Impossible to generate the url because one/some params are missing"
+          throw "Impossible to generate the url because one/some params are missing:  #{name}"
           return ''
 
         if params[name] != undefined
@@ -34,7 +37,10 @@ ng.factory('url', ($location, $route) ->
       return url
 
     getRouteParams: (route) ->
-      return route.match(/\:[\w-?]*/g)
+      result = route.match(/\:[\w-?]*/g)
+      if result == null
+        result = []
+      return result
 
     getParamName: (param) ->
       if this.isOptional(param)
