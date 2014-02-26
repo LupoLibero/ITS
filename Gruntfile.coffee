@@ -41,10 +41,13 @@ module.exports = (grunt) ->
         browsers: ['Chrome']
         reporters: ['dots']
         files: [
+          # Vendor
           'static/vendor/angular/angular.min.js'
           'static/vendor/{,*/}*.min.js'
+          # Script
           'static/coffee/main.coffee'
           'static/coffee/{,*/}*.coffee'
+          # Test
           'test/unit/{,*/}*.coffee'
         ]
       unit: {
@@ -55,9 +58,8 @@ module.exports = (grunt) ->
       options:
         args:
           seleniumServerJar: './node_modules/protractor/selenium/selenium-server-standalone-2.39.0.jar'
-          chromeDriver: './node_modules/protractor/selenium/chromedriver.exe'
-          chromeOnly: true
           browser: 'Chrome'
+          baseUrl: 'http://127.0.0.1:5984/lupolibero'
           specs: [
             'test/e2e/*.js'
           ]
