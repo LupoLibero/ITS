@@ -28,7 +28,7 @@ ng.factory('url', ($location, $route) ->
           return ''
 
         if params[name] != undefined
-          url = url.replace(param, params[name])
+          url = url.replace(param, params[name].replace('#', '%23'))
         else
           url = url.replace(param, '')
 
