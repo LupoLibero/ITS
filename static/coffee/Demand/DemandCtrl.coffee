@@ -1,6 +1,6 @@
 ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, name) ->
   $scope.project     = $route.current.locals.project
-  $scope.demand      = $route.current.locals.demand
+  $scope.demand      = angular.copy($route.current.locals.demand)
   $scope.categories  = $route.current.locals.config[0].value
   $scope.statuses    = $route.current.locals.config[1].value
 
@@ -20,7 +20,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, 
   $scope.statusChange = ->
     $scope.change('status')
 
-
+  # On change
   $scope.change = (field) ->
     $scope.startLoading(field)
     id = $scope.demand._id.replace('#', '%23')
@@ -31,6 +31,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, 
     }).then(
       (data) -> #Success
         $scope.endLoading(field)
+        $route.current.locals.demand[field] = $scope.demand[field]
       ,(err) -> #Error
         console.log "error"
     )
@@ -41,6 +42,31 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, 
   $scope.endLoading = (field) ->
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1)] = false
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1) + 'Finish'] = true
+    $scope[field + 'HasChange'] = false
+
+  # Title
+  $scope.titleHasChange = false
+  $scope.titleChange = ->
+    $scope.titleHasChange = true
+
+  $scope.titleSave = ->
+    $scope.change('title')
+
+  $scope.titleCancel = ->
+    $scope.demand.title = $route.current.locals.demand.title
+    $scope.titleHasChange = false
+
+  # Description
+  $scope.descriptionHasChange = false
+  $scope.descriptionChange = ->
+    $scope.descriptionHasChange = true
+
+  $scope.descriptionSave = ->
+    $scope.change('description')
+
+  $scope.descriptionCancel = ->
+    $scope.demand.description = $route.current.locals.demand.description
+    $scope.descriptionHasChange = false
 
 
   if $route.current.params.onglet == 'history'

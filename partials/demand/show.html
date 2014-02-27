@@ -7,7 +7,11 @@
       <span ng-show="loadCategory" us-spinner="bigSpinner"></span>
       <i ng-show="loadCategoryFinish" class="glyphicon glyphicon-ok" style="color:green;"></i>
       {{ demand.id }}:
-      <input ng-model="demand.title" placeholder="{{locale.title}}">
+      <input ng-keyup="titleChange()" ng-model="demand.title">
+      <span ng-show="titleHasChange">
+        <button ng-click="titleSave()"   class="btn btn-default glyphicon glyphicon-ok"     style="color:green;"></button>
+        <button ng-click="titleCancel()" class="btn btn-default glyphicon glyphicon-remove" style="color:red;"  ></button>
+      </span>
     </h3>
     <hr>
     <div class="row">
@@ -30,7 +34,11 @@
           </div>
         </div>
         <hr>
-        <textarea class="input-block-level" ng-model="demand.desc"></textarea>
+        <textarea ng-keyup="descriptionChange()" class="input-block-level" ng-model="demand.description"></textarea>
+        <span ng-show="descriptionHasChange">
+          <button ng-click="descriptionSave()"   class="btn btn-default glyphicon glyphicon-ok"     style="color:green;"></button>
+          <button ng-click="descriptionCancel()" class="btn btn-default glyphicon glyphicon-remove" style="color:red;"  ></button>
+        </span>
         <hr>
       </div>
     </div>
