@@ -65,16 +65,12 @@ ng.config( ($routeProvider, $translateProvider)->
       name:        'demand.show'
       resolve: {
         demand: (Demand, $route) ->
-          demandID  = $route.current.params.demand_id
-          projectid = $route.current.params.project_id
-          id = projectid.toUpperCase() + '#' + demandID
           return Demand.get({
-            id: 'demand-' + id
+            id: 'demand-' + $route.current.params.demand_id
           })
         project: (Project, $route) ->
-          id = $route.current.params.project_id
           return Project.get({
-            id: 'project-' + id
+            id: 'project-' + $route.current.params.project_id
           })
         comments: (Comment) ->
           return Comment.all({
@@ -94,11 +90,7 @@ ng.config( ($routeProvider, $translateProvider)->
         histories: ($q, Activity, $route) ->
           if not $route.current.params.onglet
             return false
-
-          demandID  = $route.current.params.demand_id
-          projectid = $route.current.params.project_id
-          id = "demand-" + projectid.toUpperCase() + '#' + demandID
-
+          id = "demand-" + $route.current.params.demand_id
           return Activity.all({
             descending: true
             startkey: [id,"\ufff0"]

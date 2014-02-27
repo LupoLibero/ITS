@@ -1,6 +1,5 @@
-ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $location, url) ->
+ng.controller('ContainerCtrl', ($rootScope, notification, $translate) ->
   # Some global definition because use everywhere
-  $rootScope.url   = url
   $rootScope.notif = notification
 
   # Translate the interface in the language of the navigator
@@ -16,7 +15,6 @@ ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $l
   $rootScope.$on('$routeChangeSuccess', ->
     path = $location.path()
     # Remove the hash if present
-    path = path.replace('#', '')
     breadcrumb = path.split('/').splice(1)
 
     result = []
@@ -24,7 +22,7 @@ ng.controller('ContainerCtrl', ($rootScope, $scope, notification, $translate, $l
     for piece in breadcrumb
       link += '/' + piece
       add=
-        link: link
+        link: link.replace('#', '%23')
         value: piece
       result.push(add)
 
