@@ -4,12 +4,13 @@ ng.directive('actualLink', ($location)->
       scope.$on('$locationChangeStart', ()->
         # Remove the hash because angular return without it
         href = element.find('a').attr('href')
-        href = href.replace('#', '')
+        if href != undefined
+          href = href.replace('#', '')
 
-        if href == $location.path()
-          element.addClass('active')
-        else
-          element.removeClass('active')
+          if href == $location.path()
+            element.addClass('active')
+          else
+            element.removeClass('active')
       )
   }
 )

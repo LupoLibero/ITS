@@ -95,15 +95,8 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config
       return key
 
   $scope.getStatus = (key) ->
-    statuses = config[2].value
+    statuses = config[1].value
     if statuses.hasOwnProperty(key)
-      return statuses[key]
-    else
-      return key
-
-  $scope.getResolution = (key) ->
-    resolutions = config[1].value
-    if resolutions.hasOwnProperty(key)
       return statuses[key]
     else
       return key

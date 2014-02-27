@@ -24,7 +24,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" ng-href="{{ url.projectList() }}">Lupo Libero</a>
+                <a class="navbar-brand" goto="project.list">Lupo Libero</a>
             </div>
 
             <!-- Content -->
@@ -32,7 +32,7 @@
 
                 <!-- Links -->
                 <ul class="nav navbar-nav" id="bs-example-navbar-collapse-1">
-                    <li actual-link><a href="{{ url.projectList() }}" translate>Home</a></li>
+                    <li actual-link><a goto="project.list" translate>Home</a></li>
                     <li class="dropdown">
                         <a href="" class="dropdown-toggle" data-toggle="dropdown" translate>
                             Demand <b class="caret"></b>
@@ -44,7 +44,7 @@
                             <li><a href="#">Separated link</a></li>
                         </ul>
                     </li>
-                    <li actual-link><a ng-href="{{ url.blog() }}">Blog</a></li>
+                    <li actual-link><a go-to="blog">Blog</a></li>
                 </ul>
 
                 <!-- Account -->
@@ -83,11 +83,13 @@
         <hr/>
     </div>
 
-    <script src="modules.js"                                                       ></script>
+    <script src="modules.js"                                             ></script>
     <!-- BootStrap -->
     <script src="vendor/jquery/dist/jquery.js"                           ></script>
     <script src="vendor/sizzle/dist/sizzle.js"                           ></script>
     <script src="vendor/bootstrap/dist/js/bootstrap.js"                  ></script>
+    <!-- Javascript -->
+    <script src="vendor/spin.js/spin.js"                                 ></script>
     <!-- Angular -->
     <script src="vendor/angular/angular.js"                              ></script>
     <script src="vendor/angular-route/angular-route.js"                  ></script>
@@ -97,6 +99,7 @@
     <script src="vendor/angular-bootstrap/ui-bootstrap-tpls.js"          ></script>
     <script src="vendor/angular-translate/angular-translate.js"          ></script>
     <script src="vendor/angular-couchdb/couch.js"                        ></script>
+    <script src="vendor/angular-spinner/angular-spinner.js"              ></script>
     <script src="js/main.js"                                             ></script>
 </body>
 </html>
