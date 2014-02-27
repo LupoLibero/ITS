@@ -20,34 +20,32 @@ ng.config( ($routeProvider, $translateProvider)->
           return Project.all()
       }
     })
-    .when('/project/:id', {
+    .when('/project/:project_id', {
       templateUrl: 'partials/project/show.html'
       controller:  'ProjectCtrl'
       name:        'project.show'
       resolve: {
         project: (Project, $route) ->
-          id = $route.current.params.id
           return Project.get({
-            id: 'project-'+id
+            id: 'project-'+$route.current.params.project_id
           })
       }
     })
-    .when('/project/:id/demand', {
+    .when('/project/:project_id/demand', {
       templateUrl: 'partials/demand/list.html'
       controller:  'DemandListCtrl'
       name:        'demand.list'
       resolve: {
         demands: (Demand, $route) ->
-          id = $route.current.params.id
+          id = $route.current.params.project_id
           return Demand.all({
             descending: true
             startkey: [id,"\ufff0"]
             endkey: [id,0]
           })
         project: (Project, $route) ->
-          id = $route.current.params.id
           return Project.get({
-            id: 'project-' + id
+            id: 'project-' +$route.current.params.project_id
           })
         config: ($http, dbUrl, $q, name) ->
           defer = $q.defer()
@@ -106,6 +104,13 @@ ng.config( ($routeProvider, $translateProvider)->
             startkey: [id,"\ufff0"]
             endkey: [id,0]
           })
+      }
+    })
+    .when('/blog', {
+      templateUrl: ''
+      controller:  ''
+      name:        'blog'
+      resolve: {
       }
     })
     .otherwise({redirectTo: '/project'})

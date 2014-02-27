@@ -1,8 +1,8 @@
-ng.directive('goTo', (url) ->
+ng.directive('goto', (url) ->
   return {
     restrict: 'A'
     link: (scope, element, attrs) ->
-      route = url.getRouteByName(attrs.goTo)
+      route = url.getRouteByName(attrs.goto)
       params = {}
 
       for param in url.getRouteParams(route)
@@ -18,6 +18,6 @@ ng.directive('goTo', (url) ->
         if attrs[name] != undefined
           params[realName] = attrs[name]
 
-      element.attr('href', url.get(attrs.goTo, params) )
+      element.attr('href', url.get(attrs.goto, params) )
   }
 )
