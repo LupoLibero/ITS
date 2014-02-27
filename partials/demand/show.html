@@ -3,8 +3,9 @@
 <tabset>
   <tab heading="Information" ng-click="loadInformation()">
     <h3>
-      <select ng-model="demand.category" ng-options="key as value for (key, value) in categories"></select>
-        </div>
+      <select ng-change="categoryChange()" ng-model="demand.category" ng-options="key as value for (key, value) in categories"></select>
+      <span ng-show="loadCategory" us-spinner="bigSpinner"></span>
+      <i ng-show="loadCategoryFinish" class="glyphicon glyphicon-ok" style="color:green;"></i>
       {{ demand.id }}:
       <input ng-model="demand.title" placeholder="{{locale.title}}">
     </h3>
@@ -15,7 +16,9 @@
           <h3>Details</h3>
           <div class="col-xs-6">
             <strong>Status: </strong>
-            <select ng-model="demand.status" ng-options="key as value for (key, value) in statuses"></select>
+            <select ng-change="statusChange()" ng-model="demand.status" ng-options="key as value for (key, value) in statuses"></select>
+            <span ng-show="loadStatus" us-spinner="littleSpinner"></span>
+            <i ng-show="loadStatusFinish" class="glyphicon glyphicon-ok" style="color:green;"></i>
           </div>
           <div class="col-xs-6">
             <strong>Created at: </strong>
@@ -27,7 +30,9 @@
           </div>
           <div class="col-xs-6">
             <strong>Resolution: </strong>
-            <select ng-model="demand.resolution" ng-options="key as value for (key, value) in resolutions"></select>
+            <select ng-change="resolutionChange()" ng-model="demand.resolution" ng-options="key as value for (key, value) in resolutions"></select>
+            <span ng-show="loadResolution" us-spinner="littleSpinner"></span>
+            <i ng-show="loadResolutionFinish" class="glyphicon glyphicon-ok" style="color:green;"></i>
           </div>
         </div>
         <hr>

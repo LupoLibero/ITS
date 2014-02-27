@@ -1,4 +1,4 @@
-ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap', 'pascalprecht.translate'])
+ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap', 'pascalprecht.translate', 'angularSpinner'])
 
 ng.value('name', 'lupolibero-its')
 ng.value('dbUrl', '/lupolibero')
