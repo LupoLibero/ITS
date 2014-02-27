@@ -28,12 +28,6 @@
             <strong>Last Update: </strong>
             <span>{{demand.last_edit |date |default:'Never updated'}}</span>
           </div>
-          <div class="col-xs-6">
-            <strong>Resolution: </strong>
-            <select ng-change="resolutionChange()" ng-model="demand.resolution" ng-options="key as value for (key, value) in resolutions"></select>
-            <span ng-show="loadResolution" us-spinner="littleSpinner"></span>
-            <i ng-show="loadResolutionFinish" class="glyphicon glyphicon-ok" style="color:green;"></i>
-          </div>
         </div>
         <hr>
         <textarea class="input-block-level" ng-model="demand.desc"></textarea>

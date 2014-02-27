@@ -13,7 +13,6 @@
     <th>  Summary   </th>
     <th>  Category  </th>
     <th>   Status   </th>
-    <th> Resolution </th>
     <th>   Rank     </th>
     <th></th>
   </tr>
@@ -22,7 +21,6 @@
     <td><a goto="demand.show" project_id="{{project.id}}" demand_id="{{demand.id}}">{{ demand.title }}</a></td>
     <td translate>{{ getCategory(demand.category)  }}</td>
     <td>{{  getStatus(demand.status)   }}</td>
-    <td>{{  getResolution(demand.resolution) |default:'No resolution'   }}</td>
     <td>{{ demand.rank }}</td>
     <td>
       <button ng-click="vote($index)" class="btn btn-default" ng-model="demand.check" btn-checkbox>+1</button>

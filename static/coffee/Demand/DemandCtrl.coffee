@@ -2,8 +2,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, 
   $scope.project     = $route.current.locals.project
   $scope.demand      = $route.current.locals.demand
   $scope.categories  = $route.current.locals.config[0].value
-  $scope.resolutions = $route.current.locals.config[1].value
-  $scope.statuses    = $route.current.locals.config[2].value
+  $scope.statuses    = $route.current.locals.config[1].value
 
   # Spinner
   $scope.littleSpinner= {radius:4, width:3, length:5, lines:9}
@@ -21,11 +20,6 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, 
   $scope.statusChange = ->
     $scope.change('status')
 
-  # Resolution
-  $scope.loadResolution = false
-  $scope.loadResolutionFinish = false
-  $scope.resolutionChange = ->
-    $scope.change('resolution')
 
   $scope.change = (field) ->
     $scope.startLoading(field)
