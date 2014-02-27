@@ -20,6 +20,7 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config
 
     if login.isNotConnect()
       $scope.notif.addAlert('You need to be connected for doing that!', 'danger')
+      demand.check = !demand.check # Cancel the interface
       return true
 
     id = demand.id.replace('#', '%23')
