@@ -1,4 +1,4 @@
-ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, name) ->
+ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
   $scope.project     = $route.current.locals.project
   $scope.demand      = angular.copy($route.current.locals.demand)
   $scope.categories  = $route.current.locals.config[0].value
@@ -23,8 +23,9 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, 
   # On change
   $scope.change = (field) ->
     $scope.startLoading(field)
-    id = $scope.demand._id.replace('#', '%23')
-    $http.put("#{dbUrl}/_design/#{name}/_update/demand_update_field/#{id}", {
+    Demand.update({
+      update:  'update_field'
+      id:      $scope.demand.id
       element: field
       value:   $scope.demand[field]
       _rev:    $scope.demand._rev
@@ -32,8 +33,6 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, 
       (data) -> #Success
         $scope.endLoading(field)
         $route.current.locals.demand[field] = $scope.demand[field]
-      ,(err) -> #Error
-        console.log "error"
     )
 
   $scope.startLoading = (field) ->
@@ -67,7 +66,6 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, $http, dbUrl, 
   $scope.descriptionCancel = ->
     $scope.demand.description = $route.current.locals.demand.description
     $scope.descriptionHasChange = false
-
 
   if $route.current.params.onglet == 'history'
     $scope.historyTab = true

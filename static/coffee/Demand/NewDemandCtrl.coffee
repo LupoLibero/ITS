@@ -1,22 +1,11 @@
-ng.controller('NewDemandCtrl', ($modalInstance, $scope, notification, categories, project, Demand, login) ->
+ng.controller('NewDemandCtrl', ($modalInstance, $scope, $route, Demand, login) ->
 
   # Initialize
-  $scope.focusSecondField   = false
-  $scope.displaySecondField = false
-  $scope.categories = categories
+  project = $route.current.locals.project
+  $scope.categories = $route.current.locals.config[0].value
   $scope.demand=
     title:     ''
     category:  ''
-
-  # On keypress on the summary field
-  $scope.press = ($event) ->
-    if $event.key == "Enter"
-      $event.preventDefault()
-      $scope.displaySecondField = true
-      $scope.focusSecondField   = true
-
-  $scope.secondField = ->
-    return $scope.displaySecondField
 
   $scope.save = ->
     if $scope.demand.title == '' or $scope.demand.category == ''
@@ -53,8 +42,6 @@ ng.controller('NewDemandCtrl', ($modalInstance, $scope, notification, categories
           (data) -> #Success
             data.rank = 1
             $modalInstance.close(data)
-          ,(err) -> #Error
-            $scope.notif.setAlert('Error while saving please try again', 'danger')
         )
     )
 

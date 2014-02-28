@@ -1,5 +1,5 @@
-ng.controller('CommentCtrl', ($scope, $route, Comment, login, $http, dbUrl, name) ->
-  
+ng.controller('CommentCtrl', ($scope, $route, Comment, login) ->
+
   # Get the comments for the resolve
   $scope.comments = $route.current.locals.comments
 
@@ -29,7 +29,7 @@ ng.controller('CommentCtrl', ($scope, $route, Comment, login, $http, dbUrl, name
           author:      login.actualUser.name
           message:     $scope.newComment.message
           created_at:  new Date().getTime()
-          parent_id:   $route.current.demand._id
+          parent_id:   $route.current.locals.demand._id
           votes:       {}
         }).$save().then(
           (data) -> #Success
@@ -37,8 +37,6 @@ ng.controller('CommentCtrl', ($scope, $route, Comment, login, $http, dbUrl, name
             data.votedown = 0
             $scope.comments.unshift(data)
             $scope.newComment.message = ''
-          ,(err) -> #Error
-            $scope.notif('Impossible to submit your comment! Please try again', 'danger')
         )
 
   # When click on a up vote button
@@ -64,7 +62,10 @@ ng.controller('CommentCtrl', ($scope, $route, Comment, login, $http, dbUrl, name
       $scope.notif.addAlert('You can vote you own comment', 'danger')
       return false
 
-    $http.put("#{dbUrl}/_design/#{name}/_update/vote_comment_#{sens}/#{comment._id}").then(
+    Comment.update({
+      update: 'vote_' + sens
+      _id: comment._id
+    }).then(
       (data) -> #Success
         if sens == 'up'
           $scope.comments[$index].votes[login.actualUser.name] = true
@@ -72,7 +73,5 @@ ng.controller('CommentCtrl', ($scope, $route, Comment, login, $http, dbUrl, name
         else
           $scope.comments[$index].votes[login.actualUser.name] = false
           $scope.comments[$index].votedown++
-      ,(err) -> #Error
-        $scope.notif.addAlert('An error has occur when trying to make you vote!', 'danger')
     )
 )

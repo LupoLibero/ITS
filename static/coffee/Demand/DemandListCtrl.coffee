@@ -1,4 +1,4 @@
-ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config, $http, name, dbUrl) ->
+ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config, Demand) ->
 
   # Add demands and project to the scope
   $scope.project    = project
@@ -14,37 +14,6 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config
       demand.check =  $scope.hasVote(demand)
   )
 
-  # Function call when a user vote
-  $scope.vote = ($index) ->
-    demand = $scope.demandList[$index] # Get the demand
-
-    if login.isNotConnect()
-      $scope.notif.addAlert('You need to be connected for doing that!', 'danger')
-      demand.check = !demand.check # Cancel the interface
-      return true
-
-    id = demand.id.replace('#', '%23')
-
-    if not $scope.hasVote(demand)
-      action = 'vote'
-    else
-      action = 'cancel_vote'
-
-    $http.put("#{dbUrl}/_design/#{name}/_update/#{action}/demand-#{id}").then(
-      (data) -> #Success
-        if action == 'vote'
-          demand.check = true
-          demand.rank  = demand.rank+1
-          demand.votes[login.actualUser.name] = true
-        else
-          demand.check = false
-          demand.rank  = demand.rank-1
-          delete demand.votes[login.actualUser.name]
-      ,(err) -> #Error
-        $scope.notif.addAlert('An Error is send! Please try again.', 'danger')
-        demand.check = !demand.check # Cancel the interface
-    )
-
   # Check at the begining
   $scope.$emit('CheckVote')
 
@@ -58,6 +27,32 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config
     $scope.$emit('CheckVote')
   )
 
+  # Function call when a user vote
+  $scope.vote = ($index) ->
+    demand = $scope.demandList[$index] # Get the demand
+
+    if not $scope.hasVote(demand)
+      action = 'vote'
+    else
+      action = 'cancel_vote'
+
+    Demand.update({
+      id: demand.id
+      update: action
+    }).then(
+      (data) -> #Success
+        if action == 'vote'
+          demand.check = true
+          demand.rank  = demand.rank+1
+          demand.votes[login.actualUser.name] = true
+        else
+          demand.check = false
+          demand.rank  = demand.rank-1
+          delete demand.votes[login.actualUser.name]
+      ,(err) -> #Error
+        demand.check = !demand.check # Cancel the interface
+    )
+
   # Create a new demand
   $scope.newDemandPopup = ->
     if login.isNotConnect() # If the user is not connect
@@ -68,16 +63,6 @@ ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config
     modalNewDemand = $modal.open({
       templateUrl: '../partials/demand/new.html'
       controller:  'NewDemandCtrl'
-      resolve: {
-        categories: ($q) ->
-          defer = $q.defer()
-          defer.resolve(config[0].value)
-          return defer.promise
-        project: ($q) ->
-          defer = $q.defer()
-          defer.resolve(project)
-          return defer.promise
-      }
     })
 
     # When the popup is close

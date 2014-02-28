@@ -10,4 +10,8 @@ ng.controller('ContainerCtrl', ($rootScope, notification, $translate) ->
     $translate.use('en') # Use English
     notification.addAlert("Your favorite language is not available. The content is displayed with the original language.")
   )
+
+  $rootScope.$on('DatabaseError', (event, err) ->
+    console.log "DatabaseError", event, err
+  )
 )

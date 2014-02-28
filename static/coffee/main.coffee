@@ -27,7 +27,7 @@ ng.config( ($routeProvider, $translateProvider)->
       resolve: {
         project: (Project, $route) ->
           return Project.get({
-            id: 'project-'+$route.current.params.project_id
+            id: $route.current.params.project_id
           })
       }
     })
@@ -45,7 +45,7 @@ ng.config( ($routeProvider, $translateProvider)->
           })
         project: (Project, $route) ->
           return Project.get({
-            id: 'project-' +$route.current.params.project_id
+            id: $route.current.params.project_id
           })
         config: ($http, dbUrl, $q, name) ->
           defer = $q.defer()
@@ -65,15 +65,17 @@ ng.config( ($routeProvider, $translateProvider)->
       name:        'demand.show'
       resolve: {
         demand: (Demand, $route) ->
-          return Demand.get({
-            id: 'demand-' + $route.current.params.demand_id
+          return Demand.getDoc({
+            id: $route.current.params.demand_id
           })
         project: (Project, $route) ->
           return Project.get({
-            id: 'project-' + $route.current.params.project_id
+            id: $route.current.params.project_id
           })
-        comments: (Comment) ->
+        comments: (Comment, $route) ->
+          id = "demand-#{$route.current.params.demand_id}"
           return Comment.all({
+            key: id
             descending: true
             limit:      10
           })

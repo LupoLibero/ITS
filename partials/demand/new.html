@@ -5,8 +5,8 @@
 <div class="modal-body">
   <alert ng-repeat="alert in notif.alerts" type="alert.type" close="notif.closeAlert($index)">{{alert.message}}</alert>
   <form ng-submit="save()">
-    <textarea style="width: 100%;" ng-model="demand.title" ng-keypress="press($event)"></textarea>
-    <select size="6" focus="focusSecondField" ng-model="demand.category" ng-options="key as value for (key, value) in categories" ng-show="secondField()"></select>
+    <textarea style="width: 100%;" ng-model="demand.title"></textarea>
+    <select size="6" ng-model="demand.category" ng-options="key as value for (key, value) in categories"></select>
     <div>
       <input type="submit" class="btn btn-primary" value="New Demand">
       <button ng-click="cancel()" class="btn btn-default">Cancel</button>
