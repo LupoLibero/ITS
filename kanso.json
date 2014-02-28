@@ -3,15 +3,13 @@
   "version": "0.0.1",
   "description": "Lupo Libero's Issue Tracking System",
   "load": "lib/app",
-  "modules": ["lib"],
+  "modules": ["lib", "views"],
   "attachments": ["static", "partials"],
-  "shell": [
-    "grunt coffee"
-  ],
+  "shell": [],
   "dependencies": {
+    "modules": null,
     "db": null,
     "properties": null,
-    "modules": null,
     "attachments": null,
     "showdown": null,
     "base64": null,
