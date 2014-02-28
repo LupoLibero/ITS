@@ -1,8 +1,14 @@
-ng.controller('DemandListCtrl', ($scope, demands, project, $modal, login, config, Demand) ->
+ng.controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal, login, config, Demand) ->
 
   # Add demands and project to the scope
   $scope.project    = project
-  $scope.demandList = demands
+  $scope.demandList = demands_default
+
+  # Replace the default demand by the translate demand
+  for demand, i in demands_default
+    for trad in demands
+      if trad.id == demand.id
+        demands_default[i] = trad
 
   # If the user has already vote for this demand
   $scope.hasVote = (demand) ->

@@ -26,7 +26,7 @@ ng.config( ($routeProvider, $translateProvider)->
       name:        'project.show'
       resolve: {
         project: (Project, $route) ->
-          return Project.get({
+          return Project.getDoc({
             id: $route.current.params.project_id
           })
       }
@@ -36,15 +36,23 @@ ng.config( ($routeProvider, $translateProvider)->
       controller:  'DemandListCtrl'
       name:        'demand.list'
       resolve: {
-        demands: (Demand, $route) ->
+        demands_default: (Demand, $route) ->
           id = $route.current.params.project_id
           return Demand.all({
             descending: true
-            startkey: [id,"\ufff0"]
-            endkey: [id,0]
+            startkey: [id, 'default', "\ufff0"]
+            endkey: [id, 'default', 0]
+          })
+        demands: (Demand, $route, $translate) ->
+          language = window.navigator.language
+          id = $route.current.params.project_id
+          return Demand.all({
+            descending: true
+            startkey: [id, language, "\ufff0"]
+            endkey: [id, language, 0]
           })
         project: (Project, $route) ->
-          return Project.get({
+          return Project.getDoc({
             id: $route.current.params.project_id
           })
         config: ($http, dbUrl, $q, name) ->

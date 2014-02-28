@@ -6,6 +6,7 @@ module.exports = (grunt) ->
       coffee: {
         files: ['static/coffee/{,*/}*.coffee']
         tasks: [
+          'coffee:dist'
           'shell:kansoPush'
         ]
       }
