@@ -8,8 +8,8 @@ ng.factory('login', ($q, User, $rootScope) ->
     signIn: (user, password) ->
       defer = $q.defer()
       _this = this
-      User.get({
-        id: 'user-' + user
+      User.getDoc({
+        id: user
       }).then(
         (data) -> #Success
           _this.session.login(user, password, (err, response) ->

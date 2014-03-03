@@ -73,8 +73,8 @@ ng.config( ($routeProvider, $translateProvider)->
       name:        'demand.show'
       resolve: {
         demand: (Demand, $route) ->
-          return Demand.getDoc({
-            id: $route.current.params.demand_id
+          return Demand.get({
+            key: [$route.current.params.demand_id, window.navigator.language]
           })
         project: (Project, $route) ->
           return Project.getDoc({

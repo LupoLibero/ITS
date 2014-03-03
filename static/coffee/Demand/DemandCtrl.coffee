@@ -28,7 +28,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
       id:      $scope.demand.id
       element: field
       value:   $scope.demand[field]
-      lang:    demand.init_lang
+      lang:    $scope.demand.lang
       _rev:    $scope.demand._rev
     }).then(
       (data) -> #Success
