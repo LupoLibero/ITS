@@ -24,20 +24,20 @@ ng.controller('CommentCtrl', ($scope, $route, Comment, login) ->
   # Create a new comment with the form
   $scope.addComment = ->
     if $scope.newComment.message != ''
-      if login.isConnect()
-        new Comment({
-          author:      login.actualUser.name
-          message:     $scope.newComment.message
-          created_at:  new Date().getTime()
-          parent_id:   $route.current.locals.demand._id
-          votes:       {}
-        }).$save().then(
-          (data) -> #Success
-            data.voteup   = 0
-            data.votedown = 0
-            $scope.comments.unshift(data)
-            $scope.newComment.message = ''
-        )
+      Comment.update({
+        update: 'create'
+
+        message:     $scope.newComment.message
+        parent_id:   $route.current.locals.demand._id
+      }).then(
+        (data) -> #Success
+          data.votes    = {}
+          data.author   = login.actualUser.name
+          data.voteup   = 0
+          data.votedown = 0
+          $scope.comments.unshift(data)
+          $scope.newComment.message = ''
+      )
 
   # When click on a up vote button
   $scope.voteup = ($index) ->
@@ -49,18 +49,6 @@ ng.controller('CommentCtrl', ($scope, $route, Comment, login) ->
 
   $scope.vote = ($index, sens) ->
     comment = $scope.comments[$index] # Get the comment
-
-    if login.isNotConnect()
-      $scope.notif.addAlert('You need to be connect!', 'danger')
-      return false
-
-    if comment.votes.hasOwnProperty(login.actualUser.name)
-      $scope.notif.addAlert('You have already vote for this comment', 'danger')
-      return false
-
-    if comment.author == login.actualUser.name
-      $scope.notif.addAlert('You can vote you own comment', 'danger')
-      return false
 
     Comment.update({
       update: 'vote_' + sens
