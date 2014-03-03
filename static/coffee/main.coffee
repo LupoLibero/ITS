@@ -77,7 +77,7 @@ ng.config( ($routeProvider, $translateProvider)->
             id: $route.current.params.demand_id
           })
         project: (Project, $route) ->
-          return Project.get({
+          return Project.getDoc({
             id: $route.current.params.project_id
           })
         comments: (Comment, $route) ->
@@ -100,7 +100,7 @@ ng.config( ($routeProvider, $translateProvider)->
         histories: ($q, Activity, $route) ->
           if not $route.current.params.onglet
             return false
-          id = "demand-" + $route.current.params.demand_id
+          id = "demand-#{$route.current.params.demand_id}"
           return Activity.all({
             descending: true
             startkey: [id,"\ufff0"]
