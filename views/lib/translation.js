@@ -25,7 +25,7 @@ exports.translation = {
 
   isTranslated: function (doc, fieldName) {
     //return field.translatable
-    return typeof doc[fieldName] != 'string';
+    return typeof doc[fieldName] == 'object';
   },
 
   collectLangs: function (doc, fieldName) {
@@ -119,21 +119,21 @@ exports.translation = {
         log(doc[fieldName]);
         this.collectLangs(doc, fieldName);
       }
-      if (atLeastOneTranslatedField) {
-        log(['langs', this.langs]);
-        this.guessDefaultLang(doc);
-        log(['defaultLang', this.defaultLang]);
-        for (lang in this.langs) {
-          newDoc = this.createTranslatedDoc(doc, lang);
-          emit(this.keyReplacement(key, lang), newDoc);
-          if (lang == this.defaultLang) {
-            emit(this.keyReplacement(key, 'default'), newDoc);
-          }
+    }
+    if (atLeastOneTranslatedField) {
+      log(['langs', this.langs]);
+      this.guessDefaultLang(doc);
+      log(['defaultLang', this.defaultLang]);
+      for (lang in this.langs) {
+        newDoc = this.createTranslatedDoc(doc, lang);
+        emit(this.keyReplacement(key, lang), newDoc);
+        if (lang == this.defaultLang) {
+          emit(this.keyReplacement(key, 'default'), newDoc);
         }
       }
-      else {
-        emit(this.keyReplacement(key, 'default'), doc);
-      }
+    }
+    else {
+      emit(this.keyReplacement(key, 'default'), doc);
     }
   }
 };
