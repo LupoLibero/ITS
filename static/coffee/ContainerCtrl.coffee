@@ -14,4 +14,8 @@ ng.controller('ContainerCtrl', ($rootScope, notification, $translate) ->
   $rootScope.$on('DatabaseError', (event, err) ->
     console.log "DatabaseError", event, err
   )
+
+  $rootScope.$on('$routeChangeError', (event, err) ->
+    console.log "$routeChangeError", event, err
+  )
 )

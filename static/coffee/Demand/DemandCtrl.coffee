@@ -1,8 +1,15 @@
 ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
   $scope.project     = $route.current.locals.project
-  $scope.demand      = angular.copy($route.current.locals.demand)
   $scope.categories  = $route.current.locals.config[0].value
   $scope.statuses    = $route.current.locals.config[1].value
+
+  # If a traduction is available
+  if $route.current.locals.demand.length != 0
+    $scope.demand = $route.current.locals.demand[0]
+    $scope.save   = $route.current.locals.demand[0]
+  else
+    $scope.demand = $route.current.locals.demand_default
+    $scope.save   = $route.current.locals.demand_default
 
   # Spinner
   $scope.littleSpinner= {radius:4, width:3, length:5, lines:9}
@@ -53,7 +60,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
     $scope.change('title')
 
   $scope.titleCancel = ->
-    $scope.demand.title = $route.current.locals.demand.title
+    $scope.demand.title = $scope.save.title
     $scope.titleHasChange = false
 
   # Description
@@ -65,7 +72,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
     $scope.change('description')
 
   $scope.descriptionCancel = ->
-    $scope.demand.description = $route.current.locals.demand.description
+    $scope.demand.description = $scope.save.description
     $scope.descriptionHasChange = false
 
   if $route.current.params.onglet == 'history'

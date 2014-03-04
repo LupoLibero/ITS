@@ -72,9 +72,14 @@ ng.config( ($routeProvider, $translateProvider)->
       controller:  'DemandCtrl'
       name:        'demand.show'
       resolve: {
-        demand: (Demand, $route) ->
+        demand_default: (Demand, $route) ->
           return Demand.get({
-            key: [$route.current.params.demand_id, window.navigator.language]
+            key: [$route.current.params.demand_id, 'default']
+          })
+        demand: (Demand, $route) ->
+          return Demand.view({
+            view: 'get'
+            key:  [$route.current.params.demand_id, window.navigator.language]
           })
         project: (Project, $route) ->
           return Project.getDoc({
@@ -83,9 +88,9 @@ ng.config( ($routeProvider, $translateProvider)->
         comments: (Comment, $route) ->
           id = "demand-#{$route.current.params.demand_id}"
           return Comment.all({
-            key: id
+            endkey:   [id,0]
+            startkey: [id,"\ufff0"]
             descending: true
-            limit:      10
           })
         config: ($http, dbUrl, $q, name) ->
           defer = $q.defer()
