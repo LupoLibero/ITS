@@ -25,22 +25,21 @@ ng.controller('NewDemandCtrl', ($modalInstance, $scope, $route, Demand, login) -
         # Get the author
         author = login.actualUser.name
         # Create Demand
-        demand = new Demand({
+        Demand.update({
+          update: 'create'
+
           id:          project.id.toUpperCase() + '#' + count
           project_id:  project.id
-          author:      author
-          status:      "draft"
           title:       $scope.demand.title
           category:    $scope.demand.category
-          created_at:  new Date().getTime()
-          votes:       {}
-          activity:    []
-          description: ''
-        })
-        demand.votes[author] = true
-        demand.$save().then(
+          lang:        window.navigator.language
+        }).then(
           (data) -> #Success
-            data.rank = 1
+            console.log data
+            data.rank   = 1
+            data.status = 'draft'
+            data.votes  = {}
+            data.votes[login.actualUser.name] = true
             $modalInstance.close(data)
         )
     )
