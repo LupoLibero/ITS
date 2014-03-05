@@ -1,7 +1,7 @@
-ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
+ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
   $scope.project     = $route.current.locals.project
   $scope.categories  = $route.current.locals.config[0].value
-  $scope.statuses    = $route.current.locals.config[1].value
+  $scope.statuses    = $route.current.locals.config[2].value
 
   # If a traduction is available
   if $route.current.locals.demand.length != 0
@@ -11,6 +11,30 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
     $scope.demand = $route.current.locals.demand_default
     $scope.save   = $route.current.locals.demand_default
 
+  # Available language for this demand
+  $scope.languages = angular.copy($scope.demand.avail_langs)
+  # All lang available
+  $scope.langs = $route.current.locals.config[1].value
+  # Current lang
+  $scope.actualLang = $scope.demand.lang
+
+  $scope.$watch('actualLang', ->
+    # If it's the actual lang don't do the rest
+    if $scope.demand.lang == $scope.actualLang
+      return false
+    if $scope.demand.avail_langs.hasOwnProperty($scope.actualLang)
+      return Demand.get({
+        key: [$scope.save.id, $scope.actualLang]
+      }).then(
+        (data) -> #Success
+          $scope.demand = data
+          $scope.save   = data
+      )
+  )
+  $scope.titleSave = ->
+    $scope.change('title')
+  $scope.descriptionSave = ->
+    $scope.change('description')
   # Spinner
   $scope.littleSpinner= {radius:4, width:3, length:5, lines:9}
   $scope.bigSpinner= {radius:6, width:3, length:5, lines:11}
@@ -75,12 +99,12 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
     $scope.demand.description = $scope.save.description
     $scope.descriptionHasChange = false
 
+  # History
   if $route.current.params.onglet == 'history'
     $scope.historyTab = true
   else
     $scope.historyTab = false
 
-  # History
   $scope.loadHistory = ->
     path = $location.path()
     $location.path(path+'/history')
