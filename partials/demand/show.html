@@ -1,4 +1,5 @@
 ﻿<h2>{{ project.name }}</h2>
+<lang-bar lang="actualLang" all-langs="langs" langs="languages" class="pull-right"></lang-bar>
 <tabset>
   <tab heading="Information" ng-click="loadInformation()">
     <h3>
@@ -6,11 +7,7 @@
       <span ng-show="loadCategory" us-spinner="bigSpinner"></span>
       <i ng-show="loadCategoryFinish" class="glyphicon glyphicon-ok" style="color:green;"></i>
       {{ demand.id }}:
-      <input ng-keyup="titleChange()" ng-model="demand.title">
-      <span ng-show="titleHasChange">
-        <button ng-click="titleSave()"   class="btn btn-default glyphicon glyphicon-ok"     style="color:green;"></button>
-        <button ng-click="titleCancel()" class="btn btn-default glyphicon glyphicon-remove" style="color:red;"  ></button>
-      </span>
+      <edit-field type="input" ng-model="demand.title" save="titleSave()" lang="demand.lang"></edit-field>
     </h3>
     <hr>
     <div class="row">
@@ -33,11 +30,7 @@
           </div>
         </div>
         <hr>
-        <textarea ng-keyup="descriptionChange()" class="input-block-level" ng-model="demand.description"></textarea>
-        <span ng-show="descriptionHasChange">
-          <button ng-click="descriptionSave()"   class="btn btn-default glyphicon glyphicon-ok"     style="color:green;"></button>
-          <button ng-click="descriptionCancel()" class="btn btn-default glyphicon glyphicon-remove" style="color:red;"  ></button>
-        </span>
+          <edit-field type="textarea" ng-model="demand.description" save="titleSave()" lang="demand.lang"></edit-field>
         <hr>
       </div>
     </div>

@@ -126,6 +126,7 @@ exports.translation = {
       log(['defaultLang', this.defaultLang]);
       for (lang in this.langs) {
         newDoc = this.createTranslatedDoc(doc, lang);
+        newDoc.avail_langs = this.langs;
         emit(this.keyReplacement(key, lang), newDoc);
         if (lang == this.defaultLang) {
           emit(this.keyReplacement(key, 'default'), newDoc);

@@ -1,7 +1,7 @@
-ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
+ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
   $scope.project     = $route.current.locals.project
   $scope.categories  = $route.current.locals.config[0].value
-  $scope.statuses    = $route.current.locals.config[1].value
+  $scope.statuses    = $route.current.locals.config[2].value
 
   # If a traduction is available
   if $route.current.locals.demand.length != 0
@@ -11,6 +11,30 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
     $scope.demand = $route.current.locals.demand_default
     $scope.save   = $route.current.locals.demand_default
 
+  # Available language for this demand
+  $scope.languages = angular.copy($scope.demand.avail_langs)
+  # All lang available
+  $scope.langs = $route.current.locals.config[1].value
+  # Current lang
+  $scope.actualLang = $scope.demand.lang
+
+  $scope.$watch('actualLang', ->
+    # If it's the actual lang don't do the rest
+    if $scope.demand.lang == $scope.actualLang
+      return false
+    if $scope.demand.avail_langs.hasOwnProperty($scope.actualLang)
+      return Demand.get({
+        key: [$scope.save.id, $scope.actualLang]
+      }).then(
+        (data) -> #Success
+          $scope.demand = data
+          $scope.save   = data
+      )
+  )
+  $scope.titleSave = ->
+    $scope.change('title')
+  $scope.descriptionSave = ->
+    $scope.change('description')
   # Spinner
   $scope.littleSpinner= {radius:4, width:3, length:5, lines:9}
   $scope.bigSpinner= {radius:6, width:3, length:5, lines:11}
@@ -29,8 +53,9 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
 
   # On change
   $scope.change = (field) ->
+    defer = $q.defer()
     $scope.startLoading(field)
-    Demand.update({
+    return Demand.update({
       update:  'update_field'
       id:      $scope.demand.id
       element: field
@@ -39,9 +64,22 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
       _rev:    $scope.demand._rev
     }).then(
       (data) -> #Success
+        $scope.demand._rev = data.newrev
+        defer.resolve(data)
         $scope.endLoading(field)
         $route.current.locals.demand[field] = $scope.demand[field]
+      ,(err) -> #Error
+        Activity.view({
+          view: 'by_field'
+          startkey:  [$scope.demand.id, field, $scope.demand]
+        }).then(
+          (data) -> #Success
+            console.log data
+          ,(err) -> #Error
+            console.log err
+        )
     )
+    return defer.promise
 
   $scope.startLoading = (field) ->
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1)] = true
@@ -49,38 +87,13 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand) ->
   $scope.endLoading = (field) ->
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1)] = false
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1) + 'Finish'] = true
-    $scope[field + 'HasChange'] = false
 
-  # Title
-  $scope.titleHasChange = false
-  $scope.titleChange = ->
-    $scope.titleHasChange = true
-
-  $scope.titleSave = ->
-    $scope.change('title')
-
-  $scope.titleCancel = ->
-    $scope.demand.title = $scope.save.title
-    $scope.titleHasChange = false
-
-  # Description
-  $scope.descriptionHasChange = false
-  $scope.descriptionChange = ->
-    $scope.descriptionHasChange = true
-
-  $scope.descriptionSave = ->
-    $scope.change('description')
-
-  $scope.descriptionCancel = ->
-    $scope.demand.description = $scope.save.description
-    $scope.descriptionHasChange = false
-
+  # History
   if $route.current.params.onglet == 'history'
     $scope.historyTab = true
   else
     $scope.historyTab = false
 
-  # History
   $scope.loadHistory = ->
     path = $location.path()
     $location.path(path+'/history')
