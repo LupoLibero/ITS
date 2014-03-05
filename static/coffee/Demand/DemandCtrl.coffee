@@ -54,7 +54,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
   # On change
   $scope.change = (field) ->
     $scope.startLoading(field)
-    Demand.update({
+    return Demand.update({
       update:  'update_field'
       id:      $scope.demand.id
       element: field
@@ -63,6 +63,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
       _rev:    $scope.demand._rev
     }).then(
       (data) -> #Success
+        $scope.demand._rev = data.newrev
         $scope.endLoading(field)
         $route.current.locals.demand[field] = $scope.demand[field]
     )
@@ -73,31 +74,6 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
   $scope.endLoading = (field) ->
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1)] = false
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1) + 'Finish'] = true
-    $scope[field + 'HasChange'] = false
-
-  # Title
-  $scope.titleHasChange = false
-  $scope.titleChange = ->
-    $scope.titleHasChange = true
-
-  $scope.titleSave = ->
-    $scope.change('title')
-
-  $scope.titleCancel = ->
-    $scope.demand.title = $scope.save.title
-    $scope.titleHasChange = false
-
-  # Description
-  $scope.descriptionHasChange = false
-  $scope.descriptionChange = ->
-    $scope.descriptionHasChange = true
-
-  $scope.descriptionSave = ->
-    $scope.change('description')
-
-  $scope.descriptionCancel = ->
-    $scope.demand.description = $scope.save.description
-    $scope.descriptionHasChange = false
 
   # History
   if $route.current.params.onglet == 'history'
