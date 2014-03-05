@@ -24,21 +24,27 @@ ng.controller('NewDemandCtrl', ($modalInstance, $scope, $route, Demand, login) -
           count = data[0].max + 1
         # Get the author
         author = login.actualUser.name
+        id     = project.id.toUpperCase() + '#' + count
         # Create Demand
         Demand.update({
           update: 'create'
 
-          id:          project.id.toUpperCase() + '#' + count
+          id:          id
           project_id:  project.id
           title:       $scope.demand.title
           category:    $scope.demand.category
           lang:        window.navigator.language
         }).then(
           (data) -> #Success
-            console.log data
-            data.rank   = 1
-            data.status = 'draft'
-            data.votes  = {}
+            data.id       = id
+            data.title    = $scope.demand.title
+            data.category = $scope.demand.category
+            data.rank     = 1
+            data.status   = 'draft'
+            data.votes    = {}
+
+            delete data.newrev
+            delete data.ok
             data.votes[login.actualUser.name] = true
             $modalInstance.close(data)
         )
