@@ -53,6 +53,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
 
   # On change
   $scope.change = (field) ->
+    defer = $q.defer()
     $scope.startLoading(field)
     return Demand.update({
       update:  'update_field'
@@ -64,9 +65,21 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
     }).then(
       (data) -> #Success
         $scope.demand._rev = data.newrev
+        defer.resolve(data)
         $scope.endLoading(field)
         $route.current.locals.demand[field] = $scope.demand[field]
+      ,(err) -> #Error
+        Activity.view({
+          view: 'by_field'
+          startkey:  [$scope.demand.id, field, $scope.demand]
+        }).then(
+          (data) -> #Success
+            console.log data
+          ,(err) -> #Error
+            console.log err
+        )
     )
+    return defer.promise
 
   $scope.startLoading = (field) ->
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1)] = true
