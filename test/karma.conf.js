@@ -13,18 +13,17 @@ module.exports = function(config) {
       'static/vendor/angular/angular.min.js',
       'static/vendor/{,*/}*.min.js',
       // Script
-      'static/coffee/main.coffee',
-      'static/coffee/**/*.coffee',
+      'coffee/main.coffee',
+      'coffee/**/*.coffee',
       // Test
       'test/unit/**/*Spec.coffee',
     ],
     // list of files to exclude
     exclude: [
-      
     ],
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress'],
+    reporters: ['dots'],
     // web server port
     port: 9876,
     // enable / disable colors in the output (reporters and logs)
