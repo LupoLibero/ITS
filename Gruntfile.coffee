@@ -4,6 +4,12 @@ module.exports = (grunt) ->
   grunt.initConfig {
     # Watcher
     watch: {
+      all: {
+        files: ['{,*/}*']
+        tasks: [
+          'shell:kansoPush'
+        ]
+      }
       coffee: {
         files: ['static/coffee/{,*/}*.coffee']
         tasks: [

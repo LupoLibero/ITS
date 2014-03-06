@@ -4,11 +4,6 @@
   "description": "Lupo Libero's Issue Tracking System",
   "load": "lib/app",
   "modules": ["lib"],
-  "shell": [
-    "karma run test/karma.conf.js",
-    "protractor test/protractor.conf.js",
-    "grunt coffee"
-  ],
   "dependencies": {
     "db": null,
     "properties": null,
@@ -18,7 +13,6 @@
     "base64": null,
     "couchtypes": null,
     "session": null,
-    "users": null,
-    "blocking-multi-shell": null
+    "users": null
   }
 }
