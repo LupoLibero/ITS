@@ -24,6 +24,6 @@ ng.directive('breadcrumb', ($location)->
           result.push(add)
 
         scope.breadcrumb = result
-    )
+      )
   }
 )
