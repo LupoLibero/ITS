@@ -36,33 +36,18 @@ module.exports = (grunt) ->
     # Testing
     karma: {
       options:
-        frameworks: ['jasmine']
-        runnerPort: 8800
-        browsers: ['Chrome']
-        reporters: ['dots']
-        files: [
-          # Vendor
-          'static/vendor/angular/angular.min.js'
-          'static/vendor/{,*/}*.min.js'
-          # Script
-          'static/coffee/main.coffee'
-          'static/coffee/{,*/}*.coffee'
-          # Test
-          'test/unit/{,*/}*.coffee'
-        ]
+        configFile: "./test/karma.conf.js"
       unit: {
         autoWatch: true
       }
     }
     protractor:{
       options:
+        configFile: "./test/protractor.conf.js"
+        keepAlive:  true
         args:
           seleniumServerJar: './node_modules/protractor/selenium/selenium-server-standalone-2.39.0.jar'
-          browser: 'Chrome'
           baseUrl: 'http://127.0.0.1:5984/lupolibero'
-          specs: [
-            'test/e2e/*.js'
-          ]
       e2e:{
       }
     }
