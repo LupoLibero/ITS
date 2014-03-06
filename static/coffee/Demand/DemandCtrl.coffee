@@ -65,6 +65,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
     }).then(
       (data) -> #Success
         $scope.demand._rev = data.newrev
+        $scope.updated_at  = new Date().getTime()
         defer.resolve(data)
         $scope.endLoading(field)
         $route.current.locals.demand[field] = $scope.demand[field]
