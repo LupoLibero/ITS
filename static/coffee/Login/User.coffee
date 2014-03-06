@@ -1,3 +1,3 @@
-ng.factory('User', (CouchDB, dbUrl, name)->
-  return CouchDB(dbUrl, name, 'user')
+ng.factory('User', (CouchDB, db)->
+  return CouchDB(db.url, db.name, 'user')
 )

@@ -1,7 +1,7 @@
-ng.factory('translation', ($q, $http, dbUrl)->
+ng.factory('translation', ($q, $http, db)->
   return (options) ->
     defer = $q.defer()
-    $http.get(dbUrl + '/local-' + options.key).then(
+    $http.get(db.name + '/local-' + options.key).then(
       (data) -> # Success
         data = data.data
         delete data._id
