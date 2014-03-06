@@ -64,39 +64,13 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
       _rev:    $scope.demand._rev
     }).then(
       (data) -> #Success
-        $scope.demand._rev = data.newrev
         $scope.updated_at  = new Date().getTime()
         defer.resolve(data)
         $scope.endLoading(field)
         $route.current.locals.demand[field] = $scope.demand[field]
       ,(err) -> #Error
-        Activity.view({
-          view: 'by_field'
-          startkey:  [$scope.demand._id, field, $scope.demand.updated_at+1]
-          endkey:    [$scope.demand._id, field, "\ufff0"]
-        }).then(
-          (data) -> #Success
-            if data.length == 0
-              Demand.get({
-                id: $scope.demand.id
-              }).then(
-                (data) -> #Success
-                  Demand.update({
-                    update:  'update_field'
-                    id:      $scope.demand.id
-                    element: field
-                    value:   $scope.demand[field]
-                    lang:    $scope.demand.lang
-                    _rev:    data._rev
-                  }).then(
-                    (data) -> #Success
-                      console.log "done after conflict"
-                  )
-              )
-            else
-              console.log "Conflict"
-              #TODO: popup confilct
-        )
+        console.log "Conflict"
+        #TODO: popup confilct
     )
     return defer.promise
 
