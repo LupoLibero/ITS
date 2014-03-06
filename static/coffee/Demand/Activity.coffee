@@ -1,3 +1,3 @@
-ng.factory('Activity', (CouchDB, dbUrl, name)->
-  return CouchDB(dbUrl, name, 'activity')
+ng.factory('Activity', (CouchDB, db)->
+  return CouchDB(db.url, db.name, 'activity')
 )

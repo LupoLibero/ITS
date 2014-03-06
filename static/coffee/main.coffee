@@ -1,7 +1,18 @@
 ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap', 'pascalprecht.translate', 'angularSpinner'])
 
-ng.value('name', 'lupolibero-its')
-ng.value('dbUrl', '/lupolibero')
+ng.value('db', {
+  url: ''
+  name:'lupolibero-its'
+})
+
+ng.run( ($location, db) ->
+  if $location.absUrl().indexOf('_rewrite')
+    db.url = '/' + $location.absUrl().split('/')[3]
+  else
+    # vhost
+    # host: dev.lupolibero.org -> db: /lupolibero-dev
+    db.url = '/lupolibero-' + $location.host().split('.')[0]
+)
 
 ng.config( ($routeProvider, $translateProvider)->
   # $locationProvider.html5Mode(true)
@@ -55,9 +66,9 @@ ng.config( ($routeProvider, $translateProvider)->
           return Project.getDoc({
             id: $route.current.params.project_id
           })
-        config: ($http, dbUrl, $q, name) ->
+        config: ($http, db, $q) ->
           defer = $q.defer()
-          $http.get(dbUrl+'/_design/'+name+'/_view/config').then(
+          $http.get(db.url+'/_design/'+db.name+'/_view/config').then(
             (data) -> #Success
               data = data.data.rows
               defer.resolve(data)
@@ -92,9 +103,9 @@ ng.config( ($routeProvider, $translateProvider)->
             startkey: [id,"\ufff0"]
             descending: true
           })
-        config: ($http, dbUrl, $q, name) ->
+        config: ($http, db, $q) ->
           defer = $q.defer()
-          $http.get(dbUrl+'/_design/'+name+'/_view/config').then(
+          $http.get(db.url+'/_design/'+db.name+'/_view/config').then(
             (data) -> #Success
               data = data.data.rows
               defer.resolve(data)
