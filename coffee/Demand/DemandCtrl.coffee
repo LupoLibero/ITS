@@ -6,10 +6,8 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
   # If a traduction is available
   if $route.current.locals.demand.length != 0
     $scope.demand = $route.current.locals.demand[0]
-    $scope.save   = $route.current.locals.demand[0]
   else
     $scope.demand = $route.current.locals.demand_default
-    $scope.save   = $route.current.locals.demand_default
 
   # Available language for this demand
   $scope.languages = angular.copy($scope.demand.avail_langs)
@@ -28,7 +26,6 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
       }).then(
         (data) -> #Success
           $scope.demand = data
-          $scope.save   = data
       )
   )
   $scope.titleSave = ->
