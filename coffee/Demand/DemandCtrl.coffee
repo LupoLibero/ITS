@@ -9,24 +9,21 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
   else
     $scope.demand = $route.current.locals.demand_default
 
-  # Available language for this demand
-  $scope.languages = angular.copy($scope.demand.avail_langs)
-  # All lang available
-  $scope.langs = $route.current.locals.config[1].value
-  # Current lang
+  # Languages
   $scope.actualLang = $scope.demand.lang
+  $scope.available  = angular.copy($scope.demand.avail_langs)
+  $scope.languages  = $route.current.locals.config[1].value
 
-  $scope.$watch('actualLang', ->
-    # If it's the actual lang don't do the rest
-    if $scope.demand.lang == $scope.actualLang
-      return false
-    if $scope.demand.avail_langs.hasOwnProperty($scope.actualLang)
-      return Demand.get({
-        key: [$scope.save.id, $scope.actualLang]
-      }).then(
-        (data) -> #Success
-          $scope.demand = data
-      )
+  $scope.$on('NewLanguage', ($event, key) ->
+    $scope.$broadcast('EditFieldTranslationOn', key)
+  )
+  $scope.$on('ChangeLanguage', ($event, key) ->
+    Demand.get({
+      key: [$scope.demand.id, key]
+    }).then(
+      (data) -> #Success
+        $scope.demand = data
+    )
   )
   $scope.titleSave = ->
     $scope.change('title')
@@ -52,12 +49,12 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
   $scope.change = (field) ->
     defer = $q.defer()
     $scope.startLoading(field)
-    return Demand.update({
+    Demand.update({
       update:  'update_field'
       id:      $scope.demand.id
       element: field
       value:   $scope.demand[field]
-      lang:    $scope.demand.lang
+      lang:    $scope.actualLang
       _rev:    $scope.demand._rev
     }).then(
       (data) -> #Success
@@ -67,6 +64,7 @@ ng.controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
         $route.current.locals.demand[field] = $scope.demand[field]
       ,(err) -> #Error
         console.log "Conflict"
+        defer.reject(err)
         #TODO: popup confilct
     )
     return defer.promise

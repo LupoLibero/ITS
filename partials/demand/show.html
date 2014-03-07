@@ -1,5 +1,5 @@
 ﻿<h2>{{ project.name }}</h2>
-<lang-bar lang="actualLang" all-langs="langs" langs="languages" class="pull-right"></lang-bar>
+<lang-bar lang="actualLang" all-langs="languages" langs="available" class="pull-right"></lang-bar>
 <tabset>
   <tab heading="Information" ng-click="loadInformation()">
     <h3>
@@ -43,7 +43,7 @@
             <h5>Change on {{ history.0 }}</h5>
             <p>by {{ history.1 }} the {{ history.2 |date }}</p>
           </accordion-heading>
-          {{ history.3 }}
+          {{ history.4 }}
         </accordion-group>
       </accordion>
       <p ng-if="histories.length == 0">No history for the moment</p>
