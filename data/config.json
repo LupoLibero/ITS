@@ -16,7 +16,7 @@
     "resolved": "Resolved",
     "done": "Done"
   },
-  "language": {
+  "languages": {
     "fr": "Français",
     "en": "English",
     "de": "German",

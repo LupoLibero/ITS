@@ -4,8 +4,12 @@ module.exports = (grunt) ->
   grunt.initConfig {
     # Watcher
     watch: {
-      all: {
-        files: ['{,*/}*']
+      html: {
+        files: [
+          './partials/{,*/}*.html'
+          './coffee/{,*/}*.coffee'
+          './lib/{,*/}*.js'
+        ]
         tasks: [
           'shell:kansoPush'
         ]
@@ -65,7 +69,7 @@ module.exports = (grunt) ->
     'shell:kansoDelete'
     'shell:kansoCreate'
     'shell:kansoInit'
-    'shell:kansoPush'
+    'shell:kanso'
   ])
   grunt.registerTask('default', [
     'watch'

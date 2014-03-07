@@ -19,8 +19,7 @@ ng.directive('langBar', () ->
                 '</ul>'+
               '</div>'
     link: (scope, element, attrs) ->
-      scope.langs[scope.lang] = true
-
+      # Delete from the list all the available languages
       for key of scope.langs
         delete scope.allLangs[key]
 
@@ -31,11 +30,13 @@ ng.directive('langBar', () ->
       # Change between available language
       scope.changeLangue = (key) ->
         scope.lang = key
+        scope.$emit('ChangeLanguage', key)
 
       # Add a new language
       scope.addLangue = (key) ->
         scope.lang = key
         scope.langs[key] = true
         delete scope.allLangs[key]
+        scope.$emit('NewLanguage', key)
   }
 )

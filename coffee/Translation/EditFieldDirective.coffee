@@ -6,7 +6,9 @@ ng.directive('editField', ->
       type:    '@'
       lang:    '='
       save:    '&'
-    template: '<input ng-show="type == \'input\'" ng-disabled="onLoad()" ng-keyup="change()" type="text" ng-model="ngModel"/>'+
+    template: '<input ng-show="type == \'input\' && translation == true" type="text" ng-model="saveValue" disabled/>'+
+              '<input ng-show="type == \'input\'" ng-disabled="onLoad()" ng-keyup="change()" type="text" ng-model="ngModel"/>'+
+              '<textarea ng-show="type == \'textarea\' && translation == true" ng-model="saveValue" disabled></textarea>'+
               '<textarea ng-show="type == \'textarea\'" ng-disabled="onLoad()" ng-keyup="change()" ng-model="ngModel"></textarea>'+
               '<span ng-show="onLoad()" us-spinner="{width:2,length:6,radius:5}"></span>'+
               '<span ng-show="onChange()">'+
@@ -17,8 +19,13 @@ ng.directive('editField', ->
     link: (scope, element, attrs) ->
       scope.haveChange = false
 
+      scope.$on('EditFieldTranslationOn', ->
+        scope.translation = true
+        scope.ngModel     = ''
+      )
       scope.$watch('lang', ->
         scope.saveValue = angular.copy(scope.ngModel)
+        scope.translation = false
       )
 
       scope.change = ->
@@ -27,10 +34,11 @@ ng.directive('editField', ->
       scope.goSave = ->
         scope.haveChange = false
         scope.loading = true
-        scope.saveValue = angular.copy(scope.ngModel)
         scope.save().then(
           (data) -> #Success
             scope.loading = false
+            scope.translation = false
+            scope.saveValue = angular.copy(scope.ngModel)
           ,(err) -> #Error
             scope.haveChange = true
             scope.loading = false
