@@ -10,8 +10,11 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       // Vendor
-      'static/vendor/angular/angular.min.js',
+      'static/vendor/angular/angular.js',
+      'static/vendor/angular-mocks/angular-mocks.js',
       'static/vendor/{,*/}*.min.js',
+      'static/vendor/angular-couchdb/couch.js',
+      'static/vendor/spin.js/spin.js',
       // Script
       'coffee/main.coffee',
       'coffee/**/*.coffee',
@@ -41,7 +44,7 @@ module.exports = function(config) {
     // - Safari (only Mac; has to be installed with `npm install karma-safari-launcher`)
     // - PhantomJS
     // - IE (only Windows; has to be installed with `npm install karma-ie-launcher`)
-    browsers: ['Firefox'],
+    browsers: ['PhantomJS'],
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 60000,
     // Continuous Integration mode

@@ -25,5 +25,11 @@
     "angular-sanitize": "~1.2.13",
     "angular-spinner": "~0.3.1",
     "angular-couchdb": "LupoLibero/ngCouch"
+  },
+  "resolutions": {
+    "angular": "1.2.14"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.2.14"
   }
 }
