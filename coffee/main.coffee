@@ -2,7 +2,7 @@ ng = angular.module('its', ['ngRoute', 'ngCouchDB', 'ui.bootstrap', 'pascalprech
 
 ng.value('db', {
   url: ''
-  name:'lupolibero-its'
+  name:'its'
 })
 
 ng.run( ($location, db) ->
