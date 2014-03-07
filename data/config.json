@@ -1,0 +1,26 @@
+{
+  "_id": "config",
+  "categories": {
+    "bug": "Bug",
+    "feature_request": "Feature request",
+    "improvement": "Improvement",
+    "question": "Question",
+    "criticism_complaint": "Criticism/Complaint",
+    "translation_request": "Translation request"
+  },
+  "statuses": {
+    "draft": "Draft",
+    "open": "Open",
+    "in_progress": "In progress",
+    "reopened": "Reopened",
+    "resolved": "Resolved",
+    "done": "Done"
+  },
+  "language": {
+    "fr": "Français",
+    "en": "English",
+    "de": "German",
+    "es": "Español",
+    "jp": "日本"
+  }
+}

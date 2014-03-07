@@ -27,9 +27,18 @@ module.exports = (grunt) ->
     }
     # Kanso
     shell:{
+      options:
+        stdout: true
+      kansoDelete:{
+        command: 'kanso deletedb http://admin:admin@127.0.0.1:5984/lupolibero'
+      }
+      kansoCreate:{
+        command: 'kanso createdb http://admin:admin@127.0.0.1:5984/lupolibero'
+      }
+      kansoInit:{
+        command: 'kanso upload ./data http://admin:admin@127.0.0.1:5984/lupolibero'
+      }
       kansoPush:{
-        options:
-          stdout: true
         command: 'kanso push http://admin:admin@127.0.0.1:5984/lupolibero'
       }
     }
@@ -52,6 +61,12 @@ module.exports = (grunt) ->
     }
   }
 
+  grunt.registerTask('init', [
+    'shell:kansoDelete'
+    'shell:kansoCreate'
+    'shell:kansoInit'
+    'shell:kansoPush'
+  ])
   grunt.registerTask('default', [
     'watch'
   ])
