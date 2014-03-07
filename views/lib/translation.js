@@ -1,6 +1,5 @@
 exports.translation = {
   _keyTag: '%lang%',
-  translatableFields: {title: true},
   defaultLang: '',
   langs: {},
   mostTranslatedLang: '',
@@ -23,9 +22,10 @@ exports.translation = {
     this.translatedFields[fieldName] = true;
   },
 
-  isTranslated: function (doc, fieldName) {
+  isTranslated: function (doc, fieldName, translatableFields) {
     //return field.translatable
-    return typeof doc[fieldName] == 'object';
+    return translatableFields.hasOwnProperty(fieldName) &&
+      typeof doc[fieldName] == 'object';
   },
 
   collectLangs: function (doc, fieldName) {
@@ -72,11 +72,11 @@ exports.translation = {
     newDoc[fieldName] = doc[fieldName];
   },
 
-  createTranslatedDoc: function (doc, lang) {
+  createTranslatedDoc: function (doc, lang, translatableFields) {
     var fieldName;
     newDoc = {lang: lang};
     for (fieldName in doc) {
-      if (this.isTranslated(doc, fieldName)) {
+      if (this.isTranslated(doc, fieldName, translatableFields)) {
         if (this.hasTranslation(doc, fieldName, lang)) {
           this.setTranslation(newDoc, doc, fieldName, lang);
         }
@@ -111,9 +111,8 @@ exports.translation = {
 
   emitTranslatedDoc: function (key, doc, translatableFields) {
     var fieldName, newDoc, lang, atLeastOneTranslatedField = false;
-
     for (fieldName in translatableFields) {
-      if (this.isTranslated(doc, fieldName)) {
+      if (this.isTranslated(doc, fieldName, translatableFields)) {
         atLeastOneTranslatedField = true;
         log(doc._id);
         log(doc[fieldName]);
@@ -125,7 +124,7 @@ exports.translation = {
       this.guessDefaultLang(doc);
       log(['defaultLang', this.defaultLang]);
       for (lang in this.langs) {
-        newDoc = this.createTranslatedDoc(doc, lang);
+        newDoc = this.createTranslatedDoc(doc, lang, translatableFields);
         newDoc.avail_langs = this.langs;
         emit(this.keyReplacement(key, lang), newDoc);
         if (lang == this.defaultLang) {
