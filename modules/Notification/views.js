@@ -10,7 +10,7 @@ exports.subscription_by_object_key = {
 exports.notification_all = {
   map: function(doc) {
     if(doc.type && doc.type == 'notification') {
-      emit(doc.subscriber, doc);
+      emit([doc.displayed, doc.subscriber], doc);
     }
   }
 };
