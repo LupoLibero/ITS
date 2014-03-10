@@ -15,7 +15,9 @@ exports.Project = function () {
     fields: {
       id: fields.string(),
       name: translatableField(),
-      prefix: fields.string(),
+      init_lang: fields.string({
+        required: false
+      }),
       description: translatableField({
         required: false
       })
