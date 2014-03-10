@@ -4,7 +4,7 @@ var widgets           = require('couchtypes/widgets');
 var permissions       = require('couchtypes/permissions');
 var _                 = require('underscore');
 var translatableField = require('../Translation/fields').translatableField;
-var activityField     = require('../History/fields').activityField;
+var activityField     = require('../Activity/fields').activityField;
 var votingField        = require('../Voting/fields').votingField;
 
 exports.Demand = function () {

@@ -1,7 +1,7 @@
 var _                   = require('underscore')._;
 var fields              = require('lib/types');
 var registerTranslation = require('../Translation/utils').registerTranslation;
-var updateActivity      = require('../History/utils').updateActivity;
+var updateActivity      = require('../Activity/utils').updateActivity;
 
 exports.demand_create = function(doc, req) {
   var date = new Date().getTime();

@@ -7,7 +7,7 @@ module.exports = (grunt) ->
       html: {
         files: [
           './partials/{,*/}*.html'
-          './coffee/{,*/}*.coffee'
+          './modules/{,*/}*.coffee'
           './lib/{,*/}*.js'
         ]
         tasks: [
@@ -23,9 +23,10 @@ module.exports = (grunt) ->
       dist: {
         files:
           'static/js/main.js': [
-            'coffee/main.coffee'
-            'coffee/{,*/}*.coffee'
-            'coffee/{,*/}*Ctrl.coffee'
+            'modules/*/__init__.coffee'
+            'modules/*/*.coffee'
+            'modules/ITS/__init__.coffee'
+            'modules/ITS/*.coffee'
           ]
       }
     }

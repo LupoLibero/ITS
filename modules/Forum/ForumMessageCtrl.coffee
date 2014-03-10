@@ -1,4 +1,5 @@
-ng.controller('ForumMessageCtrl', ($scope, $route, $location, Forum) ->
+angular.module('forum').
+controller('ForumMessageCtrl', ($scope, $route, $location, Forum) ->
   $scope.forum     = $route.current.locals.forum
 
   # If a traduction is available
@@ -6,3 +7,4 @@ ng.controller('ForumMessageCtrl', ($scope, $route, $location, Forum) ->
     $scope.forum = $route.current.locals.forum[0]
   else
     $scope.forum = $route.current.locals.forum_default
+)
