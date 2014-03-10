@@ -24,9 +24,9 @@ module.exports = (grunt) ->
         files:
           'static/js/main.js': [
             'modules/*/__init__.coffee'
+            'modules/*/config.coffee'
+            'modules/*/routes.coffee'
             'modules/*/*.coffee'
-            'modules/ITS/__init__.coffee'
-            'modules/ITS/*.coffee'
           ]
       }
     }
