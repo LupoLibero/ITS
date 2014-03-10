@@ -1,3 +1,4 @@
+var fields = require('lib/types');
 
 exports.registerTranslation = function (doc, form, type, element, lang) {
   if (!fields[type].fields[element].translatable) {

@@ -1,6 +1,7 @@
 var fields = require('couchtypes/fields');
-var utils       = require('lib/utils');
-var assert      = utils.assert;
+var utils  = require('lib/utils');
+var assert = utils.assert;
+var _      = require('underscore')._;
 
 exports.activityField = function () {
   var CHANGE_ELEMENT = 0,

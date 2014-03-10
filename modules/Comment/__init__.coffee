@@ -1,1 +1,1 @@
-angular.module('comment', ['ngCouch'])
+angular.module('comment', ['ngCouchDB', 'login'])

@@ -1,4 +1,15 @@
-angular.module('its', ['ngRoute', 'pascalprecht.translate', 'navbar', 'project', 'ngCouchDB', 'login'])
+angular.module('its', [
+  'ngRoute'
+  'dbSelect'
+  'url'
+  'pascalprecht.translate'
+  'navbar'
+  'project'
+  'ngCouchDB'
+  'notification'
+  'translation'
+  'demand'
+])
 
 ng.value('db', {
   url: ''

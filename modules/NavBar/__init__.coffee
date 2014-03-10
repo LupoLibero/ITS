@@ -1,1 +1,1 @@
-angular.module('navbar', [])
+angular.module('navbar', ['ui.bootstrap', 'login', 'notification'])

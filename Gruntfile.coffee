@@ -7,7 +7,7 @@ module.exports = (grunt) ->
       html: {
         files: [
           './partials/{,*/}*.html'
-          './modules/{,*/}*.coffee'
+          './modules/{,*/}*'
           './lib/{,*/}*.js'
         ]
         tasks: [

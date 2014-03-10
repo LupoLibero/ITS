@@ -1,1 +1,1 @@
-angular.module('activity', [])
+angular.module('activity', ['ngCouchDB'])

@@ -1,4 +1,3 @@
-
 exports.activity_all = {
   map: function(doc) {
     var k, act;

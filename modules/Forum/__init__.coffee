@@ -1,1 +1,1 @@
-angular.module('forum', ['ngCouch'])
+angular.module('forum', ['ngCouchDB', 'ui.bootstrap', 'login'])

@@ -1,3 +1,4 @@
+var _ = require('underscore')._;
 
 exports.updateActivity = function (doc, req, element, _rev) {
   if (!doc.hasOwnProperty('activity')) {

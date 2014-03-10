@@ -1,1 +1,1 @@
-angular.module('demand', [])
+angular.module('demand', ['ngCouchDB', 'activity', 'ui.bootstrap', 'login', 'comment'])
