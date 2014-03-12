@@ -10,7 +10,6 @@ exports.demand_create = function(doc, req) {
   if(doc !== null){
     throw({forbidden: 'New demand only'});
   } else {
-    registerTranslation(form, form, 'demand', 'title', form.lang);
     form.type        = 'demand';
     form._id         = form.type + '-' + form.id;
     form.author      = req.userCtx.name;
@@ -20,6 +19,7 @@ exports.demand_create = function(doc, req) {
     form.description = {};
     form.activity    = [];
     form.init_lang   = form.lang;
+    registerTranslation(form, form, 'demand', 'title', form.lang);
     // Add the vote of the creator
     form.description[form.lang]  = '';
     form.votes[req.userCtx.name] = true;

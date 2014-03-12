@@ -28,5 +28,4 @@ exports.registerTranslation = function (doc, form, type, element, lang) {
       doc[element]['default'] = saved;
     }
   }
-  doc[element][lang] = value;
 }
