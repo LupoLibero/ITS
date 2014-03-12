@@ -6,8 +6,18 @@ config( ($routeProvider)->
       controller:  'ProjectListCtrl'
       name:        'project.list'
       resolve: {
+        projects_default: (Project)->
+          return Project.view({
+            view: 'get'
+            startkey: ['default', ""]
+            endkey:   ['default', {}]
+          })
         projects: (Project)->
-          return Project.all()
+          return Project.view({
+            view: 'get'
+            startkey: [window.navigator.language, ""]
+            endkey:   [window.navigator.language, {}]
+          })
       }
     })
     .when('/project/:project_id', {
@@ -15,9 +25,14 @@ config( ($routeProvider)->
       controller:  'ProjectCtrl'
       name:        'project.show'
       resolve: {
+        project_default: (Project, $route) ->
+          return Project.get({
+            key: ['default', "project-#{$route.current.params.project_id}"]
+          })
         project: (Project, $route) ->
-          return Project.getDoc({
-            id: $route.current.params.project_id
+          return Project.view({
+            view: 'get'
+            key: [window.navigator.language, "project-#{$route.current.params.project_id}"]
           })
       }
     })

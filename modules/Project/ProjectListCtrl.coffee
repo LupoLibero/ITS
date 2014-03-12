@@ -1,5 +1,11 @@
 angular.module('project').
-controller('ProjectListCtrl', ($scope, projects, url) ->
+controller('ProjectListCtrl', ($scope, projects_default, projects, url) ->
+  # Replace the default project by the translate project
+  for project, i in projects_default
+    for trad in projects
+      if trad.id == project.id
+        project_default[i] = trad
+
   # If only one project go directly to him
   if projects.length == 1
     route = url.get('project.show', {
@@ -8,5 +14,5 @@ controller('ProjectListCtrl', ($scope, projects, url) ->
     $location.path(route)
 
   # Put projects in the scope
-  $scope.projectList = projects
+  $scope.projects = projects_default
 )

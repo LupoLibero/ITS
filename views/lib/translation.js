@@ -23,7 +23,6 @@ exports.translation = {
   },
 
   isTranslated: function (doc, fieldName, translatableFields) {
-    //return field.translatable
     return translatableFields.hasOwnProperty(fieldName) &&
       typeof doc[fieldName] == 'object';
   },
@@ -114,15 +113,11 @@ exports.translation = {
     for (fieldName in translatableFields) {
       if (this.isTranslated(doc, fieldName, translatableFields)) {
         atLeastOneTranslatedField = true;
-        log(doc._id);
-        log(doc[fieldName]);
         this.collectLangs(doc, fieldName);
       }
     }
     if (atLeastOneTranslatedField) {
-      log(['langs', this.langs]);
       this.guessDefaultLang(doc);
-      log(['defaultLang', this.defaultLang]);
       for (lang in this.langs) {
         newDoc = this.createTranslatedDoc(doc, lang, translatableFields);
         newDoc.avail_langs = this.langs;
