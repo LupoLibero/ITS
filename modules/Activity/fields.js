@@ -8,7 +8,8 @@ exports.activityField = function () {
       CHANGE_AUTHOR  = 1,
       CHANGE_DATE    = 2,
       PREVIOUS_REV   = 3,
-      OLD_CONTENT    = 4;
+      DEMAND_ID      = 4,
+      OLD_CONTENT    = 5;
   return new fields.Field({
     permissions: {
       update: function (newDoc, oldDoc, newValue, oldValue, userCtx) {

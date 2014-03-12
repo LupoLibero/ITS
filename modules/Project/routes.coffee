@@ -34,6 +34,14 @@ config( ($routeProvider)->
             view: 'get'
             key: [window.navigator.language, "project-#{$route.current.params.project_id}"]
           })
+        activities: (Activity, $route) ->
+          id = $route.current.params.project_id
+          Activity.all({
+            endkey: ["", id, 0]
+            startkey: [{}, id, {}]
+            descending: true
+            limit: 10
+          })
       }
     })
 )

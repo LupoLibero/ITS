@@ -1,1 +1,1 @@
-angular.module('project', ['ngCouchDB', 'url'])
+angular.module('project', ['ngCouchDB', 'url', 'activity'])

@@ -4,7 +4,7 @@ exports.activity_all = {
     if (doc.hasOwnProperty('activity')) {
       for(k in doc.activity) {
         act = doc.activity[k];
-        emit([doc._id, act[2]], act);
+        emit([doc._id, doc.project_id, act[2]], act);
       }
     }
   }
