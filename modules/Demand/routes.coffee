@@ -10,7 +10,7 @@ config( ($routeProvider, $translateProvider)->
           id = $route.current.params.project_id
           return Demand.all({
             descending: true
-            startkey: [id, 'default', "\ufff0"]
+            startkey: [id, 'default', {}]
             endkey: [id, 'default', 0]
           })
         demands: (Demand, $route, $translate) ->
@@ -18,7 +18,7 @@ config( ($routeProvider, $translateProvider)->
           id = $route.current.params.project_id
           return Demand.all({
             descending: true
-            startkey: [id, language, "\ufff0"]
+            startkey: [id, language, {}]
             endkey: [id, language, 0]
           })
         project: (Project, $route) ->
@@ -60,8 +60,8 @@ config( ($routeProvider, $translateProvider)->
         comments: (Comment, $route) ->
           id = "demand-#{$route.current.params.demand_id}"
           return Comment.all({
-            endkey:   [id,0]
-            startkey: [id,"\ufff0"]
+            endkey:   [id, 0]
+            startkey: [id, {}]
             descending: true
           })
         config: ($http, db, $q) ->
@@ -82,8 +82,8 @@ config( ($routeProvider, $translateProvider)->
           id = "demand-#{$route.current.params.demand_id}"
           return Activity.all({
             descending: true
-            startkey: [id,"\ufff0"]
-            endkey: [id,0]
+            startkey: [id, {}]
+            endkey: [id, 0]
           })
       }
     })

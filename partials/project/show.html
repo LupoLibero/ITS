@@ -3,3 +3,5 @@
 <a goto="demand.list" project_id="{{project.id}}">Demand list</a>
 
 <p>{{ project.description }}</p>
+<hr/>
+<p ng-repeat="activity in activities"><b>{{ activity.1 }}</b> updated <b>{{ activity.0 }}</b> of <b>{{ activity.4.replace('demand-', '')}}<b></p>
