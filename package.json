@@ -4,8 +4,15 @@
   "description": "An issue tracker system for Lupo Libero",
   "main": "index.js",
   "dependencies": {
+    "cradle": "~0.6.7",
+    "q": "~1.0.1",
+    "underscore": "~1.6.0",
+    "crypto": "0.0.3",
+    "nodemailer": "~0.6.1"
+  },
+  "devDependencies": {
     "grunt-contrib-coffee": "~0.10.0",
-    "grunt": "~0.4.2",
+    "grunt": "~0.4.4",
     "grunt-contrib-watch": "~0.5.3",
     "load-grunt-tasks": "~0.3.0",
     "grunt-shell": "~0.6.4",
@@ -24,7 +31,6 @@
     "protractor": "~0.19.0",
     "coffee-script": "~1.7.1"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "grunt karma"
   },
