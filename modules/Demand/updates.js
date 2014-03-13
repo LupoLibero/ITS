@@ -1,6 +1,5 @@
 var _                   = require('underscore')._;
 var fields              = require('lib/types');
-var hasRole             = require('lib/utils').hasRole;
 var registerTranslation = require('../Translation/utils').registerTranslation;
 var updateActivity      = require('../Activity/utils').updateActivity;
 
@@ -66,10 +65,6 @@ exports.demand_update_field = function (doc, req) {
 
 exports.demand_vote = function(doc, req) {
   if(doc != null) {
-    if(hasRole(req.userCtx, 'sponsor')){
-      throw new Error('You need to be a sponsor for voting' || 'unauth');
-      return false;
-    }
     doc.updated_at = new Date().getTime();
     updateActivity(doc, req, 'votes');
     doc.votes[req.userCtx.name] = true;
@@ -79,10 +74,6 @@ exports.demand_vote = function(doc, req) {
 
 exports.demand_cancel_vote = function(doc, req) {
   if(doc != null) {
-    if(!hasRole(req.userCtx, 'sponsor')){
-      throw new Error('You need to be a sponsor for voting' || 'unauth');
-      return false;
-    }
     doc.updated_at = new Date().getTime();
     updateActivity(doc, req, 'votes');
     delete doc.votes[req.userCtx.name];

@@ -3,6 +3,7 @@ var permissions = require('couchtypes/permissions');
 var _           = require('underscore');
 var utils       = require('lib/utils');
 var assert      = utils.assert;
+var hasRole     = utils.hasRole;
 
 exports.votesValidation = function (newDoc, oldDoc, newValue, oldValue, userCtx) {
   var name, voter, newRank, oldRank;
@@ -18,6 +19,9 @@ exports.votesValidation = function (newDoc, oldDoc, newValue, oldValue, userCtx)
     assert(toJSON(newValue) == toJSON(oldValue), "Same rank but different votes");
   }
   else {
+    // Vote is allow only by sponsor member
+    assert(hasRole(userCtx, 'sponsor'), "Only sponsor can vote");
+
     if (newRank > oldRank) {
       assert(newRank == oldRank + 1, "Adding more than one vote at a time");
       for (name in newValue) {
@@ -75,7 +79,7 @@ exports.votingField = function (options) {
     );
   }
   else {
-    p.update = exports.votes_validation;
+    p.update = exports.votesValidation;
   }
   return new fields.Field({
     permissions: {
