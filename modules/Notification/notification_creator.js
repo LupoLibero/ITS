@@ -2,16 +2,32 @@ var cradle = require('cradle');
 var _      = require('underscore');
 var Q      = require('q');
 var crypto = require('crypto');
+var db, feed;
 
-var db = new(cradle.Connection)('http://localhost', 5984, {
-  cache: true,
-  raw: false,
-  forceSave: true,
-  auth: { username: 'slaivyn', password: 'slaivyn' }
-}).database('lupolibero');
+function getConfig () {
+  var deferred = Q.defer();
+  require('properties').parse('modules/Notification/notification_creator.conf',
+    {path: true, sections: true},
+    function(error, config) {
+      if (error) {
+        console.error (error);
+        return deferred.reject(error);
+      }
 
+      db = new(cradle.Connection)(config.db.base_url, config.db.port, {
+        cache: true,
+        raw: false,
+        forceSave: true,
+        auth: { username: config.db.user, password: config.db.password }
+      }).database(config.db.name);
 
-var feed = db.changes(/*{ since: 42}*/);
+      feed = db.changes(/*{ since: 42}*/);
+      deferred.resolve();
+    }
+  );
+  return deferred.promise;
+}
+
 
 var helpers = {
   buildValidationUrl: function(notification, type, data) {
@@ -174,37 +190,41 @@ var createNotificationDocAndSave = function (type, data) {
 }
 
 
-feed.on('change', function (change) {
-  if (change.id.indexOf('-')) {
-    var _idArray = change.id.split('-')
-    var type = monitoredTypes[_idArray[0]];
-    var createNotificationDocAndSaveCaller = function (data) {
-      return createNotificationDocAndSave(type, data)
-    }
+function main () {
+  feed.on('change', function (change) {
+    if (change.id.indexOf('-')) {
+      var _idArray = change.id.split('-')
+      var type = monitoredTypes[_idArray[0]];
+      var createNotificationDocAndSaveCaller = function (data) {
+        return createNotificationDocAndSave(type, data)
+      }
 
-    if (type) {
-      console.log("\n\n", _idArray, change.seq);
-      console.log(change);
-      if (type.monitoring_type == 'to-user') {
-        if (isDocCreation(change)) {
-          console.log("newDoc")
-          //informNewDocWatchers()
-          createNotificationDocAndSave(type, {
-            subscriber: _idArray[1],
-            _seq: change.seq,
-            _id: change.id
-          });
+      if (type) {
+        console.log("\n\n", _idArray, change.seq);
+        console.log(change);
+        if (type.monitoring_type == 'to-user') {
+          if (isDocCreation(change)) {
+            console.log("newDoc")
+            //informNewDocWatchers()
+            createNotificationDocAndSave(type, {
+              subscriber: _idArray[1],
+              _seq: change.seq,
+              _id: change.id
+            });
+          }
         }
-      }
-      else {
-        if (isDocCreation(change)) {
-          console.log("newDoc")
-          //informNewDocWatchers()
-        } else {
-          getDocWatcherList(type, change).
-            done(createNotificationDocAndSaveCaller);
+        else {
+          if (isDocCreation(change)) {
+            console.log("newDoc")
+            //informNewDocWatchers()
+          } else {
+            getDocWatcherList(type, change).
+              done(createNotificationDocAndSaveCaller);
+          }
         }
       }
     }
-  }
-});
+  });
+}
+
+getConfig().done(main);

@@ -1,28 +1,45 @@
 var cradle = require('cradle');
 var nodemailer = require('nodemailer');
 var Q = require('q');
+var db, dbView, smtpTransport, sendMail;
 
-var db = new(cradle.Connection)('http://localhost', 5984, {
-  cache: true,
-  raw: false,
-  forceSave: true
-}).database('lupolibero');
 
-var dbView = Q.nbind(db.view, db);
 
-var smtpTransport = nodemailer.createTransport("SMTP", {
-  host: "ssl0.ovh.net",
-  secureConnection: true, // use SSL
-    port: 465, // port for secure SMTP
-    auth: {
-        user: "test@sylvainduchesne.com",
-        pass: "suppleteam"
+function getConfig () {
+  var deferred = Q.defer();
+  require('properties').parse('modules/Mailer/mailer.conf',
+    {path: true, sections: true},
+    function(error, config) {
+      if (error) {
+        console.error (error);
+        return deferred.reject(error);
+      }
+
+      db = new(cradle.Connection)(config.db.base_url, config.db.port, {
+        cache: true,
+        raw: false,
+        forceSave: true,
+        auth: { username: config.db.user, password: config.db.password }
+      }).database(config.db.name);
+
+      dbView = Q.nbind(db.view, db);
+
+      smtpTransport = nodemailer.createTransport("SMTP", {
+        host: config.smtp.host,
+        secureConnection: true, // use SSL
+          port: config.smtp.port, // port for secure SMTP
+          auth: {
+              user: config.smtp.user,
+              pass: config.smtp.password
+          }
+      })
+
+      sendMail = Q.nbind(smtpTransport.sendMail, smtpTransport);
+      deferred.resolve();
     }
-})
-
-var sendMail = Q.nbind(smtpTransport.sendMail, smtpTransport);
-
-
+  );
+  return deferred.promise;
+}
 
 var setEmailOfSubscriber = function (emailObj, username) {
   var deferred = Q.defer();
@@ -49,8 +66,11 @@ var setEmailOfSubscriber = function (emailObj, username) {
   return deferred.promise;
 }
 
-var setNotificationAsDisplayed = function () {
+var setNotificationAsDisplayed = function (docId) {
   console.log("displayed= true")
+  db.merge(docId, {email_sent: true}, function (err, res) {
+    console.log(err, res);
+  });
   return;
 }
 
@@ -68,30 +88,39 @@ var sendNotification = function (notification) {
     });
 }
 
-
-setInterval(function () {
-    console.log("toto")
-    db.view(
-      'its/notification_all',
-      {
-        startkey: [false, null],
-        endkey: [false, {}]
-      },
-      function(err, res) {
-        if (err) {
-          console.log(err)
-        }
-        else {
-          res.forEach(function (row) {
-            console.log(row.type, row.subscriber);
-            //callback(type, doc, row);
-            sendNotification(row);
-          });
-        }
+function loopBody () {
+  db.view(
+    'its/notification_all',
+    {
+      startkey: [false, null],
+      endkey: [false, {}]
+    },
+    function(err, res) {
+      if (err) {
+        console.log(err)
       }
-    );
-  },
-  1000 * 60
-);
+      else {
+        res.forEach(function (row) {
+          console.log(row.type, row.subscriber);
+          //callback(type, doc, row);
+          sendNotification(row);
+        });
+      }
+    }
+  );
+}
+
+function main () {
+  setInterval(loopBody,
+    1000 * 60 * 5
+  );
+  loopBody();
+}
+
+
+getConfig().done(main);
+
+
+
 
 //smtpTransport.close()

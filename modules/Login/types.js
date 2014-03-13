@@ -20,7 +20,7 @@ exports.user = new Type('user', {
     name: fields.string({
       validators: [
         function(doc, value) {
-          assert(doc.id == doc.name, "User.name must be equal to User.id");
+          assert(value == doc.id, "User.name must be equal to User.id");
         }]
     }),
     email_validation_token: fields.string({
