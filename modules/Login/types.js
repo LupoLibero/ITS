@@ -17,6 +17,12 @@ exports.user = new Type('user', {
     created_at: fields.createdTime(),
     email: fields.email(),
     id: fields.string(),
+    name: fields.string({
+      validators: [
+        function(doc, value) {
+          assert(doc.id == doc.name, "User.name must be equal to User.id");
+        }]
+    }),
     email_validation_token: fields.string({
       required: false
     }),

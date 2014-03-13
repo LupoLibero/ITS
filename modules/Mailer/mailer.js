@@ -56,7 +56,7 @@ var setNotificationAsDisplayed = function () {
 
 var sendNotification = function (notification) {
   var emailObj = {
-    from: "Fred Foo ✔ <test@sylvainduchesne.com>",
+    from: "Test ✔ <test@sylvainduchesne.com>",
     subject: notification.subject,
     text: notification.message_txt,
     html: notification.message_html,
@@ -69,7 +69,7 @@ var sendNotification = function (notification) {
 }
 
 
-//setInterval(function () {
+setInterval(function () {
     console.log("toto")
     db.view(
       'its/notification_all',
@@ -90,8 +90,8 @@ var sendNotification = function (notification) {
         }
       }
     );
-//  },
-//  1000 * 60
-//);
+  },
+  1000 * 60
+);
 
 //smtpTransport.close()
