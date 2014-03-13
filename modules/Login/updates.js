@@ -8,6 +8,7 @@ exports.user_create = function(doc, req) {
       type:             'user',
       email_validated:  false,
       email:            form.email,
+      created_at:       new Date().getTime(),
     };
     return [doc, 'ok'];
   }

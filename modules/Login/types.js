@@ -2,8 +2,8 @@ var Type        = require('couchtypes/types').Type;
 var fields      = require('couchtypes/fields');
 var permissions = require('couchtypes/permissions');
 var md5         = require('md5');
-var utils  = require('lib/utils');
-var assert = utils.assert;
+var utils       = require('lib/utils');
+var assert      = utils.assert;
 
 exports.user = new Type('user', {
   permissions: {
