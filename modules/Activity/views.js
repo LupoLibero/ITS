@@ -3,8 +3,15 @@ exports.activity_all = {
     var k, act;
     if (doc.hasOwnProperty('activity')) {
       for(k in doc.activity) {
-        act = doc.activity[k];
-        act['_id'] = doc._id;
+        activity = doc.activity[k];
+        act = {
+          _id:      doc._id,
+          element:  activity.element,
+          author:   activity.author,
+          date:     activity.date,
+          _rev:     activity._rev,
+          content:  activity.content,
+        };
         emit([doc._id, act.date], act);
       }
     }
