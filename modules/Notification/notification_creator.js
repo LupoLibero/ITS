@@ -1,13 +1,40 @@
 var cradle = require('cradle');
+var _      = require('underscore');
+var Q      = require('q');
+var crypto = require('crypto');
 
 var db = new(cradle.Connection)('http://localhost', 5984, {
-      cache: true,
-      raw: false,
-      forceSave: true
-  }).database('lupolibero');
+  cache: true,
+  raw: false,
+  forceSave: true,
+  auth: { username: 'slaivyn', password: 'slaivyn' }
+}).database('lupolibero');
 
 
-var feed = db.changes({ since: 503});
+var feed = db.changes({ since: 42});
+
+var helpers = {
+  buildValidationUrl: function(notification, type, data) {
+    var deferred = Q.defer();
+    console.log("buildValidationUrl");
+    crypto.randomBytes(10, function(ex, buf) {
+      var token = buf.toString('hex');
+      shasum = crypto.createHash('md5')
+      shasum.update(token);
+      var token_md5 = shasum.digest('hex');
+      console.log(token, token_md5)
+      data.validationUrl = 'http://localhost:5984/lupolibero/_design/its/_rewrite/#email_validation?token=' + token;
+      db.merge('user-' + data.subscriber,
+        {email_validation_token: token_md5},
+        function (err, res) {
+          console.log(err, res);
+        }
+      );
+      deferred.resolve();
+    });
+    return deferred.promise;
+  },
+}
 
 var monitoredTypes = {
   demand: {
@@ -17,20 +44,37 @@ var monitoredTypes = {
       subject: 'hello {{subscriber}}',
       message_txt: 'This is a test',
       message_html: '<h1>This is a test</h1>'
-    }
+    },
+    notification_type: 'email',
+    monitoring_type: 'user'
+  },
+  user: {
+    name: 'user',
+    key: '_id',
+    preprocessors: ['buildValidationUrl'],
+    templates: {
+      subject: 'Email validation',
+      message_text: 'Validation url: {{validationUrl}}',
+      message_html: '<p>Validation url: <a href="{{validationUrl}}">{{validationUrl}}</a>'
+    },
+    notification_type: 'email',
+    monitoring_type: 'to-user',
   }
 };
+
+
 
 var isMonitoredType = function (type) {
   return type in monitoredTypes
 };
 
-var isNewDoc = function (change) {
-  return parseInt(change.changes[0].rev) == 1
+var isDocCreation = function (change) {
+  return parseInt(change.changes[0].rev) == 42
 }
 
-var getDocWatcherList = function (type, change, callback) {
-  var doc = {_id: change.id}
+var getDocWatcherList = function (type, change) {
+  var doc = {_id: change.id};
+  var deferred = Q.defer();
   if (type.key != '_id') {
     console.log('getFullDoc')
     // getDoc
@@ -44,59 +88,122 @@ var getDocWatcherList = function (type, change, callback) {
     function(err, res) {
       if (err) {
         console.log(err)
+        deferred.reject(err)
       }
       else {
         res.forEach(function (row) {
+          row._seq = change.seq;
+          row._id = change.id;
           console.log(row);
-          callback(type, doc, row);
+          //callback(type, doc, row);
+          // TODO: does not loop
+          deferred.resolve(row);
         });
       }
     }
   );
+  return deferred.promise;
 }
 
-var applyTemplates = function (notification, templates, data) {
+var initNotification = function (data, type) {
+  var deferred = Q.defer();
+  deferred.resolve({
+    _id: 'notification-' + data._seq + '-' + data.subscriber,
+    type: 'notification',
+    doc_type: type.name,
+    doc_id: data._id,
+    subscriber: data.subscriber,
+    created_at: new Date().getTime(),
+    displayed: false,
+    notification_type: type.notification_type || "",
+  });
+  return deferred.promise;
+}
+
+var applyPreprocessors = function (notification, type, data) {
+    var promises = [], deferred;
+  _.forEach(type.preprocessors, function (prepro) {
+    promises.push(helpers[prepro](notification, type, data));
+  });
+  return Q.all(promises).thenResolve(notification);
+}
+
+var applyAllTemplates = function (notification, type, data) {
+
   function applyOneTemplate (notification, templateName, template, data) {
-    notification[templateName] = template.replace(/\{\{(.*)\}\}/, function (match, p1) {
+    notification[templateName] = template.replace(/\{\{([^\{]+)\}\}/g, function (match, p1) {
       console.log("match:", p1);
       return data[p1];
     })
   }
-  for(var tmpl in templates) {
-    applyOneTemplate(notification, tmpl, templates[tmpl], data);
+  for(var tmpl in type.templates) {
+    applyOneTemplate(notification, tmpl, type.templates[tmpl], data);
   }
+  return notification;
 }
 
-var createNotificationDoc = function (type, doc, data) {
-  var notification = {
-    type: 'notification',
-    doc_type: type.name,
-    subscriber: data.subscriber,
-    created_at: new Date().getTime(),
-    displayed: false,
-  };
-  applyTemplates(notification, type.templates, data);
+var saveNotification = function (notification) {
+  var deferred = Q.defer();
   console.log("notification", notification);
   db.save(notification, function (err, res) {
     if (err) {
-      console.log(err)
+      console.log(err);
+      deferred.reject(err);
     }
     else {
-      console.log(res)
+      console.log(res);
+      deferred.resolve(res);
     }
-  })
+  });
+  return deferred.promise;
+}
+
+var createNotificationDocAndSave = function (type, data) {
+
+  var applyPreprocessorsCaller = function (notification) {
+    return applyPreprocessors(notification, type, data)
+  }
+  var applyAllTemplatesCaller = function (notification) {
+    return applyAllTemplates(notification, type, data);
+  }
+
+  return initNotification(data, type).
+    then(applyPreprocessorsCaller).
+    then(applyAllTemplatesCaller).
+    done(saveNotification);
 }
 
 
 feed.on('change', function (change) {
   if (change.id.indexOf('-')) {
-    var type = monitoredTypes[change.id.split('-')[0]];
+    var _idArray = change.id.split('-')
+    var type = monitoredTypes[_idArray[0]];
+    var createNotificationDocAndSaveCaller = function (data) {
+      return createNotificationDocAndSave(type, data)
+    }
+
     if (type) {
-      //console.log(type, change);
-      if (isNewDoc(change)) {
-        //informNewDocWatchers()
-      } else {
-        getDocWatcherList(type, change, createNotificationDoc);//.informThem();
+      console.log("\n\n", _idArray, change.seq);
+      console.log(change);
+      if (type.monitoring_type == 'to-user') {
+        if (isDocCreation(change)) {
+          console.log("newDoc")
+          //informNewDocWatchers()
+          createNotificationDocAndSave(type, {
+            subscriber: _idArray[1],
+            _seq: change.seq,
+            _id: change.id
+          });
+        }
+      }
+      else {
+        if (isDocCreation(change)) {
+          console.log("newDoc")
+          //informNewDocWatchers()
+        } else {
+          getDocWatcherList(type, change).
+            done(createNotificationDocAndSaveCaller);
+        }
       }
     }
   }

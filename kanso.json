@@ -18,6 +18,7 @@
     "couchtypes": null,
     "session": null,
     "users": null,
-    "blocking-multi-shell": null
+    "blocking-multi-shell": null,
+    "md5": null
   }
 }
