@@ -69,7 +69,7 @@ var isMonitoredType = function (type) {
 };
 
 var isDocCreation = function (change) {
-  return parseInt(change.changes[0].rev) == 42
+  return parseInt(change.changes[0].rev) == 1
 }
 
 var getDocWatcherList = function (type, change) {
