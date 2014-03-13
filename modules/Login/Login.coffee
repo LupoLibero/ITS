@@ -26,23 +26,33 @@ factory('login', ($q, User, $rootScope) ->
       )
       return defer.promise
 
-    signUp: (user, password) ->
+    signUp: (user) ->
       defer = $q.defer()
       _this = this
-      this.users.create(user, password, {}, (err, response) ->
-          if err
-            defer.reject(err)
-          else
-            new User({
-              id: user
-              name: user
-            }).$save().then(
-              ()->
-                _this.signIn(user, password).then(
-                  (data) ->
-                    defer.resolve(data)
-                )
-            )
+      # Create the user inside _users db
+      this.users.create(user.name, user.password, {}, (err, response) ->
+        if err
+          defer.reject(err)
+        else
+          # Create the user inside the db of the project
+          User.update({
+            _id:    ''
+            update: 'create'
+            name:   user.name
+            email:  user.email
+          }).then(
+            (data) -> #Success
+              # Sign In the user
+              _this.signIn(user.namer, user.password).then(
+                (data) -> #Success
+                  defer.resolve(data)
+                ,(err) -> #Error
+                  defer.reject(err)
+              )
+
+            ,(err) -> #Error
+              defer.resolve(err)
+          )
       )
       return defer.promise
 

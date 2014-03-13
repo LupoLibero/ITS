@@ -10,6 +10,7 @@ angular.module('its', [
   'notification'
   'translation'
   'demand'
+  'mailer'
 ])
 
 ng.value('db', {
