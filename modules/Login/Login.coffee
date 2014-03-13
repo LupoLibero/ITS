@@ -43,7 +43,7 @@ factory('login', ($q, User, $rootScope) ->
           }).then(
             (data) -> #Success
               # Sign In the user
-              _this.signIn(user.namer, user.password).then(
+              _this.signIn(user.name, user.password).then(
                 (data) -> #Success
                   defer.resolve(data)
                 ,(err) -> #Error
