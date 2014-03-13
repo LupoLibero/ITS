@@ -13,10 +13,12 @@ controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Em
     }).then(
       (data) -> #Success
         $rootScope.$broadcast('endLoading')
-        notification.addAlert('Your email has been validate')
+        notification.addAlert('Your email has been validate', 'success')
+        $location.url($location.path())
       ,(err) -> #Error
         $rootScope.$broadcast('endLoading')
-        notification.addAlert('Your email has not been validate')
+        notification.addAlert('Your email has not been validate', 'danger')
+        $location.url($location.path())
     )
 
   # Translate the interface in the language of the navigator
