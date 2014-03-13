@@ -1,8 +1,11 @@
 angular.module('demand').
-controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q) ->
+controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login) ->
   $scope.project     = $route.current.locals.project
   $scope.categories  = $route.current.locals.config[0].value
   $scope.statuses    = $route.current.locals.config[2].value
+
+  # Pass the login factory to the view
+  $scope.login = login
 
   # If a traduction is available
   if $route.current.locals.demand.length != 0

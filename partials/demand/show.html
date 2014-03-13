@@ -16,7 +16,7 @@
           <h3>Details</h3>
           <div class="col-xs-6">
             <strong>Status: </strong>
-            <select ng-change="statusChange()" ng-model="demand.status" ng-options="key as value for (key, value) in statuses"></select>
+            <select ng-disabled="login.hasRole('dev')" ng-change="statusChange()" ng-model="demand.status" ng-options="key as value for (key, value) in statuses"></select>
             <span ng-show="loadStatus" us-spinner="littleSpinner"></span>
             <i ng-show="loadStatusFinish" class="glyphicon glyphicon-ok" style="color:green;"></i>
           </div>
