@@ -22,6 +22,6 @@
     <td>{{  getStatus(demand.status)   }}</td>
     <td>{{ demand.rank }}</td>
     <td>
-      <button ng-click="vote($index)" class="btn btn-default" ng-model="demand.check" btn-checkbox>+1</button>
+      <button id="test" popover="{{messageTooltip}}" popover-trigger="mouseenter" ng-click="vote($index)" class="btn btn-default" ng-model="demand.check" btn-checkbox>+1</button>
     </td>
 </table>

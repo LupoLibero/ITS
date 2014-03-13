@@ -81,5 +81,11 @@ factory('login', ($q, User, $rootScope) ->
     isNotConnect: ->
       return !this.isConnect()
 
+    hasRole: (role) ->
+      for piece in this.actualUser.roles
+        if role == piece or piece == 'admin'
+          return true
+      # Otherwise
+      return false
   }
 )

@@ -2,6 +2,7 @@ angular.module('demand').
 controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal, login, config, Demand) ->
 
   # Add demands and project to the scope
+  $scope.login      = login
   $scope.project    = project
   $scope.demandList = demands_default
 
@@ -17,6 +18,13 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
 
   # Event for checking all the votes into the scope
   $scope.$on('CheckVote', ->
+    if login.isNotConnect()
+      $scope.messageTooltip = "You need to be connected"
+    else if not login.hasRole('sponsor')
+      $scope.messageTooltip = "You need to be a sponsor"
+    else
+      $scope.messageTooltip = "You need to be a sponsor"
+
     for demand in $scope.demandList
       demand.check =  $scope.hasVote(demand)
   )
