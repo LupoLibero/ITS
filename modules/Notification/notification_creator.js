@@ -11,7 +11,7 @@ var db = new(cradle.Connection)('http://localhost', 5984, {
 }).database('lupolibero');
 
 
-var feed = db.changes({ since: 42});
+var feed = db.changes(/*{ since: 42}*/);
 
 var helpers = {
   buildValidationUrl: function(notification, type, data) {
