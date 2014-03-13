@@ -33,7 +33,11 @@ exports.Demand = function () {
         required: false
       }),
       project_id: fields.string(),
-      status: fields.string(),
+      status: fields.string({
+        permissions: {
+          update: permissions.hasRole('dev')
+        }
+      }),
       description: translatableField({
         required: false,
       }),
