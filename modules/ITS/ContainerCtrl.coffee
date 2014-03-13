@@ -1,7 +1,23 @@
 angular.module('its').
-controller('ContainerCtrl', ($rootScope, notification, $translate) ->
+controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Email) ->
   # Some global definition because use everywhere
   $rootScope.notif = notification
+
+  # Check if the user wants to validate is email adress
+  if $location.search().hasOwnProperty('email_validation')
+    $rootScope.$broadcast('Loading')
+    Email.update({
+      update: 'validation'
+      _id:    ''
+      token: $location.search().email_validation
+    }).then(
+      (data) -> #Success
+        $rootScope.$broadcast('endLoading')
+        notification.addAlert('Your email has been validate')
+      ,(err) -> #Error
+        $rootScope.$broadcast('endLoading')
+        notification.addAlert('Your email has not been validate')
+    )
 
   # Translate the interface in the language of the navigator
   $translate.use(window.navigator.language)
