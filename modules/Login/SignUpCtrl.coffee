@@ -16,12 +16,12 @@ controller('SignUpCtrl', ($scope, notification, $modalInstance, login) ->
       return false
 
     # If one field is not fill
-    if user.pseudo is '' or user.password is '' or user.passwordconf is ''
+    if user.name is '' or user.password is '' or user.passwordconf is '' or user.email is ''
       $scope.notif.setAlert('Please fill all the fields!')
       return false
 
     # SignUp
-    login.signUp(user.pseudo, user.password).then(
+    login.signUp(user).then(
       (data) -> #Sucess
         $modalInstance.close(data)
       ,(err) -> #Error
