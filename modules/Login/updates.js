@@ -1,4 +1,3 @@
-
 exports.user = function(doc, req) {
   var form = JSON.parse(req.body)
   if(doc === null) {
