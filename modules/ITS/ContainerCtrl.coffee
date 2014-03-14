@@ -6,21 +6,21 @@ controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Em
   # Check if the user wants to validate is email adress
   $rootScope.$on('SignIn', ->
     if $location.search().hasOwnProperty('email_validation')
-    $rootScope.$broadcast('Loading')
-    Email.update({
-      update: 'validation'
-      _id:    "user-#{login.getName()}"
-      token:  $location.search().email_validation
-    }).then(
-      (data) -> #Success
-      $rootScope.$broadcast('endLoading')
-      notification.addAlert('Your email has been validate', 'success')
-      $location.url($location.path())
-      ,(err) -> #Error
-      $rootScope.$broadcast('endLoading')
-      notification.addAlert('Your email has not been validate', 'danger')
-      $location.url($location.path())
-    )
+      $rootScope.$broadcast('Loading')
+      Email.update({
+        update: 'validation'
+        _id:    "user-#{login.getName()}"
+        token:  $location.search().email_validation
+      }).then(
+        (data) -> #Success
+        $rootScope.$broadcast('endLoading')
+        notification.addAlert('Your email has been validate', 'success')
+        $location.url($location.path())
+        ,(err) -> #Error
+        $rootScope.$broadcast('endLoading')
+        notification.addAlert('Your email has not been validate', 'danger')
+        $location.url($location.path())
+      )
   )
 
   # Translate the interface in the language of the navigator

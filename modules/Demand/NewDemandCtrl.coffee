@@ -23,9 +23,8 @@ controller('NewDemandCtrl', ($modalInstance, $scope, $route, Demand, login) ->
           count = 1
         else
           count = data[0].max + 1
-        # Get the author
-        author = login.actualUser.name
-        id     = project.id.toUpperCase() + '#' + count
+
+        id = project.id.toUpperCase() + '#' + count
         # Create Demand
         Demand.update({
           update: 'create'
@@ -46,7 +45,7 @@ controller('NewDemandCtrl', ($modalInstance, $scope, $route, Demand, login) ->
 
             delete data.newrev
             delete data.ok
-            data.votes[login.actualUser.name] = true
+            data.votes[login.getName()] = true
             $modalInstance.close(data)
         )
     )

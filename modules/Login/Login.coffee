@@ -4,7 +4,7 @@ factory('login', ($q, User, $rootScope) ->
     actualUser: {}
 
     session: require('session')
-    users: require('users')
+    users:   require('users')
 
     getName: ->
       if this.isConnect()
