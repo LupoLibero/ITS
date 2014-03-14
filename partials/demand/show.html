@@ -7,7 +7,7 @@
       <span ng-show="loadCategory" us-spinner="bigSpinner"></span>
       <i ng-show="loadCategoryFinish" class="glyphicon glyphicon-ok" style="color:green;"></i>
       {{ demand.id }}:
-      <edit-field type="input" ng-model="demand.title" save="titleSave()" lang="demand.lang"></edit-field>
+      <edit-field type="input" ng-model="demand.title" save="titleSave()" lang="actualLang"></edit-field>
     </h3>
     <hr>
     <div class="row">
@@ -16,7 +16,7 @@
           <h3>Details</h3>
           <div class="col-xs-6">
             <strong>Status: </strong>
-            <select ng-disabled="login.hasRole('dev')" ng-change="statusChange()" ng-model="demand.status" ng-options="key as value for (key, value) in statuses"></select>
+            <select ng-disabled="!login.hasRole('dev')" ng-change="statusChange()" ng-model="demand.status" ng-options="key as value for (key, value) in statuses"></select>
             <span ng-show="loadStatus" us-spinner="littleSpinner"></span>
             <i ng-show="loadStatusFinish" class="glyphicon glyphicon-ok" style="color:green;"></i>
           </div>
@@ -30,7 +30,7 @@
           </div>
         </div>
         <hr>
-          <edit-field type="textarea" ng-model="demand.description" save="descriptionSave()" lang="demand.lang"></edit-field>
+          <edit-field type="textarea" ng-model="demand.description" save="descriptionSave()" lang="actualLang"></edit-field>
         <hr>
       </div>
     </div>

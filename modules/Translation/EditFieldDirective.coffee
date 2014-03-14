@@ -18,15 +18,19 @@ directive('editField', ->
               '</span>'
 
     link: (scope, element, attrs) ->
-      scope.haveChange = false
+      scope.haveChange  = false
+      scope.translation = false
 
       scope.$on('EditFieldTranslationOn', ->
         scope.translation = true
+        if scope.ngModel isnt ''
+          scope.saveValue = angular.copy(scope.ngModel)
         scope.ngModel     = ''
       )
-      scope.$watch('lang', ->
-        scope.saveValue = angular.copy(scope.ngModel)
+
+      scope.$on('EditFieldChangeLanguage', ->
         scope.translation = false
+        scope.saveValue   = angular.copy(scope.ngModel)
       )
 
       scope.change = ->
@@ -52,7 +56,10 @@ directive('editField', ->
         return scope.loading
 
       scope.cancel = ->
-        scope.ngModel    = scope.saveValue
+        if scope.translation
+          scope.ngModel = ''
+        else
+          scope.ngModel = scope.saveValue
         scope.haveChange = false
   }
 )

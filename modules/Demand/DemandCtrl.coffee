@@ -19,14 +19,21 @@ controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login
   $scope.languages  = $route.current.locals.config[1].value
 
   $scope.$on('NewLanguage', ($event, key) ->
+    $scope.actualLang = key
+
     $scope.$broadcast('EditFieldTranslationOn', key)
   )
   $scope.$on('ChangeLanguage', ($event, key) ->
+    $scope.actualLang = key
+
     Demand.get({
       key: [$scope.demand.id, key]
     }).then(
       (data) -> #Success
-        $scope.demand = data
+        $scope.$broadcast('EditFieldChangeLanguage', key)
+        $scope.demand     = data
+      ,(err) -> #Error
+        $scope.$broadcast('EditFieldTranslationOn', key)
     )
   )
   $scope.titleSave = ->
