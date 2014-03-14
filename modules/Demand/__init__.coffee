@@ -1,1 +1,1 @@
-angular.module('demand', ['ngCouchDB', 'activity', 'ui.bootstrap', 'login', 'comment'])
+angular.module('demand', ['ngCouchDB', 'activity', 'ui.bootstrap', 'login', 'comment', 'subscription'])
