@@ -1,10 +1,10 @@
 angular.module('demand').
-controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login) ->
+controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login, url) ->
   $scope.project     = $route.current.locals.project
   $scope.categories  = $route.current.locals.config[0].value
   $scope.statuses    = $route.current.locals.config[2].value
 
-  # Pass the login factory to the view
+  # Pass the login factory to the view (I need it for checking the role)
   $scope.login = login
 
   # If a traduction is available
@@ -18,11 +18,13 @@ controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login
   $scope.available  = angular.copy($scope.demand.avail_langs)
   $scope.languages  = $route.current.locals.config[1].value
 
+  # On select new language in the langbar
   $scope.$on('NewLanguage', ($event, key) ->
     $scope.actualLang = key
-
     $scope.$broadcast('EditFieldTranslationOn', key)
   )
+
+  # When the user change language in the langbar
   $scope.$on('ChangeLanguage', ($event, key) ->
     $scope.actualLang = key
 
@@ -36,10 +38,13 @@ controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login
         $scope.$broadcast('EditFieldTranslationOn', key)
     )
   )
+
   $scope.titleSave = ->
     $scope.change('title')
+
   $scope.descriptionSave = ->
     $scope.change('description')
+
   # Spinner
   $scope.littleSpinner= {radius:4, width:3, length:5, lines:9}
   $scope.bigSpinner= {radius:6, width:3, length:5, lines:11}
@@ -88,19 +93,18 @@ controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1) + 'Finish'] = true
 
   # History
-  if $route.current.params.onglet == 'history'
-    $scope.historyTab = true
-  else
-    $scope.historyTab = false
-
-  $scope.loadHistory = ->
-    path = $location.path()
-    $location.path(path+'/history')
+  $scope.historyTab = $route.current.params.onglet == 'history'
 
   $scope.loadInformation = ->
-    path = $location.path()
-    path = path.split('/')
-    path.pop()
-    path = path.join('/')
-    $location.path(path)
+    url.redirect('demand.show', {
+      project_id: $scope.project.id
+      demand_id:  $scope.demand.id
+    })
+
+  $scope.loadHistory = ->
+    url.redirect('demand.show', {
+      project_id: $scope.project.id
+      demand_id:  $scope.demand.id
+      onglet:     'history'
+    })
 )
