@@ -1,5 +1,5 @@
 angular.module('demand').
-controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login) ->
+controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login, url) ->
   $scope.project     = $route.current.locals.project
   $scope.categories  = $route.current.locals.config[0].value
   $scope.statuses    = $route.current.locals.config[2].value
@@ -88,19 +88,18 @@ controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login
     $scope['load'+ field.substr(0,1).toUpperCase() + field.substr(1) + 'Finish'] = true
 
   # History
-  if $route.current.params.onglet == 'history'
-    $scope.historyTab = true
-  else
-    $scope.historyTab = false
-
-  $scope.loadHistory = ->
-    path = $location.path()
-    $location.path(path+'/history')
+  $scope.historyTab = $route.current.params.onglet == 'history'
 
   $scope.loadInformation = ->
-    path = $location.path()
-    path = path.split('/')
-    path.pop()
-    path = path.join('/')
-    $location.path(path)
+    url.redirect('demand.show', {
+      project_id: $scope.project.id
+      demand_id:  $scope.demand.id
+    })
+
+  $scope.loadHistory = ->
+    url.redirect('demand.show', {
+      project_id: $scope.project.id
+      demand_id:  $scope.demand.id
+      onglet:     'history'
+    })
 )

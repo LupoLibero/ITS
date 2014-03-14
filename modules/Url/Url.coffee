@@ -6,6 +6,11 @@ ng.factory('url', ($location, $route) ->
       else
         return '#'
 
+    redirect: (name, params = {}) ->
+      route = this.getRouteByName(name)
+      route = this.inject(params, route)
+      $location.path(route)
+
     get: (name, params = {}) ->
       route = this.getRouteByName(name)
       return this.prefix() + this.inject(params, route)
