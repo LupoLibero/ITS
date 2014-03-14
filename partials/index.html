@@ -48,13 +48,13 @@
                 </ul>
 
                 <!-- Account -->
-                <ul class="nav navbar-nav navbar-right" ng-if="userIsConnected()">
-                    <li><a href="#">{{ user.name }}</a></li>
-                    <li><button class="btn btn-default navbar-btn" ng-click="logout()">Logout</button></li>
+                <ul class="nav navbar-nav navbar-right" ng-if="login.isConnect()">
+                    <li><a href="#">{{ login.getName() }}</a></li>
+                    <li><button class="btn btn-default navbar-btn" ng-click="login.signOut()">Logout</button></li>
                 </ul>
 
                 <!-- Login Form -->
-                <form class="form-group navbar-form navbar-right" role="login" ng-if="!userIsConnected()" ng-submit="login()">
+                <form class="form-group navbar-form navbar-right" role="login" ng-if="login.isNotConnect()" ng-submit="signIn()">
                     <input  type="text"     class="form-control"   ng-model="loginform.user" placeholder="Email">
                     <input  type="password" class="form-control"   ng-model="loginform.password" placeholder="Password">
                     <button type="submit"   class="btn btn-default" translate>Sign In</button>

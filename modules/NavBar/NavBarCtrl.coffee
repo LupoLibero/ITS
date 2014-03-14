@@ -4,22 +4,17 @@ controller('NavBarCtrl', ($scope, login, $modal, notification) ->
   $scope.loginform=
     user:      ''
     password:  ''
-  $scope.user = {}
+  $scope.login = login
 
-  login.getInfo().then(
-    (user) ->
-      $scope.user = user
+  # Get the session
+  login.getInfo()
+
+  $scope.$on('SignOut', ->
+    $scope.$apply()
   )
 
-  # LogOut User
-  $scope.logout = ->
-    login.signOut().then(
-      ->
-        $scope.user = {}
-    )
-
   # login User
-  $scope.login = ->
+  $scope.signIn = ->
     user     = $scope.loginform.user
     password = $scope.loginform.password
 
@@ -31,25 +26,16 @@ controller('NavBarCtrl', ($scope, login, $modal, notification) ->
     # SignIn
     login.signIn(user, password).then(
       (data)-> #Success
-        $scope.user = data
         $scope.loginform.password = ''
         $scope.loginform.user = ''
-      , -> #Error
+      ,(err) -> #Error
         $scope.loginform.password = ''
         notification.addAlert('The username or/and password are/is not correct', 'danger')
     )
-
-  $scope.userIsConnected = ->
-    return login.isConnect()
 
   $scope.signup = ->
     modalSignUp = $modal.open({
       templateUrl: '../partials/signup.html'
       controller:  'SignUpCtrl'
     })
-
-    modalSignUp.result.then(
-      (data) ->
-        $scope.user.name = data.name
-    )
 )

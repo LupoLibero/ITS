@@ -4,7 +4,13 @@ factory('login', ($q, User, $rootScope) ->
     actualUser: {}
 
     session: require('session')
-    users: require('users')
+    users:   require('users')
+
+    getName: ->
+      if this.isConnect()
+        return this.actualUser.name
+      else
+        return ''
 
     signIn: (user, password) ->
       defer = $q.defer()

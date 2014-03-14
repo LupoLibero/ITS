@@ -34,7 +34,7 @@ controller('CommentCtrl', ($scope, $route, Comment, login) ->
       }).then(
         (data) -> #Success
           data.votes    = {}
-          data.author   = login.actualUser.name
+          data.author   = login.getName()
           data.voteup   = 0
           data.votedown = 0
           $scope.comments.unshift(data)
@@ -58,10 +58,10 @@ controller('CommentCtrl', ($scope, $route, Comment, login) ->
     }).then(
       (data) -> #Success
         if sens == 'up'
-          $scope.comments[$index].votes[login.actualUser.name] = true
+          $scope.comments[$index].votes[login.getName()] = true
           $scope.comments[$index].voteup++
         else
-          $scope.comments[$index].votes[login.actualUser.name] = false
+          $scope.comments[$index].votes[login.getName()] = false
           $scope.comments[$index].votedown++
     )
 )
