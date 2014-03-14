@@ -69,7 +69,7 @@ var monitoredTypes = {
     key: '_id',
     preprocessors: ['buildValidationUrl'],
     templates: {
-      subject: 'Email validation',
+      subject: 'Email validation {{subscriber}}',
       message_text: 'Validation url: {{validationUrl}}',
       message_html: '<p>Validation url: <a href="{{validationUrl}}">{{validationUrl}}</a>'
     },
