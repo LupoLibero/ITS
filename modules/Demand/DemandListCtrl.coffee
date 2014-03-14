@@ -20,8 +20,8 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   $scope.$on('CheckVote', ->
     if login.isNotConnect()
       $scope.messageTooltip = "You need to be connected"
-    else if not login.hasRole('sponsor')
-      $scope.messageTooltip = "You need to be a sponsor"
+    else if login.hasRole('sponsor')
+      $scope.messageTooltip = "Vote for this demand"
     else
       $scope.messageTooltip = "You need to be a sponsor"
 
