@@ -7,7 +7,7 @@ var assert      = utils.assert;
 
 exports.user = new Type('user', {
   permissions: {
-    update: permissions.hasRole('_admin'),
+    update: permissions.usernameMatchesField('name'),
     remove: permissions.any([
       permissions.usernameMatchesField('name'),
       permissions.hasRole('_admin')
@@ -21,10 +21,10 @@ exports.user = new Type('user', {
       validators: [
         function(doc, value) {
           assert(value == doc.id, "User.name must be equal to User.id");
-        }]
+        }],
     }),
     email_validation_token: fields.string({
-      required: false
+      required: false,
     }),
     email_validated: fields.boolean({
       permissions: {
