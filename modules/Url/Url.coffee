@@ -9,6 +9,7 @@ ng.factory('url', ($location, $route) ->
     redirect: (name, params = {}) ->
       route = this.getRouteByName(name)
       route = this.inject(params, route)
+      route = route.replace('%23', '#')
       $location.path(route)
 
     get: (name, params = {}) ->
