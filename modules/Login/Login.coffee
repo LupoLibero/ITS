@@ -1,5 +1,5 @@
 angular.module('login').
-factory('login', ($q, User, $rootScope) ->
+factory('login', ($q, User, $rootScope, $timeout) ->
   return {
     actualUser: {}
 
@@ -22,7 +22,7 @@ factory('login', ($q, User, $rootScope) ->
           _this.session.login(user, password, (err, response) ->
             if not err
               _this.actualUser = response
-              $rootScope.$broadcast('SignIn')
+              $rootScope.$broadcast('SignIn', _this.getName() )
               defer.resolve(response)
             else
               defer.reject(err)
@@ -85,6 +85,10 @@ factory('login', ($q, User, $rootScope) ->
         if not err
           info = info.userCtx
           _this.actualUser = info
+          if _this.isConnect()
+            $timeout( ->
+              $rootScope.$broadcast('SignIn', _this.getName())
+            ,100)
           defer.resolve(info)
         else
           defer.reject(err)
@@ -98,9 +102,10 @@ factory('login', ($q, User, $rootScope) ->
       return !this.isConnect()
 
     hasRole: (role) ->
-      for piece in this.actualUser.roles
-        if role == piece or piece == 'admin'
-          return true
+      if this.actualUser.hasOwnProperty('roles')
+        for piece in this.actualUser.roles
+          if role == piece or piece == 'admin'
+            return true
       # Otherwise
       return false
   }
