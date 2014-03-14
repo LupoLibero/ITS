@@ -22,10 +22,12 @@ exports.registerTranslation = function (doc, form, type, element, lang) {
   if(typeof doc[element] != 'object') {
     var saved = doc[element];
     doc[element] = {}
+
     if(doc.hasOwnProperty('init_lang')){
       doc[element][doc.init_lang] = saved;
     } else {
       doc[element]['default'] = saved;
     }
   }
+  doc[element][lang] = value;
 }
