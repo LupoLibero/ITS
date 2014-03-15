@@ -3,9 +3,11 @@ var permissions = require('couchtypes/permissions');
 var _           = require('underscore');
 var utils       = require('lib/utils');
 var assert      = utils.assert;
-var hasRole     = utils.hasRole;
+
 
 exports.votesValidation = function (newDoc, oldDoc, newValue, oldValue, userCtx) {
+  var hasRole = utils.hasRole(userCtx);
+
   var name, voter, newRank, oldRank;
   function isVoter(name) {
     return userCtx.name == name;
