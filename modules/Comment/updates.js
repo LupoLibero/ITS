@@ -9,6 +9,7 @@ exports.comment_create = function(doc, req) {
     form.votes      = {};
     return [form, 'ok'];
   }
+  throw({forbidden: 'Doc must not be null'});
 }
 
 exports.comment_vote_up = function(doc, req) {
@@ -16,6 +17,7 @@ exports.comment_vote_up = function(doc, req) {
     doc.votes[req.userCtx.name] = true;
     return [doc, 'ok'];
   }
+  throw({forbidden: 'Doc must not be null'});
 }
 
 exports.comment_vote_down = function(doc, req) {
@@ -23,5 +25,6 @@ exports.comment_vote_down = function(doc, req) {
     doc.votes[req.userCtx.name] = false;
     return [doc, 'ok'];
   }
+  throw({forbidden: 'Doc must not be null'});
 }
 

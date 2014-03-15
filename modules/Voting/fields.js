@@ -19,8 +19,8 @@ exports.votesValidation = function (newDoc, oldDoc, newValue, oldValue, userCtx)
     assert(toJSON(newValue) == toJSON(oldValue), "Same rank but different votes");
   }
   else {
-    // Vote is allow only by sponsor member
-    assert(hasRole(userCtx, 'sponsor'), "Only sponsor can vote");
+    // Vote is allowed only to sponsors
+    assert(hasRole(userCtx)('sponsor'), "Only sponsors can vote");
 
     if (newRank > oldRank) {
       assert(newRank == oldRank + 1, "Adding more than one vote at a time");
@@ -53,38 +53,29 @@ exports.creationValidation = function (newDoc, oldDoc, newValue, oldValue, userC
   }
 }
 
-exports.authorCantVote = function (newDoc, oldDoc, newValue, oldValue, userCtx) {
-  assert(!newValue.hasOwnProperty(userCtx.name), 'Author can\'t vote for his comment');
-}
-
 exports.votingField = function (options) {
   options = options || {};
   if (!options.permissions) {
-      options.permissions = {};
+    options.permissions = {};
   }
   var p = options.permissions;
   if (p.add) {
-    p.add = permissions.all(
+    p.add = permissions.all([
       exports.creationValidation,
       p.add
-    );
+    ]);
   }
   else {
     p.add = exports.creationValidation;
   }
   if (p.update) {
-    p.update = permissions.all(
+    p.update = permissions.all([
       exports.votesValidation,
       p.update
-    );
+    ]);
   }
   else {
     p.update = exports.votesValidation;
   }
-  return new fields.Field({
-    permissions: {
-      add: p.add,
-      update: p.update
-    },
-  });
+  return new fields.Field(options);
 }

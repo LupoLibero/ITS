@@ -6,6 +6,15 @@ var _           = require('underscore');
 var votingField = require('../Voting/fields').votingField;
 
 
+exports.authorCantVote = function() {
+  return function (newDoc, oldDoc, newValue, oldValue, userCtx) {
+    if (userCtx.name == newDoc.author) {
+      throw new Error('Author can\'t vote for his comment');
+    }
+  }
+}
+
+
 exports.Comment = function () {
   return new Type('comment', {
     permissions: {
@@ -34,7 +43,7 @@ exports.Comment = function () {
       }),
       votes: votingField({
         permissions: {
-          update: exports.authorCantVote
+          update: exports.authorCantVote()
         }
       })
     }
