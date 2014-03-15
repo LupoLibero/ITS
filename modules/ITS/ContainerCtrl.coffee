@@ -8,21 +8,31 @@ controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Em
     $localStorage.email_validation = $location.search().email_validation
     $location.url($location.path())
 
+  # If the user is not connect and have a validation in storage
+  $rootScope.$on('SignOut', ->
+    if $localStorage.email_validation?
+      notification.addAlert('Please connect for completed the validation of your email', 'info')
+  )
+
+  # If the user connect and a email validation is waiting
   $rootScope.$on('SignIn', ->
     if $localStorage.email_validation?
+      # remove the validation from storage for preventing problem
+      email_validation = $localStorage.email_validation
+      delete $localStorage.email_validation
+
       $rootScope.$broadcast('Loading')
       Email.update({
         update: 'validation'
         _id:    "user-#{login.getName()}"
-        token:  $location.search().email_validation
+        token:  email_validation
       }).then(
         (data) -> #Success
-        $rootScope.$broadcast('endLoading')
-        notification.addAlert('Your email has been validate', 'success')
+          $rootScope.$broadcast('endLoading')
+          notification.addAlert('Your email has been validate', 'success')
         ,(err) -> #Error
-        $rootScope.$broadcast('endLoading')
-        notification.addAlert('Your email has not been validate', 'danger')
-        $location.url($location.path())
+          $rootScope.$broadcast('endLoading')
+          notification.addAlert('Your email has not been validate', 'danger')
       )
   )
 

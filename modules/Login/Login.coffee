@@ -85,10 +85,12 @@ factory('login', ($q, User, $rootScope, $timeout) ->
         if not err
           info = info.userCtx
           _this.actualUser = info
-          if _this.isConnect()
-            $timeout( ->
+          $timeout( ->
+            if _this.isConnect()
               $rootScope.$broadcast('SignIn', _this.getName())
-            ,100)
+            else
+              $rootScope.$broadcast('SignOut')
+          ,100)
           defer.resolve(info)
         else
           defer.reject(err)
