@@ -25,13 +25,16 @@ exports.user = new Type('user', {
     }),
     email_validation_token: fields.string({
       required: false,
+      permissions: {
+        remove: permissions.hasRole('superadmin')
+      }
     }),
     email_validated: fields.boolean({
       permissions: {
         update: function (newDoc, oldDoc, newValue, oldValue, userCtx) {
-          log(["md5", md5.hex(newDoc.email_validation_token), oldDoc.email_validation_token]);
-          assert(md5.hex(newDoc.email_validation_token) == oldDoc.email_validation_token, "Incorrect email validation token");
           assert(newValue === true);
+          assert(newDoc.hasOwnProperty('email_validation_token'), "email_validation_token must exist");
+          assert(md5.hex(newDoc.email_validation_token) == oldDoc.email_validation_token, "Incorrect email validation token");
         },
       }
     }),
