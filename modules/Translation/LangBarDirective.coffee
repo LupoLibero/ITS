@@ -1,5 +1,5 @@
 angular.module('translation').
-directive('langBar', () ->
+directive('langBar', ($rootScope) ->
   return {
     restrict: 'E'
     scope: {
@@ -24,20 +24,17 @@ directive('langBar', () ->
       for key of scope.langs
         delete scope.allLangs[key]
 
-      # If no other language available
       scope.noOtherLangs = ->
         return Object.keys(scope.allLangs).length == 0
 
-      # Change between available language
       scope.changeLangue = (key) ->
         scope.lang = key
-        scope.$emit('ChangeLanguage', key)
+        $rootScope.$broadcast('ChangeLanguage', key)
 
-      # Add a new language
       scope.addLangue = (key) ->
         scope.lang = key
         scope.langs[key] = true
         delete scope.allLangs[key]
-        scope.$emit('NewLanguage', key)
+        $rootScope.$broadcast('NewLanguage', key)
   }
 )
