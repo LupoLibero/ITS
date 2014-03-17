@@ -1,0 +1,9 @@
+[submodule "modules/Notification"]
+	path = modules/Notification
+	url = https://github.com/LupoLibero/couch-ng-Notification.git
+[submodule "modules/dbSelect"]
+	path = modules/dbSelect
+	url = https://github.com/LupoLibero/couch-ng-dbSelect.git
+[submodule "modules/Breadcrumb"]
+	path = modules/Breadcrumb
+	url = https://github.com/LupoLibero/couch-ng-Breadcrumb.git
