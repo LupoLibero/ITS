@@ -2,7 +2,33 @@ angular.module('demand').
 controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal, login, config, Demand) ->
   $scope.login      = login
   $scope.project    = project
-  $scope.demandList = angular.extend(demands_default, demands)
+
+  $scope.lists = {
+    "doing": [
+      {
+        "title": "test second"
+        "rank":  72
+      }
+      {
+        "title": "test dernier"
+        "rank":  71
+      }
+      {
+        "title": "test premier"
+        "rank":  73
+      }
+    ]
+    "done": [
+      {
+        "title": "test"
+        "rank":  73
+      }
+      {
+        "title": "test"
+        "rank":  75
+      }
+    ]
+  }
 
   $scope.hasVote = (demand) ->
     return demand.votes.hasOwnProperty(login.actualUser.name)
@@ -41,34 +67,4 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       ,(err) -> #Error
         demand.check = !demand.check # Cancel the interface
     )
-
-  $scope.newDemandPopup = ->
-    if login.isNotConnect() # If the user is not connect
-      $scope.notif.addAlert('You need to be connected for doing that!', 'danger')
-      return false
-
-    modalNewDemand = $modal.open({
-      templateUrl: '../partials/demand/new.html'
-      controller:  'NewDemandCtrl'
-    })
-
-    modalNewDemand.result.then( (data) ->
-      data.check = true
-      $scope.demandList.push(data)
-      $scope.notif.addAlert('You demand is create!', 'success')
-    )
-
-  $scope.getCategory = (key) ->
-    categories = config[0].value
-    if categories.hasOwnProperty(key)
-      return categories[key]
-    else
-      return key
-
-  $scope.getStatus = (key) ->
-    statuses = config[1].value
-    if statuses.hasOwnProperty(key)
-      return statuses[key]
-    else
-      return key
 )

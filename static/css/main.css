@@ -1,0 +1,27 @@
+.lists {
+  position: absolute;
+  top: 170px;
+  bottom: 50px;
+}
+.list {
+  border-radius: 5px;
+  border: 1px solid black;
+  margin: 0 10px;
+  height: 100%;
+  background-color: grey;
+  text-align: center
+}
+.list>header {
+  text-align: center;
+  font-size: 2rem;
+  width: 100%;
+  padding: 3px 10px;
+  text-transform: capitalize;
+}
+.list>content>div {
+  width: 100%;
+  margin: 10px auto;
+  padding: 8px 5px;
+  border-radius: 5px;
+  background-color: lightgrey;
+}

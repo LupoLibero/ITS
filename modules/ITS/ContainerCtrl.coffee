@@ -1,6 +1,5 @@
 angular.module('its').
 controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Email, $localStorage) ->
-  # Some global definition because use everywhere
   $rootScope.notif = notification
 
   # Check if the user wants to validate is email adress
@@ -39,7 +38,6 @@ controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Em
   # If the language doesn't exist on the database
   $rootScope.$on('$translateChangeError', ->
     $translate.use('en') # Use English
-    notification.addAlert("Your favorite language is not available. The content is displayed with the original language.")
   )
 
   $rootScope.$on('DatabaseError', (event, err) ->
