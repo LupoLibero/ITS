@@ -1,32 +1,83 @@
 exports.demand_all = {
   map: function(doc) {
-    var translation = require('views/lib/translation').translation;
+    var translation = require('views/lib/translation').translation();
     var rank;
-    if(doc.type && doc.type == 'demand'){
-      if(doc.project_id && doc.id) {
+    if (doc.type) {
+      if (doc.type == 'demand_list') {
+        translation.emitTranslatedDoc(
+          [doc.project_id, doc.id, translation._keyTag],
+          {
+            id: doc.id,
+            name: doc.name,
+            type: doc.type,
+          },
+          {name: true}
+        );
+      }
+      else if (doc.type == 'demand'){
         rank = Object.keys(doc.votes).length;
         translation.emitTranslatedDoc(
-          [doc.project_id, translation._keyTag, rank],
+          [doc.project_id, doc.list_id, translation._keyTag],
           {
             project_id:  doc.project_id,
             id:          doc.id,
-            category:    doc.category,
-            status:      doc.status,
             title:       doc.title,
             votes:       doc.votes,
             init_lang:   doc.init_lang,
             rank:        rank,
+            type:        doc.type,
+            list_id:     doc.list_id,
           },
           {title: true}
         );
       }
     }
+  },
+  reduce: function (keys, values, rereduce) {
+    var list = {}, result = {}, idx, id, doc;
+
+    for(idx = 0 ; idx < values.length ; idx++){
+      log(["val", values[idx]]);
+      if (!rereduce) {
+        doc = values[idx];
+      //for (doc in values[idx]) {
+        if (doc.type == 'demand_list') {
+          list[doc.id] = null;
+        }
+        else {
+          if (!result.hasOwnProperty(doc.list_id)) {
+            result[doc.list_id] = {};
+          }
+          result[doc.list_id][doc.id] = doc;
+        }
+      }
+      else {
+        for (id in values[idx]) {
+          doc = values[idx][id];
+          if (doc.type == 'demand_list') {
+            list[doc.id] = null;
+          }
+          else {
+            if (!result.hasOwnProperty(doc.list_id)) {
+              result[doc.list_id] = {};
+            }
+            result[doc.list_id][doc.id] = doc;
+          }
+        }
+      }
+    }
+    for (idx in result) {
+      if (!list.hasOwnProperty(idx)) {
+        delete result[idx];
+      }
+    }
+    return result;
   }
 }
 
 exports.demand_get = {
   map: function(doc) {
-    var translation = require('views/lib/translation').translation;
+    var translation = require('views/lib/translation').translation();
     if(doc.type && doc.type == 'demand'){
       if(doc.project_id && doc.id) {
         translation.emitTranslatedDoc(

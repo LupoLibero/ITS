@@ -1,6 +1,6 @@
 exports.project_get = {
   map: function(doc) {
-    var translation = require('views/lib/translation').translation;
+    var translation = require('views/lib/translation').translation();
     if(doc.type && doc.type == 'project'){
       translation.emitTranslatedDoc(
         [translation._keyTag, doc._id],
