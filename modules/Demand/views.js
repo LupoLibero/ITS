@@ -34,43 +34,41 @@ exports.demand_all = {
     }
   },
   reduce: function (keys, values, rereduce) {
-    var list = {}, result = {}, idx, id, doc;
+    var idx, id, doc;
+    var result = {lists: {}, demands: {}};
 
     for(idx = 0 ; idx < values.length ; idx++){
-      log(["val", values[idx]]);
       if (!rereduce) {
         doc = values[idx];
-      //for (doc in values[idx]) {
         if (doc.type == 'demand_list') {
-          list[doc.id] = null;
+          result.lists[doc.id] = doc;
         }
         else {
-          if (!result.hasOwnProperty(doc.list_id)) {
-            result[doc.list_id] = {};
+          if (!result.demands.hasOwnProperty(doc.list_id)) {
+            result.demands[doc.list_id] = {};
           }
-          result[doc.list_id][doc.id] = doc;
+          result.demands[doc.list_id][doc.id] = doc;
         }
       }
       else {
-        for (id in values[idx]) {
-          doc = values[idx][id];
-          if (doc.type == 'demand_list') {
-            list[doc.id] = null;
+        for (id in values[idx].demands) {
+          doc = values[idx].demands[id];
+          if (!result.demands.hasOwnProperty(doc.list_id)) {
+            result.demands[doc.list_id] = {};
           }
-          else {
-            if (!result.hasOwnProperty(doc.list_id)) {
-              result[doc.list_id] = {};
-            }
-            result[doc.list_id][doc.id] = doc;
-          }
+          result.demands[doc.list_id][doc.id] = doc;
+        }
+        for (id in values[idx].lists) {
+          doc = values[idx].lists[id];
+          result.lists[doc.id] = doc;
         }
       }
     }
-    for (idx in result) {
+    /*for (idx in result) {
       if (!list.hasOwnProperty(idx)) {
-        delete result[idx];
+        //delete result[idx];
       }
-    }
+    }*/
     return result;
   }
 }
