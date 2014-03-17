@@ -12,7 +12,7 @@ exports.translation = function () {
     },
 
     guessDefaultLang: function (doc) {
-      if (doc.init_lang) {
+      if (doc.hasOwnProperty("init_lang")) {
         return this.defaultLang = doc.init_lang;
       }
       else {
@@ -32,7 +32,8 @@ exports.translation = function () {
     collectLangs: function (doc, fieldName) {
       var lang;
       for (lang in doc[fieldName]) {
-        this.langs[lang] += 1;
+        log(["lang", lang]);
+        this.langs[lang] = this.langs[lang] ? this.langs[lang] + 1 : 1;
         if (this.langs[lang] > this.maxNbOfTranslations) {
           this.maxNbOfTranslations = this.langs[lang];
           this.mostTranslatedLang = lang;
@@ -120,6 +121,8 @@ exports.translation = function () {
       }
       if (atLeastOneTranslatedField) {
         this.guessDefaultLang(doc);
+        log(["default", this.defaultLang, doc.id]);
+        log(["langs", this.langs, doc.id]);
         for (lang in this.langs) {
           newDoc = this.createTranslatedDoc(doc, lang, translatableFields);
           newDoc.avail_langs = this.langs;

@@ -64,11 +64,6 @@ exports.demand_all = {
         }
       }
     }
-    /*for (idx in result) {
-      if (!list.hasOwnProperty(idx)) {
-        //delete result[idx];
-      }
-    }*/
     return result;
   }
 }
