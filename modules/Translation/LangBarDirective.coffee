@@ -11,7 +11,7 @@ directive('langBar', ($rootScope) ->
                 '<img src="img/country-flags-png/{{key}}.png"/>'+
               '</button>'+
               '<div class="btn-group">'+
-                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">[+]</button>'+
+                '<button ng-disabled="disable" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">[+]</button>'+
                 '<ul class="dropdown-menu">'+
                   '<li ng-repeat="(key, value) in allLangs">'+
                     '<a ng-click="addLangue(key)"><img src="img/country-flags-png/{{key}}.png"/> {{value}}</a>'+
@@ -23,6 +23,14 @@ directive('langBar', ($rootScope) ->
       # Delete from the list all the available languages
       for key of scope.langs
         delete scope.allLangs[key]
+
+      $rootScope.$on('SignIn', ->
+        scope.disable = false
+      )
+
+      $rootScope.$on('SignOut', ->
+        scope.disable = true
+      )
 
       scope.noOtherLangs = ->
         return Object.keys(scope.allLangs).length == 0
