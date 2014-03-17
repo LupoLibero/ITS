@@ -4,10 +4,13 @@ module.exports = (grunt) ->
   grunt.initConfig {
     # Watcher
     watch: {
+      options:
+        livereload: true
       html: {
         files: [
           './partials/{,*/}*.html'
           './modules/{,*/}*'
+          './static/css/{,*/}*'
           './lib/{,*/}*.js'
         ]
         tasks: [
