@@ -10,16 +10,18 @@ config( ($routeProvider, $translateProvider)->
           id = $route.current.params.project_id
           return Demand.all({
             descending: true
-            startkey: [id, 'default', {}]
-            endkey: [id, 'default', 0]
+            startkey: [id, {}, 'default']
+            endkey: [id, "", 'default']
+            group_level: 3
           })
-        demands: (Demand, $route, $translate) ->
-          language = window.navigator.language
-          id = $route.current.params.project_id
+        demands: (Demand, $route) ->
+          lang = window.navigator.language
+          id   = $route.current.params.project_id
           return Demand.all({
             descending: true
-            startkey: [id, language, {}]
-            endkey: [id, language, 0]
+            startkey: [id, {}, lang]
+            endkey: [id, "", lang]
+            group_level: 3
           })
         project: (Project, $route) ->
           return Project.getDoc({

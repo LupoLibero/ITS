@@ -4,6 +4,7 @@
   bottom: 50px;
 }
 .list {
+  float: left;
   border-radius: 5px;
   border: 1px solid black;
   margin: 0 10px;
@@ -19,9 +20,13 @@
   text-transform: capitalize;
 }
 .list>content>div {
+  text-align: left;
   width: 100%;
   margin: 10px auto;
   padding: 8px 5px;
   border-radius: 5px;
   background-color: lightgrey;
+}
+.list>content>div>button {
+  float: right;
 }

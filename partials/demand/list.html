@@ -1,11 +1,12 @@
 <div class="lists col-md-9">
-  <section class="list col-md-3" ng-repeat="(listTitle, list) in lists">
+  <section class="list col-md-3" ng-repeat="list in results.lists">
     <header>
-      {{ listTitle }}
+      {{ list.name }}
     </header>
     <content>
-      <div ng-repeat="demand in list |orderBy:'rank':'desc' ">
-        {{demand}}
+      <div ng-repeat="demand in results.demands[list.id] |orderBy:'rank':'desc' ">
+        <p>{{ demand.title }}</p>
+        <button ng-click="vote($index)" class="btn btn-default">+1</button>
       </div>
     </content>
     <footer ng-show="$first">

@@ -3,32 +3,7 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   $scope.login      = login
   $scope.project    = project
 
-  $scope.lists = {
-    "doing": [
-      {
-        "title": "test second"
-        "rank":  72
-      }
-      {
-        "title": "test dernier"
-        "rank":  71
-      }
-      {
-        "title": "test premier"
-        "rank":  73
-      }
-    ]
-    "done": [
-      {
-        "title": "test"
-        "rank":  73
-      }
-      {
-        "title": "test"
-        "rank":  75
-      }
-    ]
-  }
+  $scope.results = angular.extend(demands_default, demands)[0]
 
   $scope.hasVote = (demand) ->
     return demand.votes.hasOwnProperty(login.actualUser.name)
