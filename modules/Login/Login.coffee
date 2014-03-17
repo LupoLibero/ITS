@@ -1,6 +1,6 @@
 angular.module('login').
 factory('login', ($q, User, $rootScope, $timeout) ->
-  return {
+  login = {
     actualUser: {}
 
     session: require('session')
@@ -23,6 +23,7 @@ factory('login', ($q, User, $rootScope, $timeout) ->
             if not err
               _this.actualUser = response
               $rootScope.$broadcast('SignIn', _this.getName() )
+              $rootScope.$broadcast('SessionChanged', _this.getName())
               defer.resolve(response)
             else
               defer.reject(err)
@@ -72,6 +73,7 @@ factory('login', ($q, User, $rootScope, $timeout) ->
             role: response.role
           }
           $rootScope.$broadcast('SignOut')
+          $rootScope.$broadcast('SessionChanged', _this.getName())
           defer.resolve(response)
         else
           defer.reject(err)
@@ -85,8 +87,9 @@ factory('login', ($q, User, $rootScope, $timeout) ->
         if not err
           info = info.userCtx
           _this.actualUser = info
-          $rootScope.$broadcast('SessionStart', _this.getName())
           $timeout( ->
+            $rootScope.$broadcast('SessionStart', _this.getName())
+            $rootScope.$broadcast('SessionChanged', _this.getName())
             if _this.isConnect()
               $rootScope.$broadcast('SignIn', _this.getName())
             else
@@ -112,4 +115,15 @@ factory('login', ($q, User, $rootScope, $timeout) ->
       # Otherwise
       return false
   }
+
+  $rootScope.$on('$routeChangeSuccess', ->
+    $timeout( ->
+      if login.isConnect()
+        $rootScope.$broadcast('SignIn', login.getName())
+      else
+        $rootScope.$broadcast('SignOut', login.getName())
+    ,200)
+  )
+
+  return login
 )
