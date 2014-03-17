@@ -1,5 +1,5 @@
 angular.module('translation').
-directive('langBar', () ->
+directive('langBar', ($rootScope) ->
   return {
     restrict: 'E'
     scope: {
@@ -11,7 +11,7 @@ directive('langBar', () ->
                 '<img src="img/country-flags-png/{{key}}.png"/>'+
               '</button>'+
               '<div class="btn-group">'+
-                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">[+]</button>'+
+                '<button ng-disabled="disable" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">[+]</button>'+
                 '<ul class="dropdown-menu">'+
                   '<li ng-repeat="(key, value) in allLangs">'+
                     '<a ng-click="addLangue(key)"><img src="img/country-flags-png/{{key}}.png"/> {{value}}</a>'+
@@ -24,20 +24,25 @@ directive('langBar', () ->
       for key of scope.langs
         delete scope.allLangs[key]
 
-      # If no other language available
+      $rootScope.$on('SignIn', ->
+        scope.disable = false
+      )
+
+      $rootScope.$on('SignOut', ->
+        scope.disable = true
+      )
+
       scope.noOtherLangs = ->
         return Object.keys(scope.allLangs).length == 0
 
-      # Change between available language
       scope.changeLangue = (key) ->
         scope.lang = key
-        scope.$emit('ChangeLanguage', key)
+        $rootScope.$broadcast('ChangeLanguage', key)
 
-      # Add a new language
       scope.addLangue = (key) ->
         scope.lang = key
         scope.langs[key] = true
         delete scope.allLangs[key]
-        scope.$emit('NewLanguage', key)
+        $rootScope.$broadcast('NewLanguage', key)
   }
 )
