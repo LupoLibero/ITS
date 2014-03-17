@@ -12,12 +12,12 @@ controller('SignUpCtrl', ($scope, notification, $modalInstance, login) ->
 
     # If password and it's confirmation don't match
     if user.password != user.passwordconf
-      $scope.notif.setAlert('The two password are not the same!', 'danger')
+      notification.setAlert('The two password are not the same!', 'danger')
       return false
 
     # If one field is not fill
     if user.name is '' or user.password is '' or user.passwordconf is '' or user.email is ''
-      $scope.notif.setAlert('Please fill all the fields!')
+      notification.setAlert('Please fill all the fields!')
       return false
 
     # SignUp
