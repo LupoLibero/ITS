@@ -1,5 +1,5 @@
 angular.module('its').
-controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Email, login, $localStorage) ->
+controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Email, $localStorage) ->
   # Some global definition because use everywhere
   $rootScope.notif = notification
 
@@ -9,38 +9,35 @@ controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Em
     $location.url($location.path())
 
   # If the user is not connect and have a validation in storage
-  $rootScope.$on('SignOut', ->
+  $rootScope.$on('SessionStart', ($event, username)->
     if $localStorage.email_validation?
-      notification.addAlert('Please connect for completed the validation of your email', 'info')
-  )
+      if username == ''
+        notification.addAlert('Please connect for completed the validation of your email', 'info')
+      else
+        # remove the validation from storage for preventing problem
+        email_validation = $localStorage.email_validation
+        delete $localStorage.email_validation
 
-  # If the user connect and a email validation is waiting
-  $rootScope.$on('SignIn', ->
-    if $localStorage.email_validation?
-      # remove the validation from storage for preventing problem
-      email_validation = $localStorage.email_validation
-      delete $localStorage.email_validation
-
-      $rootScope.$broadcast('Loading')
-      Email.update({
-        update: 'validation'
-        _id:    "user-#{login.getName()}"
-        token:  email_validation
-      }).then(
-        (data) -> #Success
-          $rootScope.$broadcast('endLoading')
-          notification.addAlert('Your email has been validate', 'success')
-        ,(err) -> #Error
-          $rootScope.$broadcast('endLoading')
-          notification.addAlert('Your email has not been validate', 'danger')
-      )
+        $rootScope.$broadcast('Loading')
+        Email.update({
+          update: 'validation'
+          _id:    "user-#{username}"
+          token:  email_validation
+        }).then(
+          (data) -> #Success
+            $rootScope.$broadcast('endLoading')
+            notification.addAlert('Your email has been validate', 'success')
+          ,(err) -> #Error
+            $rootScope.$broadcast('endLoading')
+            notification.addAlert('Your email has not been validate', 'danger')
+        )
   )
 
   # Translate the interface in the language of the navigator
   $translate.use(window.navigator.language)
 
   # If the language doesn't exist on the database
-  $rootScope.$on('$translateChangeError', () ->
+  $rootScope.$on('$translateChangeError', ->
     $translate.use('en') # Use English
     notification.addAlert("Your favorite language is not available. The content is displayed with the original language.")
   )

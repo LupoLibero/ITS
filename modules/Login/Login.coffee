@@ -85,6 +85,7 @@ factory('login', ($q, User, $rootScope, $timeout) ->
         if not err
           info = info.userCtx
           _this.actualUser = info
+          $rootScope.$broadcast('SessionStart', _this.getName())
           $timeout( ->
             if _this.isConnect()
               $rootScope.$broadcast('SignIn', _this.getName())
