@@ -33,3 +33,14 @@
 .list>content>div>button {
   float: right;
 }
+
+.notif-overlay.ng-enter, .notif-overlay.ng-leave {
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+}
+.notif-overlay.ng-enter {
+  animation-name: slideInRight;
+}
+.notif-overlay.ng-leave {
+  animation-name: slideOutRight;
+}
