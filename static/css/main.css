@@ -19,6 +19,9 @@
   padding: 3px 10px;
   text-transform: capitalize;
 }
+.list>content {
+  overflow-y: scroll;
+}
 .list>content>div {
   text-align: left;
   width: 100%;
