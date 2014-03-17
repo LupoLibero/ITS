@@ -15,9 +15,6 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       $scope.messageTooltip = "Vote for this demand"
     else
       $scope.messageTooltip = "You need to be a sponsor"
-
-    for demand in $scope.demandList
-      demand.check =  $scope.hasVote(demand)
   )
 
   $scope.vote = ($index) ->
