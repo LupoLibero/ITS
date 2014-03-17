@@ -2,7 +2,7 @@ angular.module('notification').
 factory('notification', ($timeout) ->
   return {
     alerts: []
-    displayTime: 5000
+    displayTime: 8000
 
     setAlert: (message, type)->
       this.alerts = []

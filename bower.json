@@ -24,12 +24,13 @@
     "angular-bootstrap": "~0.10.0",
     "angular-sanitize": "~1.2.13",
     "angular-spinner": "~0.3.1",
-    "angular-couchdb": "LupoLibero/ngCouch"
+    "angular-couchdb": "LupoLibero/ngCouch",
+    "ngstorage": "~0.3.0"
   },
   "devDependencies": {
     "angular-mocks": "~1.2.13"
   },
   "resolutions": {
-    "angular": "1.2.13"
+    "angular": "1.2.14"
   }
 }

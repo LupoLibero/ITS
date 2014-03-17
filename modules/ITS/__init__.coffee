@@ -11,6 +11,7 @@ angular.module('its', [
   'translation'
   'demand'
   'mailer'
+  'ngStorage'
 ])
 
 ng.value('db', {
