@@ -1,7 +1,25 @@
 exports.demand_all = {
   map: function(doc) {
     var translation = require('views/lib/translation').translation();
-    var rank;
+    var rank, list_id;
+    var applyWorkflowRules = function (doc) {
+      var list_id = 'idea';
+      if (doc.list_id == 'doing' || doc.list_id == 'done') {
+        return doc.list_id;
+      }
+      if (doc.hasOwnProperty("validated") && doc.validated) {
+        list_id = 'todo';
+        log("validated");
+        if (doc.hasOwnProperty('cost_estimate')) {
+          list_id = 'estimated';
+          if (doc.hasOwnProperty('funds') &&
+              doc.funds >= doc.cost_estimate) {
+            list_id = 'funded';
+          }
+        }
+      }
+      return list_id;
+    }
     if (doc.type) {
       if (doc.type == 'demand_list') {
         translation.emitTranslatedDoc(
@@ -15,9 +33,11 @@ exports.demand_all = {
         );
       }
       else if (doc.type == 'demand'){
+        list_id = applyWorkflowRules(doc);
+        log(["list_id", doc.list_id])
         rank = Object.keys(doc.votes).length;
         translation.emitTranslatedDoc(
-          [doc.project_id, doc.list_id, translation._keyTag],
+          [doc.project_id, list_id, translation._keyTag],
           {
             project_id:  doc.project_id,
             id:          doc.id,
@@ -26,7 +46,7 @@ exports.demand_all = {
             init_lang:   doc.init_lang,
             rank:        rank,
             type:        doc.type,
-            list_id:     doc.list_id,
+            list_id:     list_id,
           },
           {title: true}
         );
@@ -35,8 +55,10 @@ exports.demand_all = {
   },
   reduce: function (keys, values, rereduce) {
     var idx, id, doc;
-    var result = {lists: {}, demands: {}};
-
+    var result = {
+      lists: {},
+      demands: {}
+    };
     for(idx = 0 ; idx < values.length ; idx++){
       if (!rereduce) {
         doc = values[idx];
@@ -51,16 +73,16 @@ exports.demand_all = {
         }
       }
       else {
+        for (id in values[idx].lists) {
+          doc = values[idx].lists[id];
+          result.lists[doc.id] = doc;
+        }
         for (id in values[idx].demands) {
           doc = values[idx].demands[id];
           if (!result.demands.hasOwnProperty(doc.list_id)) {
             result.demands[doc.list_id] = {};
           }
           result.demands[doc.list_id][doc.id] = doc;
-        }
-        for (id in values[idx].lists) {
-          doc = values[idx].lists[id];
-          result.lists[doc.id] = doc;
         }
       }
     }

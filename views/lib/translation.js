@@ -32,7 +32,6 @@ exports.translation = function () {
     collectLangs: function (doc, fieldName) {
       var lang;
       for (lang in doc[fieldName]) {
-        log(["lang", lang]);
         this.langs[lang] = this.langs[lang] ? this.langs[lang] + 1 : 1;
         if (this.langs[lang] > this.maxNbOfTranslations) {
           this.maxNbOfTranslations = this.langs[lang];
@@ -121,8 +120,6 @@ exports.translation = function () {
       }
       if (atLeastOneTranslatedField) {
         this.guessDefaultLang(doc);
-        log(["default", this.defaultLang, doc.id]);
-        log(["langs", this.langs, doc.id]);
         for (lang in this.langs) {
           newDoc = this.createTranslatedDoc(doc, lang, translatableFields);
           newDoc.avail_langs = this.langs;
