@@ -50,7 +50,7 @@ exports.demand_list = new Type('demand_list', {
   },
   fields: {
     project_id: fields.string(),
-    name: fields.string(),
+    name: translatableField(),
     id: fields.string()
   }
 });
