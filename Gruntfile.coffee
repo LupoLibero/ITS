@@ -70,7 +70,7 @@ module.exports = (grunt) ->
     'shell:kansoDelete'
     'shell:kansoCreate'
     'shell:kansoInit'
-    'shell:kanso'
+    'shell:kansoPush'
   ])
   grunt.registerTask('default', [
     'watch'

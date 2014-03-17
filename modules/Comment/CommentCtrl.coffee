@@ -1,7 +1,5 @@
 angular.module('comment').
 controller('CommentCtrl', ($scope, $route, Comment, login) ->
-
-  # Get the comments for the resolve
   $scope.comments = $route.current.locals.comments
 
   # For each comment count the number of voteup and down
@@ -18,7 +16,6 @@ controller('CommentCtrl', ($scope, $route, Comment, login) ->
     comment.votedown = votedown
   )
 
-  # Initialize new comment form
   $scope.newComment=
     message: ''
 
@@ -41,11 +38,9 @@ controller('CommentCtrl', ($scope, $route, Comment, login) ->
           $scope.newComment.message = ''
       )
 
-  # When click on a up vote button
   $scope.voteup = ($index) ->
     $scope.vote($index, 'up')
 
-  # When click on a up vote button
   $scope.votedown = ($index) ->
     $scope.vote($index, 'down')
 
