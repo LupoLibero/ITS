@@ -34,6 +34,9 @@ exports.demand_all = {
         case 'cost_estimate':
           emit([doc.project_id, 'default', doc.demand_id], doc);
           break;
+        case 'payment':
+          emit([doc.project_id, 'default', doc.demand_id], doc);
+          break;
         case 'vote':
           if (doc.voted_doc_id.split('-')[0] == 'demand') {
             (function() {
@@ -62,7 +65,16 @@ exports.demand_all = {
       lists: {},
       demands: {},
       cost_estimate: {},
-      vote: {}
+      vote: {},
+      payment: {}
+    };
+    var listOrder = {
+      'ideas': 0,
+      'todo': 1,
+      'estimated': 2,
+      'funded': 3,
+      'doing': 4,
+      'done': 5
     };
     function removeFromList (doc, list) {
       if (result.lists.hasOwnProperty(list) &&
@@ -97,8 +109,8 @@ exports.demand_all = {
           doc.list_id = 'todo';
           if (result.cost_estimate.hasOwnProperty(doc.id)) {
             doc.list_id = 'estimated';
-            if (doc.hasOwnProperty('funds') &&
-                doc.funds >= doc.cost_estimate) {
+            if (result.payment.hasOwnProperty(doc.id) &&
+                result.payment[doc.id] >= result.cost_estimate[doc.id]) {
               doc.list_id = 'funded';
             }
           }
@@ -139,16 +151,18 @@ exports.demand_all = {
           case 'demand_list':
             result.lists[doc.id] = result.lists[doc.id] || {};
             result.lists[doc.id].demands = result.lists[doc.id].demands || {};
-            /*for (e in doc) {
-              result.lists[doc.id][e] = doc[e];
-            }*/
-            var test = {}
-            test[doc.id] = doc;
+            doc.order = listOrder[doc.id];
+            var list = {};
+            list[doc.id] = doc;
             //mergeDemandLists(result.lists, test);
-            recursive_merge(result.lists, test, {});
+            recursive_merge(result.lists, list, {});
             break;
           case 'cost_estimate':
             result.cost_estimate[doc.demand_id] = doc.estimate;
+            applyWorkflowRules(doc.demand_id);
+            break;
+          case 'payment':
+            result.payment[doc.demand_id] = doc.amount;
             applyWorkflowRules(doc.demand_id);
             break;
           case 'vote':

@@ -1,11 +1,17 @@
-<div class="lists col-md-9">
-  <section class="list col-md-3" ng-repeat="list in results.lists">
+<div class="lists col-md-12">
+  <section class="list col-md-2" ng-repeat="list in results.lists | orderBy:'+order'">
     <header>
-      {{ list.name }}
+      {{ list.name }} ({{list.order}})
     </header>
     <content>
-      <div ng-repeat="(id, rank) in list.demands |orderBy:'rank':'desc' ">
+      <div ng-repeat="(id, rank) in list.demands |orderBy:'+rank'">
+        <p>{{id}}</p>
         <p>{{ results.demands[id].title }}</p>
+        <p>
+          <span style="background-color:red" ng-repeat="tag in results.demands[id].tag_list">{{tag}}</span>
+          <span ng-show="results.cost_estimate[id]">{{ results.cost_estimate[id] }}€</span>
+          <span ng-show="results.payment[id]">{{ results.payment[id] }}€</span>
+        </p>
         <button ng-click="vote($index)" class="btn btn-default">+1</button>
       </div>
     </content>

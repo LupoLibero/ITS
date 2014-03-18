@@ -68,3 +68,16 @@ exports.cost_estimate = new Type('cost_estimate', {
     demand_id: fields.string(),
   }
 });
+
+exports.payment = new Type('payment', {
+  permissions: {
+    add: permissions.hasRole('_admin'),
+    update: permissions.hasRole('_admin'),
+    remove: permissions.hasRole('_admin')
+  },
+  fields: {
+    project_id: fields.string(),
+    amount: fields.number(),
+    demand_id: fields.string(),
+  }
+});
