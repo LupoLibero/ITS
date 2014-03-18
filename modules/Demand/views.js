@@ -32,7 +32,7 @@ exports.demand_all = {
           );
           break;
         case 'cost_estimate':
-          emit([doc.project_id, 'default', doc.demand_id], doc)
+          emit([doc.project_id, 'default', doc.demand_id], doc);
           break;
         case 'vote':
           if (doc.voted_doc_id.split('-')[0] == 'demand') {
@@ -50,7 +50,7 @@ exports.demand_all = {
                   demand_id: demandId,
                   type: doc.type
               });
-            })()
+            })();
           }
           break;
       }
@@ -66,14 +66,16 @@ exports.demand_all = {
     };
     function removeFromList (doc, list) {
       if (result.lists.hasOwnProperty(list) &&
+          result.lists[list].hasOwnProperty('demands') &&
           result.lists[list].demands.hasOwnProperty(doc.id)) {
         delete result.lists[list].demands[doc.id];
       }
     }
-    function assignToList (doc, list) {
-      result.lists[list] = result.lists[list] || {demands: {}};
+    function assignToList (doc, listId) {
+      result.lists[listId] = result.lists[listId] || {};
+      result.lists[listId].demands = result.lists[listId].demands || {};
       doc.rank = Object.keys(result.vote[doc.id] || {}).length;
-      result.lists[list].demands[doc.id] = doc.rank;
+      result.lists[listId].demands[doc.id] = doc.rank;
     }
     function recalculateRank (docId) {
       var doc = result.demands[docId];
@@ -84,13 +86,13 @@ exports.demand_all = {
     function applyWorkflowRules (docId) {
       var doc = result.demands[docId];
       var curr_list_id;
-      log(["apply", docId, doc]);
+      //log(["apply", docId, doc]);
       if (!doc){
         return;
       }
       curr_list_id = doc.list_id;
       if (doc.list_id != 'doing' && doc.list_id != 'done') {
-        doc.list_id = 'idea'
+        doc.list_id = 'ideas';
         if (doc.tag_list.length) {
           doc.list_id = 'todo';
           if (result.cost_estimate.hasOwnProperty(doc.id)) {
@@ -105,18 +107,43 @@ exports.demand_all = {
       if (doc.list_id != curr_list_id) {
         removeFromList(doc, curr_list_id);
       }
-      assignToList(doc, doc.list_id)
+      assignToList(doc, doc.list_id);
     }
+    recursive_merge = function(dst, src, special_merge){
+			var e;
+			if(!dst){
+				return src
+			}
+			if(!src){
+				return dst
+			}
+			if(typeof(src) == 'object'){
+				for(e in src){
+					if(e in special_merge){
+						dst[e] = special_merge[e](e, dst, src);
+					} else {
+						dst[e] = recursive_merge(dst[e], src[e], special_merge)
+					}
+				}
+			}
+			return dst;
+		}
+
 
     for(idx = 0 ; idx < values.length ; idx++){
       if (!rereduce) {
         doc = values[idx];
         switch(doc.type) {
           case 'demand_list':
-            result.lists[doc.id] = result.lists[doc.id] || {demands: {}};
-            for (e in doc) {
+            result.lists[doc.id] = result.lists[doc.id] || {};
+            result.lists[doc.id].demands = result.lists[doc.id].demands || {};
+            /*for (e in doc) {
               result.lists[doc.id][e] = doc[e];
-            }
+            }*/
+            var test = {}
+            test[doc.id] = doc;
+            //mergeDemandLists(result.lists, test);
+            recursive_merge(result.lists, test, {});
             break;
           case 'cost_estimate':
             result.cost_estimate[doc.demand_id] = doc.estimate;
@@ -128,50 +155,38 @@ exports.demand_all = {
             recalculateRank(doc.demand_id);
             break;
           case 'demand':
+            log("demand reduce");
             result.demands[doc.id] = doc;
             applyWorkflowRules(doc.id);
             break;
         }
       }
       else {
-        if (!values[idx]) {
+        if (values[idx] === null) {
+          log(["null", keys, values]);
           continue;
         }
         // merge demand_lists
-        for (id in values[idx].lists) {
-          doc = values[idx].lists[id];
-          result.lists[doc.id] = result.lists[doc.id] || {};
-          for (e in doc) {
-            result.lists[doc.id][e] = doc[e];
-          }
-        }
+        recursive_merge(result.lists, values[idx].lists, {});
         // merge votes
-        (function (votesBydemandId) {
-          var demandId, votes;
-          for (demandId in votesBydemandId) {
-            votes = values[idx].vote[demandId];
-            result.vote[demandId] = result.vote[demandId] || {};
-            for (var voter in votes) {
-              result.vote[demandId][voter] = votes[voter];
-            }
-            recalculateRank(id);
-          }
-        })(values[idx].vote)
-        // merge cost_estimates
-        for (id in values[idx].cost_estimate) {
+        recursive_merge(result.votes, values[idx].votes, {});
+
+        recursive_merge(result.cost_estimate, values[idx].cost_estimate, {});
+        /*for (id in values[idx].cost_estimate) {
           result.cost_estimate[id] = values[idx].cost_estimate[id];
           applyWorkflowRules(id);
-        }
+        }*/
         // merge demands
-        for (id in values[idx].demands) {
+        recursive_merge(result.demands, values[idx].demands, {});
+        /*for (id in values[idx].demands) {
           result.demands[id] = values[idx].demands[id];
-          applyWorkflowRules(doc.id);
-        }
+          applyWorkflowRules(id);
+        }*/
       }
     }
     return result;
   }
-}
+};
 
 exports.demand_get = {
   map: function(doc) {
