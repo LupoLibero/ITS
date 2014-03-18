@@ -36,6 +36,7 @@ exports.demand = new Type('demand', {
     }),
     title: translatableField(),
     list_id: fields.string(),
+    tag_list: fields.array(),
     votes: votingField(),
     activity: activityField(),
   },
@@ -52,5 +53,20 @@ exports.demand_list = new Type('demand_list', {
     project_id: fields.string(),
     name: translatableField(),
     id: fields.string()
+  }
+});
+
+
+exports.cost_estimate = new Type('cost_estimate', {
+  permissions: {
+    add: permissions.hasRole('dev'),
+    update: permissions.hasRole('dev'),
+    remove: permissions.hasRole('dev')
+  },
+  fields: {
+    project_id: fields.string(),
+    estimate: fields.number(),
+    //id: fields.string(),
+    demand_id: fields.string(),
   }
 });

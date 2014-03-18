@@ -2,87 +2,166 @@ exports.demand_all = {
   map: function(doc) {
     var translation = require('views/lib/translation').translation();
     var rank, list_id;
-    var applyWorkflowRules = function (doc) {
-      var list_id = 'idea';
-      if (doc.list_id == 'doing' || doc.list_id == 'done') {
-        return doc.list_id;
-      }
-      if (doc.hasOwnProperty("validated") && doc.validated) {
-        list_id = 'todo';
-        log("validated");
-        if (doc.hasOwnProperty('cost_estimate')) {
-          list_id = 'estimated';
-          if (doc.hasOwnProperty('funds') &&
-              doc.funds >= doc.cost_estimate) {
-            list_id = 'funded';
-          }
-        }
-      }
-      return list_id;
-    }
+
     if (doc.type) {
-      if (doc.type == 'demand_list') {
-        translation.emitTranslatedDoc(
-          [doc.project_id, doc.id, translation._keyTag],
-          {
-            id: doc.id,
-            name: doc.name,
-            type: doc.type,
-          },
-          {name: true}
-        );
-      }
-      else if (doc.type == 'demand'){
-        list_id = applyWorkflowRules(doc);
-        log(["list_id", doc.list_id])
-        rank = Object.keys(doc.votes).length;
-        translation.emitTranslatedDoc(
-          [doc.project_id, list_id, translation._keyTag],
-          {
-            project_id:  doc.project_id,
-            id:          doc.id,
-            title:       doc.title,
-            votes:       doc.votes,
-            init_lang:   doc.init_lang,
-            rank:        rank,
-            type:        doc.type,
-            list_id:     list_id,
-          },
-          {title: true}
-        );
+      switch(doc.type) {
+        case 'demand_list':
+          translation.emitTranslatedDoc(
+            [doc.project_id, translation._keyTag],
+            {
+              id: doc.id,
+              name: doc.name,
+              type: doc.type,
+            },
+            {name: true}
+          );
+          break;
+        case 'demand':
+          translation.emitTranslatedDoc(
+            [doc.project_id, translation._keyTag],
+            {
+              project_id:  doc.project_id,
+              id:          doc.id,
+              title:       doc.title,
+              init_lang:   doc.init_lang,
+              type:        doc.type,
+              list_id:     doc.list_id,
+              tag_list:    doc.tag_list === "" ? [] : doc.tag_list.split(','),
+            },
+            {title: true}
+          );
+          break;
+        case 'cost_estimate':
+          emit([doc.project_id, 'default'], doc)
+          break;
+        case 'vote':
+          if (doc.voted_doc_id.split('-')[0] == 'demand') {
+            emit(
+              [
+                doc.voted_doc_id.split('-')[1].split('#')[0].toLowerCase(),
+                "default"
+              ],
+              {
+                voter: doc.voter,
+                vote: doc.vote,
+                demand_id: doc.voted_doc_id.split('-')[1],
+                type: doc.type
+              });
+          }
+          break;
       }
     }
   },
   reduce: function (keys, values, rereduce) {
-    var idx, id, doc;
+    var idx, id, e, doc;
     var result = {
       lists: {},
-      demands: {}
+      demands: {},
+      cost_estimate: {},
+      vote: {}
     };
+    function removeFromList (doc, list) {
+      if (result.lists.hasOwnProperty(list) &&
+          result.lists[list].demands.hasOwnProperty(doc.id)) {
+        delete result.lists[list].demands[doc.id];
+      }
+    }
+    function assignToList (doc, list) {
+      result.lists[list] = result.lists[list] || {demands: {}};
+      doc.rank = Object.keys(result.vote[doc.id] || {}).length;
+      result.lists[list].demands[doc.id] = doc.rank;
+    }
+    function recalculateRank (docId) {
+      var doc = result.demands[docId];
+      if (doc && doc.hasOwnProperty('list_id')) {
+        assignToList(doc, doc.list_id);
+      }
+    }
+    function applyWorkflowRules (docId) {
+      var doc = result.demands[docId];
+      var curr_list_id;
+      log(["apply", docId, doc]);
+      if (!doc){
+        return;
+      }
+      curr_list_id = doc.list_id;
+      if (doc.list_id != 'doing' && doc.list_id != 'done') {
+        doc.list_id = 'idea'
+        if (doc.tag_list.length) {
+          doc.list_id = 'todo';
+          if (result.cost_estimate.hasOwnProperty(doc.id)) {
+            doc.list_id = 'estimated';
+            if (doc.hasOwnProperty('funds') &&
+                doc.funds >= doc.cost_estimate) {
+              doc.list_id = 'funded';
+            }
+          }
+        }
+      }
+      if (doc.list_id != curr_list_id) {
+        removeFromList(doc, curr_list_id);
+      }
+      assignToList(doc, doc.list_id)
+    }
+
     for(idx = 0 ; idx < values.length ; idx++){
       if (!rereduce) {
         doc = values[idx];
-        if (doc.type == 'demand_list') {
-          result.lists[doc.id] = doc;
-        }
-        else {
-          if (!result.demands.hasOwnProperty(doc.list_id)) {
-            result.demands[doc.list_id] = {};
-          }
-          result.demands[doc.list_id][doc.id] = doc;
+        switch(doc.type) {
+          case 'demand_list':
+            result.lists[doc.id] = result.lists[doc.id] || {demands: {}};
+            for (e in doc) {
+              result.lists[doc.id][e] = doc[e];
+            }
+            break;
+          case 'cost_estimate':
+            result.cost_estimate[doc.demand_id] = doc.estimate;
+            applyWorkflowRules(doc.demand_id);
+            break;
+          case 'vote':
+            result.vote[doc.demand_id] = result.vote[doc.demand_id] || {};
+            result.vote[doc.demand_id][doc.voter] = doc.vote;
+            recalculateRank(doc.demand_id);
+            break;
+          case 'demand':
+            result.demands[doc.id] = doc;
+            applyWorkflowRules(doc.id);
+            break;
         }
       }
       else {
+        if (!values[idx]) {
+          continue;
+        }
+        // merge demand_lists
         for (id in values[idx].lists) {
           doc = values[idx].lists[id];
-          result.lists[doc.id] = doc;
-        }
-        for (id in values[idx].demands) {
-          doc = values[idx].demands[id];
-          if (!result.demands.hasOwnProperty(doc.list_id)) {
-            result.demands[doc.list_id] = {};
+          result.lists[doc.id] = result.lists[doc.id] || {};
+          for (e in doc) {
+            result.lists[doc.id][e] = doc[e];
           }
-          result.demands[doc.list_id][doc.id] = doc;
+        }
+        // merge votes
+        (function (votesBydemandId) {
+          var demandId, votes;
+          for (demandId in votesBydemandId) {
+            votes = values[idx].vote[demandId];
+            result.vote[demandId] = result.vote[demandId] || {};
+            for (var voter in votes) {
+              result.vote[demandId][voter] = votes[voter];
+            }
+            recalculateRank(id);
+          }
+        })(values[idx].vote)
+        // merge cost_estimates
+        for (id in values[idx].cost_estimate) {
+          result.cost_estimate[id] = values[idx].cost_estimate[id];
+          applyWorkflowRules(id);
+        }
+        // merge demands
+        for (id in values[idx].demands) {
+          result.demands[id] = values[idx].demands[id];
+          applyWorkflowRules(doc.id);
         }
       }
     }
