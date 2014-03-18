@@ -112,11 +112,14 @@ exports.demand_all = {
     recursive_merge = function(dst, src, special_merge){
 			var e;
 			if(!dst){
+        log(["res", 2, dst, src]);
 				return src
 			}
 			if(!src){
+        log(["res", 1, dst, src]);
 				return dst
 			}
+      log(["rec", dst, "      ", src]);
 			if(typeof(src) == 'object'){
 				for(e in src){
 					if(e in special_merge){
@@ -129,9 +132,8 @@ exports.demand_all = {
 			return dst;
 		}
 
-
-    for(idx = 0 ; idx < values.length ; idx++){
-      if (!rereduce) {
+    if (!rereduce) {
+      for(idx = 0 ; idx < values.length ; idx++){
         doc = values[idx];
         switch(doc.type) {
           case 'demand_list':
@@ -161,27 +163,33 @@ exports.demand_all = {
             break;
         }
       }
-      else {
-        if (values[idx] === null) {
-          log(["null", keys, values]);
+    }
+    else {
+      for(idx = 0 ; idx < values.length ; idx++){
+        /*if (values[idx] === null) {
+          log(["null", values]);
           continue;
         }
         // merge demand_lists
+        log("rereduce");
+        log(result.lists);
+        log(values[idx].lists);
+        result.lists = values[idx].lists;
         recursive_merge(result.lists, values[idx].lists, {});
+        log(result.lists);
         // merge votes
         recursive_merge(result.votes, values[idx].votes, {});
 
         recursive_merge(result.cost_estimate, values[idx].cost_estimate, {});
-        /*for (id in values[idx].cost_estimate) {
-          result.cost_estimate[id] = values[idx].cost_estimate[id];
-          applyWorkflowRules(id);
-        }*/
+
         // merge demands
         recursive_merge(result.demands, values[idx].demands, {});
-        /*for (id in values[idx].demands) {
-          result.demands[id] = values[idx].demands[id];
+        */
+        recursive_merge(result, values[idx], {});
+        for (id in result.demand) {
+          recalculateRank(id);
           applyWorkflowRules(id);
-        }*/
+        }
       }
     }
     return result;
