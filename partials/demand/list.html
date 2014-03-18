@@ -4,8 +4,8 @@
       {{ list.name }}
     </header>
     <content>
-      <div ng-repeat="demand in results.demands[list.id] |orderBy:'rank':'desc' ">
-        <p>{{ demand.title }}</p>
+      <div ng-repeat="(id, rank) in list.demands |orderBy:'rank':'desc' ">
+        <p>{{ results.demands[id].title }}</p>
         <button ng-click="vote($index)" class="btn btn-default">+1</button>
       </div>
     </content>

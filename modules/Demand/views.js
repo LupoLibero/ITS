@@ -9,9 +9,9 @@ exports.demand_all = {
           translation.emitTranslatedDoc(
             [doc.project_id, translation._keyTag],
             {
-              id: doc.id,
-              name: doc.name,
-              type: doc.type,
+              id:    doc.id,
+              name:  doc.name,
+              type:  doc.type,
             },
             {name: true}
           );

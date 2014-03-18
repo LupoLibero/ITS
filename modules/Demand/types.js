@@ -14,7 +14,7 @@ exports.demand = new Type('demand', {
     remove: permissions.hasRole('_admin')
   },
   fields: {
-    author: fields.creator(),
+    author:     fields.creator(),
     created_at: fields.createdTime(),
     updated_at: fields.number({
       required: false
@@ -27,9 +27,7 @@ exports.demand = new Type('demand', {
           }
         }]
     }),
-    init_lang: fields.string({
-      required: false
-    }),
+    init_lang: fields.string(),
     project_id: fields.string(),
     description: translatableField({
       required: false,
