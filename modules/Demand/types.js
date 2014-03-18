@@ -14,7 +14,7 @@ exports.demand = new Type('demand', {
     remove: permissions.hasRole('_admin')
   },
   fields: {
-    author: fields.creator(),
+    author:     fields.creator(),
     created_at: fields.createdTime(),
     updated_at: fields.number({
       required: false

@@ -9,9 +9,9 @@ exports.demand_all = {
           translation.emitTranslatedDoc(
             [doc.project_id, translation._keyTag],
             {
-              id: doc.id,
-              name: doc.name,
-              type: doc.type,
+              id:    doc.id,
+              name:  doc.name,
+              type:  doc.type,
             },
             {name: true}
           );
@@ -26,13 +26,13 @@ exports.demand_all = {
               init_lang:   doc.init_lang,
               type:        doc.type,
               list_id:     doc.list_id,
-              tag_list:    doc.tag_list === "" ? [] : doc.tag_list.split(','),
+              tag_list:    doc.tag_list,
             },
             {title: true}
           );
           break;
         case 'cost_estimate':
-          emit([doc.project_id, 'default'], doc)
+          emit([doc.project_id, 'default'], doc);
           break;
         case 'vote':
           if (doc.voted_doc_id.split('-')[0] == 'demand') {
@@ -42,10 +42,10 @@ exports.demand_all = {
                 "default"
               ],
               {
-                voter: doc.voter,
-                vote: doc.vote,
-                demand_id: doc.voted_doc_id.split('-')[1],
-                type: doc.type
+                voter:      doc.voter,
+                vote:       doc.vote,
+                demand_id:  doc.voted_doc_id.split('-')[1],
+                type:       doc.type
               });
           }
           break;
