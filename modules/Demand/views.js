@@ -18,7 +18,7 @@ exports.demand_all = {
           break;
         case 'demand':
           translation.emitTranslatedDoc(
-            [doc.project_id, translation._keyTag],
+            [doc.project_id, translation._keyTag, doc.id],
             {
               project_id:  doc.project_id,
               id:          doc.id,
@@ -26,27 +26,31 @@ exports.demand_all = {
               init_lang:   doc.init_lang,
               type:        doc.type,
               list_id:     doc.list_id,
-              tag_list:    doc.tag_list === "" ? [] : doc.tag_list.split(','),
+              tag_list:    doc.tag_list,
             },
             {title: true}
           );
           break;
         case 'cost_estimate':
-          emit([doc.project_id, 'default'], doc)
+          emit([doc.project_id, 'default', doc.demand_id], doc)
           break;
         case 'vote':
           if (doc.voted_doc_id.split('-')[0] == 'demand') {
-            emit(
-              [
-                doc.voted_doc_id.split('-')[1].split('#')[0].toLowerCase(),
-                "default"
-              ],
-              {
-                voter: doc.voter,
-                vote: doc.vote,
-                demand_id: doc.voted_doc_id.split('-')[1],
-                type: doc.type
+            (function() {
+              var demandId = doc.voted_doc_id.split('-')[1];
+              emit(
+                [
+                  demandId.split('#')[0].toLowerCase(),
+                  "default",
+                  demandId
+                ],
+                {
+                  voter: doc.voter,
+                  vote: doc.vote,
+                  demand_id: demandId,
+                  type: doc.type
               });
+            })()
           }
           break;
       }
