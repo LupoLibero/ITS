@@ -12,12 +12,12 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       console.log src, dst
       for e in src
         if(e in special_merge)
-          dst[e] = special_merge[e](e, dst, src);
+          dst[e] = special_merge[e](e, dst, src)
         else
           dst[e] = recursive_merge(dst[e], src[e], special_merge)
-    dst = src;
-    return dst;
-  $scope.results = recursive_merge(demands, demands_default, {})[0];
+    dst = src
+    return dst
+  $scope.results = recursive_merge(demands, demands_default, {})[0]
 
   $scope.hasVote = (demand) ->
     return demand.votes.hasOwnProperty(login.actualUser.name)
