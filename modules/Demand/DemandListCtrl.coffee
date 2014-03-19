@@ -1,5 +1,5 @@
 angular.module('demand').
-controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal, login, config, Demand, $http, $q, $rootScope) ->
+controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal, login, config, Demand, longPolling) ->
   $scope.login      = login
   $scope.project    = project
 
@@ -9,7 +9,6 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     if !src
       return dst
     if typeof(src) == 'object'
-      console.log src, dst
       for e in src
         if(e in special_merge)
           dst[e] = special_merge[e](e, dst, src)
@@ -22,39 +21,25 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   $scope.hasVote = (demand) ->
     return demand.votes.hasOwnProperty(login.actualUser.name)
 
-  changes = (last = "now") ->
-    url = "lupolibero/_changes?feed=longpoll&filter=its/demands&since=#{last}"
-    $http.get(url, {
-      timeout: () ->
-        defer = $q.defer()
-        $rootScope.$on('$routeChangeSuccess', ($event, current)->
-          defer.resolve("end")
-        )
-        return defer.promise
-    }).then(
-      (data) -> #Success
-        last = data.data.last_seq
+  longPolling.setFilter('its/demands')
+  longPolling.start()
 
-        if typeof data.data.results == 'object'
-          for change in data.data.results
-            split = change.id.split('-')
-            type  = split[0]
-            id    = split[1]
-            if type == 'demand' and $scope.results.demands.hasOwnProperty(id)
-              p_id  = id.split('#')[0].toLowerCase()
-              Demand.get({
-                view:        'all'
-                key:         [p_id, 'en', id]
-                group_level: 3
-              }).then(
-                (data) -> #Success
-                  angular.extend($scope.results.demands[id], data.demands[id])
-                  changes(last)
-              )
-      ,(err) -> #Error
-        changes(last)
-    )
-  changes()
+  $scope.$on('Changes', ($event, _id)->
+    split = _id.split('-')
+    type  = split[0]
+    id    = split[1]
+    p_id  = id.split('#')[0].toLowerCase()
+
+    if type == 'demand' and $scope.results.demands.hasOwnProperty(id)
+      Demand.get({
+        view:        'all'
+        key:         [p_id, 'en', id]
+        group_level: 3
+      }).then(
+        (data) -> #Success
+          angular.extend($scope.results.demands[id], data.demands[id])
+      )
+  )
 
   $scope.$on('SessionChanged', ->
     if login.isNotConnect()
