@@ -26,35 +26,23 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   longPolling.setFilter('its/demands')
   longPolling.start()
 
-  updateRank = (demand) ->
-    applyRank(demand.list_id, demand.id, demand.rank)
-
-  applyRank = (listId, demandId, rank) ->
-    $scope.results.lists[listId][demandId] = rank
-
   $scope.orderByRank = () ->
     (id) ->
       console.log $scope.results.demands[id].rank
       return -1*$scope.results.demands[id].rank
 
-  $scope.$on('Changes', ($event, _id)->
-    split = _id.split('-')
-    type  = split[0]
-    id    = split[1]
+  $scope.$on('ChangeOnDemand', ($event, _id)->
+    id    = _id.split('-')[1]
     p_id  = id.split('#')[0].toLowerCase()
 
-    if type == 'demand' and $scope.results.demands.hasOwnProperty(id)
-      Demand.get({
-        view:        'all'
-        key:         [p_id, $scope.results.demands[id].lang, id]
-        group_level: 3
-      }).then(
-        (data) -> #Success
-          angular.extend($scope.results, data)
-          $scope.results = recursive_merge($scope.results.demands, data.demands)
-          #updateRank(data.demands[id])
-
-      )
+    Demand.get({
+      view:        'all'
+      key:         [p_id, $scope.results.demands[id].lang, id]
+      group_level: 3
+    }).then(
+      (data) -> #Success
+        angular.extend($scope.results.demands[id], data.demands[id])
+    )
   )
 
   $scope.$on('SessionChanged', ->
