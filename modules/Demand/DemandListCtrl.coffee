@@ -17,11 +17,6 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     dst = src
     return dst
   $scope.results = recursive_merge(demands, demands_default, {})[0]
-  #for key, value of $scope.results.lists
-    #$scope.results.lists[key].demands = Object.keys($scope.results.lists[key].demands)
-
-  $scope.hasVote = (demand) ->
-    return demand.votes.hasOwnProperty(login.actualUser.name)
 
   longPolling.setFilter('its/demands')
   longPolling.start()
@@ -29,6 +24,16 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   $scope.orderByRank = () ->
     (id) ->
       return -1*$scope.results.demands[id].rank
+  $scope.$on('ChangeOnPayement', ($event, _id)->
+    demand_id = _id.split('--')[0].split('-')[1]
+    $scope.$broadcast('ChangeOnDemand', "demand-#{demand_id}")
+  )
+
+  $scope.$on('ChangeOnCostEstimate', ($event, _id)->
+    demand_id = _id.split('--')[0].split('-')[1]
+    $scope.$broadcast('ChangeOnDemand', "demand-#{demand_id}")
+    console.log _id
+  )
 
   $scope.$on('ChangeOnDemand', ($event, _id)->
     id    = _id.split('-')[1]
@@ -53,8 +58,11 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       $scope.messageTooltip = "You need to be a sponsor"
   )
 
+  $scope.hasVote = (demand) ->
+    return demand.votes.hasOwnProperty(login.actualUser.name)
+
   $scope.vote = ($index) ->
-    demand = $scope.demandList[$index] # Get the demand
+    demand = $scope.results.demands[$index] # Get the demand
     if not $scope.hasVote(demand)
       action = 'vote'
     else
