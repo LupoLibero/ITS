@@ -34,7 +34,8 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
                 group_level: 3
               }).then(
                 (data) -> #Success
-                  angular.extend($scope.results.demands[id], data)
+                  angular.extend($scope.results.demands[id], data.demands[id])
+                  changes(last)
               )
       ,(err) -> #Error
         changes(last)
