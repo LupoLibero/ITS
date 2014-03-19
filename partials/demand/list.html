@@ -5,7 +5,10 @@
     </header>
     <content>
       <div ng-repeat="(id, rank) in list.demands |orderBy:'+rank'">
-        <p>{{id}}</p>
+        <p>
+          {{id}}
+          <span style="float:right">{{rank}}</span>
+        </p>
         <p>{{ results.demands[id].title }}</p>
         <p>
           <span style="background-color:red" ng-repeat="tag in results.demands[id].tag_list">{{tag}}</span>
