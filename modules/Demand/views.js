@@ -127,6 +127,35 @@ exports.demand_all = {
 			}
 			return dst;
 		}
+    var demandArraysMerge = function (element, dstParent, srcParent) {
+      var newDst = []
+      var dst    = dstParent[element]
+      var src    = srcParent[element]
+      var alreadyPushed   = {}
+      var demandDst, demandSrc, idDst, idSrc;
+      for (idDst in dst) {
+        demandDst = dst[idDst];
+        for (idSrc in src) {
+          demandSrc = src[idSrc];
+          if (demandDst.id == demandSrc.id) {
+            newDst.push(demandSrc);
+            alreadyPushed[demandDst.id] = true;
+            continue;
+          }
+        }
+        if (!alreadyPushed[demandDst.id]) {
+          newDst.push(demandDst);
+          alreadyPushed[demandDst.id] = true;
+        }
+      }
+      for (idSrc in src) {
+        demandSrc = src[idSrc];
+        if (!alreadyPushed[demandSrc.id]) {
+          newDst.push(demandSrc);
+        }
+      }
+      return newDst;
+    }
 
     if (!rereduce) {
       for(idx = 0 ; idx < values.length ; idx++){
@@ -163,7 +192,7 @@ exports.demand_all = {
     }
     else {
       for(idx = 0 ; idx < values.length ; idx++){
-        recursive_merge(result, values[idx], {});
+        recursive_merge(result, values[idx], {demands: demandArraysMerge});
         for (i = 0 ; i < result.demand ; i++) {
           recalculateRank(i);
           applyWorkflowRules(i);

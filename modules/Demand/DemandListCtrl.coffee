@@ -4,19 +4,51 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   $scope.project    = project
 
   recursive_merge = (dst, src, special_merge) ->
+    #typeIsArray = Array.isArray || ( value ) -> return {}.toString.call( value ) is '[object Array]'
+    #console.log dst, src
     if !dst
       return src
     if !src
       return dst
     if typeof(src) == 'object'
-      for e in src
-        if(e in special_merge)
+      for e of src
+        #console.log 'e', e
+        if e of special_merge
           dst[e] = special_merge[e](e, dst, src)
         else
           dst[e] = recursive_merge(dst[e], src[e], special_merge)
-    dst = src
+    else
+      #console.log "!!!overwritting!!!", dst, src
+      dst = src
     return dst
-  $scope.results = recursive_merge(demands, demands_default, {})[0]
+  demandArraysMerge = (element, dstParent, srcParent) ->
+    console.log 'special', element, dstParent, srcParent
+    newDst = []
+    dst    = dstParent[element]
+    src    = srcParent[element]
+    alreadyPushed   = {}
+    for demandDst in dst
+      console.log 'dst', demandDst.id
+      for demandSrc in src
+        console.log 'src', demandSrc.id
+        if demandDst.id == demandSrc.id
+          newDst.push demandSrc
+          alreadyPushed[demandDst.id] = true
+          console.log 'push'
+          continue
+      if not alreadyPushed[demandDst.id]
+        console.log 'notAvailInSrc, push'
+        newDst.push demandDst
+        alreadyPushed[demandDst.id] = true
+    for demandSrc in src
+      console.log 'src', demandSrc.id
+      if not alreadyPushed[demandSrc.id]
+        console.log 'push2'
+        newDst.push demandSrc
+    return newDst
+
+  $scope.results = recursive_merge(demands_default, demands, {demands: demandArraysMerge})[0]
+  console.log $scope.results
 
   longPolling.setFilter('its/demands')
   longPolling.start()
@@ -39,7 +71,7 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     id   = demand.id
     vote = $scope.results.vote
 
-    console.log vote
+    #console.log vote
 
     return vote.hasOwnProperty(id) and vote[id].hasOwnProperty(login.getName())
 )

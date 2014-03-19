@@ -4,7 +4,7 @@
       {{ list.name }} ({{list.order}})
     </header>
     <content>
-      <div ng-repeat="demand in results.demands |list:list.id |orderBy:'+rank'">
+      <div ng-repeat="demand in results.demands |filter:{list_id: list.id} |orderBy:'+rank'">
         <header>
           <h5>{{demand.id}}</h5>
           <span class="pull-right">{{demand.rank}}</span>
@@ -13,7 +13,6 @@
         <p>
           <span style="background-color:red" ng-repeat="tag in results.demands[id].tag_list">{{demand.tag}}</span>
           <span ng-show="results.cost_estimate[id] && !results.payment[demand.id]">{{ results.cost_estimate[demand.id] }}€</span>
-          <span ng-show="results.payment[demand.id]">€</span>
           <div ng-show="results.cost_estimate[demand.id] && results.payment[demand.id]" class="col-sm-8" tooltip="{{ results.cost_estimate[demand.id] }} €">
             <progressbar class="progress-striped active" max="results.cost_estimate[demand.id]" value="results.payment[demand.id]" type="danger" ><i>{{ results.payment[demand.id] }}€</i></progressbar>
           </div>
