@@ -4,10 +4,12 @@ directive('vote', ($rootScope, login, Vote)->
     restrict: 'E'
     scope: {
       id:    '='
-      check: '&'
+      hasVote: '=check'
     }
     template: '<button popover="{{ messageTooltip }}" popover-trigger="mouseenter" ng-click="vote()" ng-class="{active: check}" class="btn btn-default">+1</button>'
     link:  (scope, element, attrs) ->
+      scope.check = angular.copy(scope.hasVote)
+
       scope.vote = ->
         if not scope.check
           Vote.update({
