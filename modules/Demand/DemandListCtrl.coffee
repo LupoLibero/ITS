@@ -17,8 +17,8 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     dst = src
     return dst
   $scope.results = recursive_merge(demands, demands_default, {})[0]
-  for key, value of $scope.results.lists
-    $scope.results.lists[key].demands = Object.keys($scope.results.lists[key].demands)
+  #for key, value of $scope.results.lists
+    #$scope.results.lists[key].demands = Object.keys($scope.results.lists[key].demands)
 
   $scope.hasVote = (demand) ->
     return demand.votes.hasOwnProperty(login.actualUser.name)

@@ -75,18 +75,23 @@ exports.demand_all = {
       vote: {},
       payment: {}
     };
+    var reverseMapping = {};
+    function demandIndexFromId (id) {
+      return reverseMapping[id] || -1;
+    }
     function recalculateRank (i) {
       var doc = result.demands[i];
+      log(["rank", i]);
       if (doc) {
         doc.rank = Object.keys(result.vote[doc.id] || {}).length;
       }
     }
     function applyWorkflowRules (i) {
+      if(i < 0) {
+        return
+      }
       var doc = result.demands[i];
       var curr_list_id;
-      if (!doc){
-        return;
-      }
       curr_list_id = doc.list_id;
       if (doc.list_id != 'doing' && doc.list_id != 'done') {
         doc.list_id = 'ideas';
@@ -135,19 +140,21 @@ exports.demand_all = {
             break;
           case 'cost_estimate':
             result.cost_estimate[doc.demand_id] = doc.estimate;
-            applyWorkflowRules(doc.demand_id);
+            applyWorkflowRules(demandIndexFromId(doc.demand_id));
             break;
           case 'payment':
             result.payment[doc.demand_id] = doc.amount;
-            applyWorkflowRules(doc.demand_id);
+            applyWorkflowRules(demandIndexFromId(doc.demand_id));
             break;
           case 'vote':
             result.vote[doc.demand_id] = result.vote[doc.demand_id] || {};
             result.vote[doc.demand_id][doc.voter] = doc.vote;
-            recalculateRank(doc.demand_id);
+            recalculateRank(demandIndexFromId(doc.demand_id));
             break;
           case 'demand':
             i = result.demands.push(doc);
+            reverseMapping[doc.id] = i - 1;
+            recalculateRank(i-1);
             applyWorkflowRules(i-1);
             break;
         }
