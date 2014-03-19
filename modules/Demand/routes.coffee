@@ -10,7 +10,7 @@ config( ($routeProvider, $translateProvider)->
           id = $route.current.params.project_id
           return Demand.all({
             descending:  true
-            startkey:    [id, 'default']
+            startkey:    [id, 'default', {}]
             endkey:      [id, 'default']
             group_level: 2
           })
@@ -19,7 +19,7 @@ config( ($routeProvider, $translateProvider)->
           id   = $route.current.params.project_id
           return Demand.all({
             descending:  true
-            startkey:    [id, lang]
+            startkey:    [id, lang, {}]
             endkey:      [id, lang]
             group_level: 2
           })
