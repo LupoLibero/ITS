@@ -28,7 +28,6 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
 
   $scope.orderByRank = () ->
     (id) ->
-      console.log $scope.results.demands[id].rank
       return -1*$scope.results.demands[id].rank
 
   $scope.$on('ChangeOnDemand', ($event, _id)->

@@ -62,32 +62,35 @@ exports.demand_all = {
   reduce: function (keys, values, rereduce) {
     var idx, id, e, doc;
     var result = {
-      lists: {},
+      lists: [
+        {id: 'ideas', demands: {}},
+        {id: 'todo', demands: {}},
+        {id: 'estimated', demands: {}},
+        {id: 'funded', demands: {}},
+        {id: 'doing', demands: {}},
+        {id: 'done', demands: {}},
+      ],
       demands: {},
       cost_estimate: {},
       vote: {},
       payment: {}
     };
-    var listOrder = {
-      'ideas': 0,
-      'todo': 1,
-      'estimated': 2,
-      'funded': 3,
-      'doing': 4,
-      'done': 5
-    };
-    function removeFromList (doc, list) {
-      if (result.lists.hasOwnProperty(list) &&
-          result.lists[list].hasOwnProperty('demands') &&
-          result.lists[list].demands.hasOwnProperty(doc.id)) {
-        delete result.lists[list].demands[doc.id];
+    function removeFromList (doc, listId) {
+      for (var id in result.lists) {
+        if (listId == result.lists[id].id) {
+          if (result.lists[id].demands.hasOwnProperty(doc.id)) {
+            delete result.lists[id].demands[doc.id];
+          }
+        }
       }
     }
     function assignToList (doc, listId) {
-      result.lists[listId] = result.lists[listId] || {};
-      result.lists[listId].demands = result.lists[listId].demands || {};
       doc.rank = Object.keys(result.vote[doc.id] || {}).length;
-      result.lists[listId].demands[doc.id] = doc.rank;
+      for (var id in result.lists) {
+        if (listId == result.lists[id].id) {
+          result.lists[id].demands[doc.id] = doc.rank;
+        }
+      }
     }
     function recalculateRank (docId) {
       var doc = result.demands[docId];
@@ -149,13 +152,13 @@ exports.demand_all = {
         doc = values[idx];
         switch(doc.type) {
           case 'demand_list':
-            result.lists[doc.id] = result.lists[doc.id] || {};
-            result.lists[doc.id].demands = result.lists[doc.id].demands || {};
-            doc.order = listOrder[doc.id];
-            var list = {};
-            list[doc.id] = doc;
-            //mergeDemandLists(result.lists, test);
-            recursive_merge(result.lists, list, {});
+            //result.lists[doc.id] = result.lists[doc.id] || {};
+            //result.lists[doc.id].demands = result.lists[doc.id].demands || {};
+            for (var id in result.lists) {
+              if (doc.id == result.lists[id].id) {
+                recursive_merge(result.lists[id], doc, {});
+              }
+            }
             break;
           case 'cost_estimate':
             result.cost_estimate[doc.demand_id] = doc.estimate;
