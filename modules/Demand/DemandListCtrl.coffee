@@ -24,6 +24,17 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   longPolling.setFilter('its/demands')
   longPolling.start()
 
+  $scope.$on('ChangeOnPayement', ($event, _id)->
+    demand_id = _id.split('--')[0].split('-')[1]
+    $scope.$broadcast('ChangeOnDemand', "demand-#{demand_id}")
+  )
+
+  $scope.$on('ChangeOnCostEstimate', ($event, _id)->
+    demand_id = _id.split('--')[0].split('-')[1]
+    $scope.$broadcast('ChangeOnDemand', "demand-#{demand_id}")
+    console.log _id
+  )
+
   $scope.$on('ChangeOnDemand', ($event, _id)->
     id    = _id.split('-')[1]
     p_id  = id.split('#')[0].toLowerCase()
