@@ -1,5 +1,5 @@
 angular.module('demand').
-controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal, login, config, Demand) ->
+controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal, login, config, Demand, $http, $q, $rootScope) ->
   $scope.login      = login
   $scope.project    = project
 
@@ -21,6 +21,39 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
 
   $scope.hasVote = (demand) ->
     return demand.votes.hasOwnProperty(login.actualUser.name)
+
+  changes = (last = "now") ->
+    url = "lupolibero/_changes?feed=longpoll&filter=its/demands&since=#{last}"
+    $http.get(url, {
+      timeout: () ->
+        defer = $q.defer()
+        $rootScope.$on('$routeChangeSuccess', ($event, current)->
+          defer.resolve("end")
+        )
+        return defer.promise
+    }).then(
+      (data) -> #Success
+        last = data.data.last_seq
+
+        if typeof data.data.results == 'object'
+          for change in data.data.results
+            split = change.id.split('-')
+            type  = split[0]
+            id    = split[1]
+            if type == 'demand' and $scope.results.demands.hasOwnProperty(id)
+              p_id  = id.split('#')[0].toLowerCase()
+              Demand.get({
+                view:        'all'
+                key:         [p_id, 'en', id]
+                group_level: 3
+              }).then(
+                (data) -> #Success
+                  angular.extend($scope.results.demands[id], data)
+              )
+      ,(err) -> #Error
+        changes(last)
+    )
+  changes()
 
   $scope.$on('SessionChanged', ->
     if login.isNotConnect()
