@@ -60,48 +60,30 @@ exports.demand_all = {
     }
   },
   reduce: function (keys, values, rereduce) {
-    var idx, id, e, doc;
+    var idx, id, e, i, doc;
     var result = {
       lists: [
-        {id: 'ideas', demands: {}},
-        {id: 'todo', demands: {}},
-        {id: 'estimated', demands: {}},
-        {id: 'funded', demands: {}},
-        {id: 'doing', demands: {}},
-        {id: 'done', demands: {}},
+        {id: 'ideas'},
+        {id: 'todo'},
+        {id: 'estimated'},
+        {id: 'funded'},
+        {id: 'doing'},
+        {id: 'done'},
       ],
-      demands: {},
+      demands: [],
       cost_estimate: {},
       vote: {},
       payment: {}
     };
-    function removeFromList (doc, listId) {
-      for (var id in result.lists) {
-        if (listId == result.lists[id].id) {
-          if (result.lists[id].demands.hasOwnProperty(doc.id)) {
-            delete result.lists[id].demands[doc.id];
-          }
-        }
+    function recalculateRank (i) {
+      var doc = result.demands[i];
+      if (doc) {
+        doc.rank = Object.keys(result.vote[doc.id] || {}).length;
       }
     }
-    function assignToList (doc, listId) {
-      doc.rank = Object.keys(result.vote[doc.id] || {}).length;
-      for (var id in result.lists) {
-        if (listId == result.lists[id].id) {
-          result.lists[id].demands[doc.id] = doc.rank;
-        }
-      }
-    }
-    function recalculateRank (docId) {
-      var doc = result.demands[docId];
-      if (doc && doc.hasOwnProperty('list_id')) {
-        assignToList(doc, doc.list_id);
-      }
-    }
-    function applyWorkflowRules (docId) {
-      var doc = result.demands[docId];
+    function applyWorkflowRules (i) {
+      var doc = result.demands[i];
       var curr_list_id;
-      //log(["apply", docId, doc]);
       if (!doc){
         return;
       }
@@ -119,22 +101,15 @@ exports.demand_all = {
           }
         }
       }
-      if (doc.list_id != curr_list_id) {
-        removeFromList(doc, curr_list_id);
-      }
-      assignToList(doc, doc.list_id);
     }
     recursive_merge = function(dst, src, special_merge){
 			var e;
 			if(!dst){
-        log(["res", 2, dst, src]);
 				return src
 			}
 			if(!src){
-        log(["res", 1, dst, src]);
 				return dst
 			}
-      log(["rec", dst, "      ", src]);
 			if(typeof(src) == 'object'){
 				for(e in src){
 					if(e in special_merge){
@@ -152,8 +127,6 @@ exports.demand_all = {
         doc = values[idx];
         switch(doc.type) {
           case 'demand_list':
-            //result.lists[doc.id] = result.lists[doc.id] || {};
-            //result.lists[doc.id].demands = result.lists[doc.id].demands || {};
             for (var id in result.lists) {
               if (doc.id == result.lists[id].id) {
                 recursive_merge(result.lists[id], doc, {});
@@ -174,38 +147,18 @@ exports.demand_all = {
             recalculateRank(doc.demand_id);
             break;
           case 'demand':
-            log("demand reduce");
-            result.demands[doc.id] = doc;
-            applyWorkflowRules(doc.id);
+            i = result.demands.push(doc);
+            applyWorkflowRules(i-1);
             break;
         }
       }
     }
     else {
       for(idx = 0 ; idx < values.length ; idx++){
-        /*if (values[idx] === null) {
-          log(["null", values]);
-          continue;
-        }
-        // merge demand_lists
-        log("rereduce");
-        log(result.lists);
-        log(values[idx].lists);
-        result.lists = values[idx].lists;
-        recursive_merge(result.lists, values[idx].lists, {});
-        log(result.lists);
-        // merge votes
-        recursive_merge(result.votes, values[idx].votes, {});
-
-        recursive_merge(result.cost_estimate, values[idx].cost_estimate, {});
-
-        // merge demands
-        recursive_merge(result.demands, values[idx].demands, {});
-        */
         recursive_merge(result, values[idx], {});
-        for (id in result.demand) {
-          recalculateRank(id);
-          applyWorkflowRules(id);
+        for (i = 0 ; i < result.demand ; i++) {
+          recalculateRank(i);
+          applyWorkflowRules(i);
         }
       }
     }
