@@ -30,7 +30,7 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
 
     Demand.get({
       view:        'all'
-      key:         [p_id, 'en', id]
+      key:         [p_id, $scope.results.demands[id].lang, id]
       group_level: 3
     }).then(
       (data) -> #Success
