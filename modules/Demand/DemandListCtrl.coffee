@@ -18,9 +18,6 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     return dst
   $scope.results = recursive_merge(demands, demands_default, {})[0]
 
-  $scope.hasVote = (demand) ->
-    return demand.votes.hasOwnProperty(login.actualUser.name)
-
   longPolling.setFilter('its/demands')
   longPolling.start()
 
@@ -58,8 +55,11 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       $scope.messageTooltip = "You need to be a sponsor"
   )
 
+  $scope.hasVote = (demand) ->
+    return demand.votes.hasOwnProperty(login.actualUser.name)
+
   $scope.vote = ($index) ->
-    demand = $scope.demandList[$index] # Get the demand
+    demand = $scope.results.demands[$index] # Get the demand
     if not $scope.hasVote(demand)
       action = 'vote'
     else
