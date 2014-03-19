@@ -21,20 +21,6 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   longPolling.setFilter('its/demands')
   longPolling.start()
 
-  $scope.orderByRank = () ->
-    (id) ->
-      return -1*$scope.results.demands[id].rank
-  $scope.$on('ChangeOnPayement', ($event, _id)->
-    demand_id = _id.split('--')[0].split('-')[1]
-    $scope.$broadcast('ChangeOnDemand', "demand-#{demand_id}")
-  )
-
-  $scope.$on('ChangeOnCostEstimate', ($event, _id)->
-    demand_id = _id.split('--')[0].split('-')[1]
-    $scope.$broadcast('ChangeOnDemand', "demand-#{demand_id}")
-    console.log _id
-  )
-
   $scope.$on('ChangeOnDemand', ($event, _id)->
     id    = _id.split('-')[1]
     p_id  = id.split('#')[0].toLowerCase()
@@ -49,38 +35,11 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     )
   )
 
-  $scope.$on('SessionChanged', ->
-    if login.isNotConnect()
-      $scope.messageTooltip = "You need to be connected"
-    else if login.hasRole('sponsor')
-      $scope.messageTooltip = "Vote for this demand"
-    else
-      $scope.messageTooltip = "You need to be a sponsor"
-  )
-
   $scope.hasVote = (demand) ->
-    return demand.votes.hasOwnProperty(login.actualUser.name)
+    id   = demand.id
+    vote = $scope.results.vote
 
-  $scope.vote = ($index) ->
-    demand = $scope.results.demands[$index] # Get the demand
-    if not $scope.hasVote(demand)
-      action = 'vote'
-    else
-      action = 'cancel_vote'
-    Demand.update({
-      id: demand.id
-      update: action
-    }).then(
-      (data) -> #Success
-        if action == 'vote'
-          demand.check = true
-          demand.rank  = demand.rank+1
-          demand.votes[login.actualUser.name] = true
-        else
-          demand.check = false
-          demand.rank  = demand.rank-1
-          delete demand.votes[login.actualUser.name]
-      ,(err) -> #Error
-        demand.check = !demand.check # Cancel the interface
-    )
+    console.log vote
+
+    return vote.hasOwnProperty(id) and vote[id].hasOwnProperty(login.getName())
 )

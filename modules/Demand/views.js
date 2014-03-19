@@ -21,6 +21,7 @@ exports.demand_all = {
             [doc.project_id, translation._keyTag, doc.id],
             {
               project_id:  doc.project_id,
+              _id:         doc._id,
               id:          doc.id,
               title:       doc.title,
               init_lang:   doc.init_lang,

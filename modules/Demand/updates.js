@@ -62,22 +62,3 @@ exports.demand_update_field = function (doc, req) {
   }
   throw({forbidden: 'Not for demand creation'});
 }
-
-exports.demand_vote = function(doc, req) {
-  if(doc != null) {
-    doc.updated_at = new Date().getTime();
-    updateActivity(doc, req, 'votes');
-    doc.votes[req.userCtx.name] = true;
-    return [doc, 'ok'];
-  }
-}
-
-exports.demand_cancel_vote = function(doc, req) {
-  if(doc != null) {
-    doc.updated_at = new Date().getTime();
-    updateActivity(doc, req, 'votes');
-    delete doc.votes[req.userCtx.name];
-    return [doc, 'ok'];
-  }
-}
-

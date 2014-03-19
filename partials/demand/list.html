@@ -4,7 +4,7 @@
       {{ list.name }} ({{list.order}})
     </header>
     <content>
-      <div ng-repeat="demand in results.demands |list:list.id |orderBy:'+rank' ">
+      <div ng-repeat="demand in results.demands |list:list.id |orderBy:'+rank'">
         <header>
           <h5>{{demand.id}}</h5>
           <span class="pull-right">{{demand.rank}}</span>
@@ -18,7 +18,7 @@
             <progressbar class="progress-striped active" max="results.cost_estimate[demand.id]" value="results.payment[demand.id]" type="danger" ><i>{{ results.payment[demand.id] }}€</i></progressbar>
           </div>
         </p>
-        <button ng-click="vote($index)" class="btn btn-default">+1</button>
+        <vote id="demand._id" check="hasVote(demand)"></vote>
       </div>
     </content>
     <footer ng-show="$first">
