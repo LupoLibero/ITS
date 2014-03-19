@@ -9,18 +9,16 @@ config( ($routeProvider, $translateProvider)->
         demands_default: (Demand, $route) ->
           id = $route.current.params.project_id
           return Demand.all({
-            descending:  true
-            startkey:    [id, 'default', {}]
-            endkey:      [id, 'default']
+            startkey:    [id, 'default']
+            endkey:      [id, 'default', {}]
             group_level: 2
           })
         demands: (Demand, $route) ->
           lang = window.navigator.language
           id   = $route.current.params.project_id
           return Demand.all({
-            descending:  true
-            startkey:    [id, lang, {}]
-            endkey:      [id, lang]
+            startkey:    [id, lang]
+            endkey:      [id, lang, {}]
             group_level: 2
           })
         project: (Project, $route) ->
