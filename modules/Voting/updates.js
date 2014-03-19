@@ -8,9 +8,9 @@ exports.vote_create = function(doc, req) {
     doc.type         = 'vote';
     doc.voter        = author;
     doc.vote         = true;
-    doc.id           = author+'+'+_id;
+    doc.id           = _id+'--'+author;
     doc.voted_doc_id = _id;
-    doc._id          = doc.type +'-'+ doc.id;
+    doc._id          = doc.type +'--'+ doc.id;
 
     return [doc, 'ok'];
   }
@@ -21,7 +21,7 @@ exports.vote_delete = function(doc, req) {
     return [{
       _id:      doc._id,
       _rev:     doc._rev,
-      _delete:  true,
+      _deleted: true,
     }, 'ok'];
   }
   throw({forbidden: 'Vote doesn\'t exist'});

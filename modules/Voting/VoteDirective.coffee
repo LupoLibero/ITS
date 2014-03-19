@@ -22,7 +22,7 @@ directive('vote', ($rootScope, login, Vote)->
         else if scope.check and login.isConnect()
           Vote.update({
             update: 'delete'
-            _id:    "vote-#{login.getName()}+#{scope.id}"
+            _id:    "vote--#{scope.id}--#{login.getName()}"
           }).then(
             (data) -> #Success
               scope.check = !scope.check
