@@ -9,8 +9,11 @@
         <p>{{ results.demands[id].title }}</p>
         <p>
           <span style="background-color:red" ng-repeat="tag in results.demands[id].tag_list">{{tag}}</span>
-          <span ng-show="results.cost_estimate[id]">{{ results.cost_estimate[id] }}€</span>
-          <span ng-show="results.payment[id]">{{ results.payment[id] }}€</span>
+          <span ng-show="results.cost_estimate[id] && !results.payment[id]">{{ results.cost_estimate[id] }}€</span>
+          <span ng-show="results.payment[id]">€</span>
+          <div ng-show="results.cost_estimate[id] && results.payment[id]" class="col-sm-8" tooltip="{{ results.cost_estimate[id] }} €">
+            <progressbar class="progress-striped active" max="results.cost_estimate[id]" value="results.payment[id]" type="danger" ><i>{{ results.payment[id] }}€</i></progressbar>
+          </div>
         </p>
         <button ng-click="vote($index)" class="btn btn-default">+1</button>
       </div>
