@@ -26,7 +26,9 @@ factory('longPolling', (db, $http, $rootScope, $q) ->
 
           if typeof data.data.results == 'object'
             for change in data.data.results
-              $rootScope.$broadcast('Changes', change.id)
+              type = change.id.split('-')[0]
+              type = type[0].toUpperCase() + type[1..-1].toLowerCase()
+              $rootScope.$broadcast("ChangeOn#{type}", change.id)
               _this.changes(last)
 
         ,(err) -> #Error

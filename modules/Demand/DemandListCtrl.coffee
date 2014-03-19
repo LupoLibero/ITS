@@ -24,21 +24,18 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   longPolling.setFilter('its/demands')
   longPolling.start()
 
-  $scope.$on('Changes', ($event, _id)->
-    split = _id.split('-')
-    type  = split[0]
-    id    = split[1]
+  $scope.$on('ChangeOnDemand', ($event, _id)->
+    id    = _id.split('-')[1]
     p_id  = id.split('#')[0].toLowerCase()
 
-    if type == 'demand' and $scope.results.demands.hasOwnProperty(id)
-      Demand.get({
-        view:        'all'
-        key:         [p_id, 'en', id]
-        group_level: 3
-      }).then(
-        (data) -> #Success
-          angular.extend($scope.results.demands[id], data.demands[id])
-      )
+    Demand.get({
+      view:        'all'
+      key:         [p_id, 'en', id]
+      group_level: 3
+    }).then(
+      (data) -> #Success
+        angular.extend($scope.results.demands[id], data.demands[id])
+    )
   )
 
   $scope.$on('SessionChanged', ->
