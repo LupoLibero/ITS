@@ -11,7 +11,7 @@ directive('vote', ($rootScope, login, Vote)->
       scope.check = angular.copy(scope.hasVote)
 
       scope.vote = ->
-        if not scope.check
+        if not scope.check and login.isConnect()
           Vote.update({
             update:    'create'
             object_id: scope.id
@@ -19,7 +19,7 @@ directive('vote', ($rootScope, login, Vote)->
             (data) -> #Success
               scope.check = !scope.check
           )
-        else
+        else if scope.check and login.isConnect()
           Vote.update({
             update: 'delete'
             _id:    "vote-#{login.getName()}+#{scope.id}"
