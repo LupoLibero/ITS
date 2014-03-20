@@ -4,6 +4,10 @@ exports.vote_create = function(doc, req) {
     author = req.userCtx.name;
     _id    = form.object_id;
 
+    if(typeof author != 'string'){
+      throw({forbidden: 'Can\'t vote if you are not connect'});
+    }
+
     doc = {};
     doc.type         = 'vote';
     doc.voter        = author;

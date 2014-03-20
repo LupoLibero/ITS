@@ -68,7 +68,7 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     if demand?
       Demand.get({
         view:        'all'
-        key:         [p_id, demand.lang, id]
+        key:         [p_id, 'default', id]
         group_level: 3
       }).then(
         (data) -> #Success
@@ -78,7 +78,6 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
 
   $scope.hasVote = (demand) ->
     id   = demand.id
-    vote = $scope.results.vote
-
-    return vote.hasOwnProperty(id) and vote[id].hasOwnProperty(login.getName())
+    vote = $scope.results.votes
+    return vote[id].hasOwnProperty(login.getName())
 )
