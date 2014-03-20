@@ -1,15 +1,15 @@
 <div class="lists col-md-12">
   <section class="list col-md-2" ng-repeat="list in results.lists">
     <header>
-      {{ list.name }} ({{list.order}})
+      {{ list.name }}
     </header>
     <content>
-      <div ng-repeat="demand in results.demands |filter:{list_id: list.id} |orderBy:'+rank'">
+      <div ng-repeat="demand in results.demands |list:results.list_id:list.id |orderBy:orderByRank()">
         <header>
           <h5>{{demand.id}}</h5>
-          <span class="pull-right">{{demand.rank}}</span>
+          <span class="pull-right">{{results.rank[demand.id]}}</span>
         </header>
-        <p>{{ demand.title }}</p>
+        <p>{{ results.list_id[demand.id] }}{{ demand.title }}</p>
         <p>
           <span style="background-color:red" ng-repeat="tag in results.demands[id].tag_list">{{demand.tag}}</span>
           <span ng-show="results.cost_estimate[id] && !results.payment[demand.id]">{{ results.cost_estimate[demand.id] }}€</span>

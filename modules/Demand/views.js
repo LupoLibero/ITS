@@ -61,53 +61,6 @@ exports.demand_all = {
     }
   },
   reduce: function (keys, values, rereduce) {
-    var idx, id, e, i, doc;
-    var result = {
-      lists: [
-        {id: 'ideas'},
-        {id: 'todo'},
-        {id: 'estimated'},
-        {id: 'funded'},
-        {id: 'doing'},
-        {id: 'done'},
-      ],
-      demands: [],
-      cost_estimate: {},
-      vote: {},
-      payment: {}
-    };
-    var reverseMapping = {};
-    function demandIndexFromId (id) {
-      return reverseMapping[id] || -1;
-    }
-    function recalculateRank (i) {
-      var doc = result.demands[i];
-      log(["rank", i]);
-      if (doc) {
-        doc.rank = Object.keys(result.vote[doc.id] || {}).length;
-      }
-    }
-    function applyWorkflowRules (i) {
-      if(i < 0) {
-        return
-      }
-      var doc = result.demands[i];
-      var curr_list_id;
-      curr_list_id = doc.list_id;
-      if (doc.list_id != 'doing' && doc.list_id != 'done') {
-        doc.list_id = 'ideas';
-        if (doc.tag_list.length) {
-          doc.list_id = 'todo';
-          if (result.cost_estimate.hasOwnProperty(doc.id)) {
-            doc.list_id = 'estimated';
-            if (result.payment.hasOwnProperty(doc.id) &&
-                result.payment[doc.id] >= result.cost_estimate[doc.id]) {
-              doc.list_id = 'funded';
-            }
-          }
-        }
-      }
-    }
     recursive_merge = function(dst, src, special_merge){
 			var e;
 			if(!dst){
@@ -127,12 +80,13 @@ exports.demand_all = {
 			}
 			return dst;
 		}
-    var demandArraysMerge = function (element, dstParent, srcParent) {
-      var newDst = []
-      var dst    = dstParent[element]
-      var src    = srcParent[element]
-      var alreadyPushed   = {}
+    var mergeArrayById = function (element, dstParent, srcParent) {
+      var newDst = [];
+      var dst    = dstParent[element];
+      var src    = srcParent[element];
+      var alreadyPushed   = {};
       var demandDst, demandSrc, idDst, idSrc;
+      //log([dst, "             ", src]);
       for (idDst in dst) {
         demandDst = dst[idDst];
         for (idSrc in src) {
@@ -157,6 +111,54 @@ exports.demand_all = {
       return newDst;
     }
 
+    var idx, id, e, i, doc;
+    var result = {
+      lists: [
+        {id: 'ideas'},
+        {id: 'todo'},
+        {id: 'estimated'},
+        {id: 'funded'},
+        {id: 'doing'},
+        {id: 'done'},
+      ],
+      demands: [],
+      cost_estimate: {},
+      vote: {},
+      payment: {},
+      rank: {},
+      list_id: {}
+    };
+    var reverseMapping = {};
+
+    function recalculateRank (docId) {
+      result.rank[docId] = Object.keys(result.vote[docId] || {}).length;
+    }
+    function applyWorkflowRules (docId) {
+      var i = reverseMapping[docId];
+      var tagList = [];
+      var listId;
+      if (!isNaN(i)) {
+        tagList = result.demands[i].tag_list;
+        listId  = result.demands[i].list_id;
+      }
+      listId = result.list_id[docId] || listId;
+      log([docId, listId, tagList, result.cost_estimate[docId]]);
+      if (listId != 'doing' && listId != 'done') {
+        listId = 'ideas';
+        if (tagList.length) {
+          listId = 'todo';
+          if (result.cost_estimate.hasOwnProperty(docId)) {
+            listId = 'estimated';
+            if (result.payment.hasOwnProperty(docId) &&
+                result.payment[docId] >= result.cost_estimate[docId]) {
+              listId = 'funded';
+            }
+          }
+        }
+      }
+      result.list_id[docId] = listId;
+    }
+
     if (!rereduce) {
       for(idx = 0 ; idx < values.length ; idx++){
         doc = values[idx];
@@ -164,40 +166,46 @@ exports.demand_all = {
           case 'demand_list':
             for (var id in result.lists) {
               if (doc.id == result.lists[id].id) {
-                recursive_merge(result.lists[id], doc, {});
+                result.lists[id] = recursive_merge(result.lists[id], doc, {});
               }
             }
             break;
           case 'cost_estimate':
             result.cost_estimate[doc.demand_id] = doc.estimate;
-            applyWorkflowRules(demandIndexFromId(doc.demand_id));
+            //applyWorkflowRules(doc.demand_id);
             break;
           case 'payment':
             result.payment[doc.demand_id] = doc.amount;
-            applyWorkflowRules(demandIndexFromId(doc.demand_id));
+            //applyWorkflowRules(doc.demand_id);
             break;
           case 'vote':
             result.vote[doc.demand_id] = result.vote[doc.demand_id] || {};
             result.vote[doc.demand_id][doc.voter] = doc.vote;
-            recalculateRank(demandIndexFromId(doc.demand_id));
+            //recalculateRank(doc.demand_id);
             break;
           case 'demand':
             i = result.demands.push(doc);
             reverseMapping[doc.id] = i - 1;
-            recalculateRank(i-1);
-            applyWorkflowRules(i-1);
+            //recalculateRank(doc.id);
+            //applyWorkflowRules(doc.id);
             break;
         }
       }
     }
     else {
       for(idx = 0 ; idx < values.length ; idx++){
-        recursive_merge(result, values[idx], {demands: demandArraysMerge});
-        for (i = 0 ; i < result.demand ; i++) {
-          recalculateRank(i);
-          applyWorkflowRules(i);
-        }
+        result = recursive_merge(result, values[idx],{
+          demands: mergeArrayById,
+          lists: mergeArrayById
+        });
       }
+    }
+    log(result.cost_estimate);
+    for (idx = 0 ; idx < result.demands.length ; idx++) {
+      doc = result.demands[idx]
+      log(doc);
+      recalculateRank(doc.id);
+      applyWorkflowRules(doc.id);
     }
     return result;
   }

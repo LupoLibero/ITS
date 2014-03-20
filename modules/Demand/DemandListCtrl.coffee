@@ -53,6 +53,10 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   longPolling.setFilter('its/demands')
   longPolling.start()
 
+  $scope.orderByRank = () ->
+    (doc) ->
+      -1*$scope.results.rank[doc.id]
+
   $scope.$on('ChangeOnDemand', ($event, _id)->
     id    = _id.split('-')[1]
     p_id  = id.split('#')[0].toLowerCase()
