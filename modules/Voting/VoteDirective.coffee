@@ -24,7 +24,7 @@ directive('vote', ($rootScope, login, Vote)->
           }).then(
             (data) -> #Success
               scope.loading = false
-              scope.check   = !scope.check
+              scope.check   = true
             ,(err) -> #Error
               scope.loading = false
           )
@@ -36,7 +36,7 @@ directive('vote', ($rootScope, login, Vote)->
           }).then(
             (data) -> #Success
               scope.loading = false
-              scope.check   = !scope.check
+              scope.check   = false
             ,(err) -> #Error
               scope.loading = false
           )
