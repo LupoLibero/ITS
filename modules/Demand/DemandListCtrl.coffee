@@ -71,10 +71,4 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
           $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge}, true, true)
       )
   )
-
-  $scope.hasVote = (demand) ->
-    id   = demand.id
-    votes = $scope.results.votes
-    console.log "hasVote", id, login.getName(), votes.hasOwnProperty(id), votes[id].hasOwnProperty(login.getName())
-    return votes.hasOwnProperty(id) and votes[id].hasOwnProperty(login.getName())
 )

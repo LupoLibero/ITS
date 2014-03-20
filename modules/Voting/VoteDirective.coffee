@@ -1,5 +1,5 @@
 angular.module('vote').
-directive('vote', ($rootScope, login, Vote)->
+directive('vote', ($rootScope, login, Vote, notification)->
   return {
     restrict: 'E'
     scope: {
@@ -12,11 +12,11 @@ directive('vote', ($rootScope, login, Vote)->
                 '<span us-spinner="{radius:6,width:4,length:6,lines:10}" ng-show="loading"></span>'+
               '</span>'
     link:  (scope, element, attrs) ->
-      scope.check   = angular.copy(scope.hasVote)
       scope.loading = false
 
       scope.vote = ->
         if login.isNotConnect()
+          notification.addAlert('You need to be connected!', 'danger')
           return false
 
         scope.loading = true
@@ -35,7 +35,6 @@ directive('vote', ($rootScope, login, Vote)->
         promise.then(
           (data) -> #Success
             scope.loading = false
-            scope.check   = !scope.check
           ,(err) -> #Error
             scope.loading = false
         )
