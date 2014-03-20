@@ -22,20 +22,15 @@ factory('longPolling', (db, $http, $rootScope, $q) ->
 
       }).then(
         (data) -> #Success
-          last = data.data.last_seq
+          if data.data.hasOwnProperty('last_seq')
+            last = data.data.last_seq
 
           if typeof data.data.results == 'object'
             for change in data.data.results
-              type = change.id.split('-')[0]
-
-              # foo_bar -> FooBar
-              # test    -> Test
-              type = type.split('_')
-              for piece, i in type
-                type[i] = type[i][0].toUpperCase() + type[i][1..-1].toLowerCase()
-              type = type.join('')
-              $rootScope.$broadcast("ChangeOn#{type}", change.id)
+              $rootScope.$broadcast("Changes", change.id)
               _this.changes(last)
+          else
+            _this.changes(last)
 
         ,(err) -> #Error
           _this.changes(last)

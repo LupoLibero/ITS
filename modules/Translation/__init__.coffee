@@ -1,1 +1,1 @@
-angular.module('translation', [])
+angular.module('translation', ['angularSpinner'])

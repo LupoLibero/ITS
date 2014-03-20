@@ -4,21 +4,17 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   $scope.project    = project
 
   recursive_merge = (dst, src, special_merge) ->
-    #typeIsArray = Array.isArray || ( value ) -> return {}.toString.call( value ) is '[object Array]'
-    #console.log dst, src
     if !dst
       return src
     if !src
       return dst
     if typeof(src) == 'object'
       for e of src
-        #console.log 'e', e
         if e of special_merge
           dst[e] = special_merge[e](e, dst, src)
         else
           dst[e] = recursive_merge(dst[e], src[e], special_merge)
     else
-      #console.log "!!!overwritting!!!", dst, src
       dst = src
     return dst
   demandArraysMerge = (element, dstParent, srcParent) ->
@@ -57,25 +53,32 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     (doc) ->
       -1*$scope.results.rank[doc.id]
 
-  $scope.$on('ChangeOnDemand', ($event, _id)->
+  $scope.$on('Changes', ($event, _id)->
+    if _id.indexOf('--') != -1
+      _id   = _id.split('--')[1]
     id    = _id.split('-')[1]
     p_id  = id.split('#')[0].toLowerCase()
 
-    Demand.get({
-      view:        'all'
-      key:         [p_id, $scope.results.demands[id].lang, id]
-      group_level: 3
-    }).then(
-      (data) -> #Success
-        angular.extend($scope.results.demands[id], data.demands[id])
-    )
+    demand = null
+    for piece in $scope.results.demands
+      if piece.id == id
+        demand = piece
+        break
+
+    if demand?
+      Demand.get({
+        view:        'all'
+        key:         [p_id, demand.lang, id]
+        group_level: 3
+      }).then(
+        (data) -> #Success
+          $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge})
+      )
   )
 
   $scope.hasVote = (demand) ->
     id   = demand.id
     vote = $scope.results.vote
-
-    #console.log vote
 
     return vote.hasOwnProperty(id) and vote[id].hasOwnProperty(login.getName())
 )

@@ -1,1 +1,1 @@
-angular.module('vote', ['ngCouchDB'])
+angular.module('vote', ['ngCouchDB', 'angularSpinner'])
