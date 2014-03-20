@@ -4,6 +4,7 @@
   bottom: 50px;
 }
 .list {
+  position: relative;
   width: 15%;
   margin: 0 4px;
   float: left;
@@ -19,9 +20,15 @@
   width: 100%;
   padding: 3px 10px;
   text-transform: capitalize;
+  background-color: lightgrey;
 }
 .list>content {
   overflow-y: scroll;
+}
+.list>footer {
+  bottom: 0;
+  background-color: lightgrey;
+  height: 25px;
 }
 .list>content>div {
   text-align: left;

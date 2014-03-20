@@ -21,9 +21,9 @@ exports.demand = new Type('demand', {
     }),
     id: fields.string({
       validators: [function(doc, value) {
-          var id = value.split('#');
-          if (id[0] !== doc.project_id.toUpperCase() || isNaN(id[1])) {
-            throw new Error('Incorrect id');
+          var id = value.split('-');
+          if (id[0] !== doc.project_id || isNaN(id[1])) {
+            throw new Error('Incorrect id '+value);
           }
         }]
     }),

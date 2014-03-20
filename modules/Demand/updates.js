@@ -4,7 +4,6 @@ var registerTranslation = require('../Translation/utils').registerTranslation;
 var updateActivity      = require('../Activity/utils').updateActivity;
 
 exports.demand_create = function(doc, req) {
-  var date = new Date().getTime();
   var attr;
   var form = JSON.parse(req.body);
   if(doc !== null){
@@ -13,11 +12,12 @@ exports.demand_create = function(doc, req) {
     form.type        = 'demand';
     form._id         = form.type + '-' + form.id;
     form.author      = req.userCtx.name;
-    form.status      = "draft";
-    form.created_at  = date;
+    form.created_at  = new Date().getTime();
     form.votes       = {};
     form.description = {};
     form.activity    = [];
+    form.list_id     = 'ideas';
+    form.tag_list    = [];
     form.init_lang   = form.lang;
     registerTranslation(form, form, 'demand', 'title', form.lang);
     // Add the vote of the creator
