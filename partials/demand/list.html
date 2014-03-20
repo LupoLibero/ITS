@@ -21,6 +21,10 @@
       </div>
     </content>
     <footer ng-show="$first">
+      <a ng-hide="adding" ng-click="addingComment()">Add demand</a>
+      <div ng-show="adding">
+        <textarea ng-model="newDemand" ng-keypress="addDemand($event)"></textarea>
+      </div>
     </footer>
   </section>
 </div>

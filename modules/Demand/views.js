@@ -245,7 +245,7 @@ exports.demand_get = {
 exports.demand_ids = {
   map: function(doc) {
     if(doc.type && doc.type == "demand" && doc.project_id && doc.id){
-      var splitId = doc.id.split('#');
+      var splitId = doc.id.split('-');
       if(splitId.length == 2)
         emit(doc.project_id, parseInt(splitId[1]));
     }

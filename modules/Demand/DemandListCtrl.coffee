@@ -51,10 +51,10 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
 
   $scope.$on('Changes', ($event, _id)->
     type  = _id.split('-')[0]
-    if type != 'demand' and type != 'cost_estimate'
+    if type != 'demand'
       _id = _id.split('--')[1]
-    id    = _id.split('-')[1]
-    p_id  = id.split('#')[0].toLowerCase()
+    id   = _id.split('-')[1]
+    p_id = id.split('-')[0]
 
     demand = null
     for piece in $scope.results.demands
@@ -72,4 +72,39 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
           $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge}, true, true)
       )
   )
+
+  $scope.addingComment = ->
+    $scope.adding = true
+
+  $scope.addDemand = ($event) ->
+    if $event.key == 'Enter'
+      $event.preventDefault()
+
+      Demand.view({
+        view: 'ids'
+        key:  project.id
+      }).then(
+        (data) -> #Success
+          # If it's the first demand of the project
+          if data.length == 0
+            count = 1
+          else
+            count = data[0].max + 1
+
+          id = project.id+'-'+count
+          # Create Demand
+          Demand.update({
+            update: 'create'
+
+            id:          id
+            project_id:  project.id
+            title:       $scope.newDemand
+            lang:        window.navigator.language
+          }).then(
+            (data) -> #Success
+              $scope.newDemand = ''
+              $scope.adding    = false
+              console.log data
+          )
+      )
 )
