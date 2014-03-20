@@ -10,7 +10,7 @@ factory('longPolling', (db, $http, $rootScope, $q) ->
 
     changes: (last = "now") ->
       _this = this
-      url   = "#{db.url}/_changes?feed=longpoll&filter=#{@filter}&since=#{last}"
+      url   = "#{db.url}/_changes?feed=longpoll&heartbeat=10000&filter=#{@filter}&since=#{last}"
 
       $http.get(url, {
         timeout: () ->
