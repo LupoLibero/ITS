@@ -53,25 +53,33 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   longPolling.setFilter('its/demands')
   longPolling.start()
 
-  $scope.$on('ChangeOnDemand', ($event, _id)->
+  $scope.$on('Changes', ($event, _id)->
+    if _id.indexOf('--') != -1
+      _id   = _id.split('--')[1]
+
     id    = _id.split('-')[1]
     p_id  = id.split('#')[0].toLowerCase()
 
-    Demand.get({
-      view:        'all'
-      key:         [p_id, $scope.results.demands[id].lang, id]
-      group_level: 3
-    }).then(
-      (data) -> #Success
-        angular.extend($scope.results.demands[id], data.demands[id])
-    )
+    demand = null
+    for piece in $scope.results.demands
+      if piece.id == id
+        demand = piece
+        break
+
+    if demand?
+      Demand.get({
+        view:        'all'
+        key:         [p_id, demand.lang, id]
+        group_level: 3
+      }).then(
+        (data) -> #Success
+          $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge})
+      )
   )
 
   $scope.hasVote = (demand) ->
     id   = demand.id
     vote = $scope.results.vote
-
-    #console.log vote
 
     return vote.hasOwnProperty(id) and vote[id].hasOwnProperty(login.getName())
 )

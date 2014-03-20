@@ -4,7 +4,7 @@
       {{ list.name }} ({{list.order}})
     </header>
     <content>
-      <div ng-repeat="demand in results.demands |filter:{list_id: list.id} |orderBy:'+rank'">
+      <div ng-repeat="demand in results.demands |filter:{list_id: list.id} |orderBy:'-rank'">
         <header>
           <h5>{{demand.id}}</h5>
           <span class="pull-right">{{demand.rank}}</span>
