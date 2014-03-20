@@ -69,7 +69,7 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
         group_level: 3
       }).then(
         (data) -> #Success
-          $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge})
+          $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge}, true, true)
       )
   )
 )
