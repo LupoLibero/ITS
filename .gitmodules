@@ -7,3 +7,6 @@
 [submodule "modules/Breadcrumb"]
 	path = modules/Breadcrumb
 	url = https://github.com/LupoLibero/couch-ng-Breadcrumb.git
+[submodule "modules/Translation"]
+	path = modules/Translation
+	url = https://github.com/LupoLibero/couch-ng-Translation.git
