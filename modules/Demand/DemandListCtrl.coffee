@@ -7,11 +7,15 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     if !dst
       return src
     if !src
+      #console.log 'src empty', dst, src, emptyIfSrcEmpty
       if emptyIfSrcEmpty
+        #console.log 'so empty dst'
         return src
       return dst
-    if typeof(src) == 'object'
+    if typeof(src) == 'object' and typeof src == 'object'
       for e of src
+        if e == "votes"
+          #console.log e, dst, src
         if e of special_merge
           dst[e] = special_merge[e](e, dst, src)
         else
@@ -20,7 +24,7 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       if overwrite
         dst = src
     return dst
-  demandArraysMerge = (element, dstParent, srcParent) ->
+  mergeArrayById = (element, dstParent, srcParent) ->
     newDst = []
     dst    = dstParent[element]
     src    = srcParent[element]
@@ -38,9 +42,27 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       if not alreadyPushed[demandSrc.id]
         newDst.push demandSrc
     return newDst
-
-  $scope.results = recursive_merge(demands_default, demands, {demands: demandArraysMerge}, true, false)[0]
-  console.log $scope.results
+  mergeVotes = (element, dstParent, srcParent) ->
+    newDst = {}
+    dst    = dstParent[element]
+    src    = srcParent[element]
+    #console.log "mergeVotes", dst, src
+    for demandId, dstVotes of dst
+      #console.log demandId, dstVotes
+      if demandId of src
+        newDst[demandId] = {}
+        for voter, vote of dstVotes
+          #console.log "dst", voter, vote
+          if voter not in src[demandId]
+            continue
+          newDst[demandId][voter] = vote
+        for voter, vote of src[demandId]
+          #console.log "src", voter, vote
+          newDst[demandId][voter] = vote
+      else
+        newDst[demandId] = dstVotes
+    return newDst
+  $scope.results = recursive_merge(demands_default, demands, {demands: mergeArrayById}, true, false)[0]
 
   longPolling.setFilter('its/demands')
   longPolling.start()
@@ -69,7 +91,11 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
         group_level: 3
       }).then(
         (data) -> #Success
-          $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge})
+          console.log "data", data
+          $scope.results = recursive_merge($scope.results, data, {
+            demands: mergeArrayById
+            votes: mergeVotes
+          }, true, true)
       )
   )
 )
