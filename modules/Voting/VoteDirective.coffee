@@ -16,30 +16,29 @@ directive('vote', ($rootScope, login, Vote)->
       scope.loading = false
 
       scope.vote = ->
-        if not scope.check and login.isConnect()
-          scope.loading = true
-          Vote.update({
+        if login.isNotConnect()
+          return false
+
+        scope.loading = true
+        promise       = null
+        if not scope.check
+          promise = Vote.update({
             update:    'create'
             object_id: scope.id
-          }).then(
-            (data) -> #Success
-              scope.loading = false
-              scope.check   = true
-            ,(err) -> #Error
-              scope.loading = false
-          )
-        else if scope.check and login.isConnect()
-          scope.loading = true
-          Vote.update({
+          })
+        else
+          promise = Vote.update({
             update: 'delete'
             _id:    "vote--#{scope.id}--#{login.getName()}"
-          }).then(
-            (data) -> #Success
-              scope.loading = false
-              scope.check   = false
-            ,(err) -> #Error
-              scope.loading = false
-          )
+          })
+
+        promise.then(
+          (data) -> #Success
+            scope.loading = false
+            scope.check   = !scope.check
+          ,(err) -> #Error
+            scope.loading = false
+        )
 
       $rootScope.$on('SessionChanged', ->
         if login.isNotConnect()
