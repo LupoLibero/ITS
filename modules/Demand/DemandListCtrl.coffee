@@ -50,8 +50,9 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       -1*$scope.results.rank[doc.id]
 
   $scope.$on('Changes', ($event, _id)->
-    if _id.indexOf('--') != -1
-      _id   = _id.split('--')[1]
+    type  = _id.split('-')[0]
+    if type != 'demand' and type != 'cost_estimate'
+      _id = _id.split('--')[1]
     id    = _id.split('-')[1]
     p_id  = id.split('#')[0].toLowerCase()
 
@@ -64,11 +65,11 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     if demand?
       Demand.get({
         view:        'all'
-        key:         [p_id, (if _id? then 'default' else demand.lang), id]
+        key:         [p_id, (if type != 'demand' then 'default' else demand.lang), id]
         group_level: 3
       }).then(
         (data) -> #Success
-          $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge}, true, true)
+          $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge})
       )
   )
 )
