@@ -123,7 +123,7 @@ exports.demand_all = {
       ],
       demands: [],
       cost_estimate: {},
-      vote: {},
+      votes: {},
       payment: {},
       rank: {},
       list_id: {}
@@ -131,7 +131,7 @@ exports.demand_all = {
     var reverseMapping = {};
 
     function recalculateRank (docId) {
-      result.rank[docId] = Object.keys(result.vote[docId] || {}).length;
+      result.rank[docId] = Object.keys(result.votes[docId] || {}).length;
     }
     function applyWorkflowRules (docId) {
       var i = reverseMapping[docId];
@@ -147,9 +147,9 @@ exports.demand_all = {
         listId = 'ideas';
         if (tagList.length) {
           listId = 'todo';
-          if (result.cost_estimate.hasOwnProperty(docId)) {
+          if (result.cost_estimate[docId]) {
             listId = 'estimated';
-            if (result.payment.hasOwnProperty(docId) &&
+            if (result.payment[docId] &&
                 result.payment[docId] >= result.cost_estimate[docId]) {
               listId = 'funded';
             }
@@ -179,13 +179,17 @@ exports.demand_all = {
             //applyWorkflowRules(doc.demand_id);
             break;
           case 'vote':
-            result.vote[doc.demand_id] = result.vote[doc.demand_id] || {};
-            result.vote[doc.demand_id][doc.voter] = doc.vote;
+            result.votes[doc.demand_id] = result.votes[doc.demand_id] || {};
+            result.votes[doc.demand_id][doc.voter] = doc.vote;
             //recalculateRank(doc.demand_id);
             break;
           case 'demand':
             i = result.demands.push(doc);
             reverseMapping[doc.id] = i - 1;
+            result.cost_estimate[doc.id] = result.cost_estimate[doc.id] || 0;
+            result.payment[doc.id] = result.payment[doc.id] || 0;
+            result.rank[doc.id] = result.rank[doc.id] || 0;
+            result.votes[doc.id] = result.votes[doc.id] || {};
             //recalculateRank(doc.id);
             //applyWorkflowRules(doc.id);
             break;

@@ -4,7 +4,7 @@ directive('vote', ($rootScope, login, Vote)->
     restrict: 'E'
     scope: {
       id:    '='
-      hasVote: '=check'
+      check: '='
     }
     template: '<span>'+
                 '<button popover="{{ messageTooltip }}" popover-trigger="mouseenter"'+

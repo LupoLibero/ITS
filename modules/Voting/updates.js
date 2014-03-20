@@ -21,6 +21,7 @@ exports.vote_delete = function(doc, req) {
     return [{
       _id:      doc._id,
       _rev:     doc._rev,
+      type:     doc.type,
       _deleted: true,
     }, 'ok'];
   }

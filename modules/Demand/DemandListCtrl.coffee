@@ -3,47 +3,43 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
   $scope.login      = login
   $scope.project    = project
 
-  recursive_merge = (dst, src, special_merge) ->
+  recursive_merge = (dst, src, special_merge, overwrite, emptyIfSrcEmpty) ->
     if !dst
       return src
     if !src
+      if emptyIfSrcEmpty
+        return src
       return dst
     if typeof(src) == 'object'
       for e of src
         if e of special_merge
           dst[e] = special_merge[e](e, dst, src)
         else
-          dst[e] = recursive_merge(dst[e], src[e], special_merge)
+          dst[e] = recursive_merge(dst[e], src[e], special_merge, overwrite, emptyIfSrcEmpty)
     else
-      dst = src
+      if overwrite
+        dst = src
     return dst
   demandArraysMerge = (element, dstParent, srcParent) ->
-    console.log 'special', element, dstParent, srcParent
     newDst = []
     dst    = dstParent[element]
     src    = srcParent[element]
     alreadyPushed   = {}
     for demandDst in dst
-      console.log 'dst', demandDst.id
       for demandSrc in src
-        console.log 'src', demandSrc.id
         if demandDst.id == demandSrc.id
           newDst.push demandSrc
           alreadyPushed[demandDst.id] = true
-          console.log 'push'
           continue
       if not alreadyPushed[demandDst.id]
-        console.log 'notAvailInSrc, push'
         newDst.push demandDst
         alreadyPushed[demandDst.id] = true
     for demandSrc in src
-      console.log 'src', demandSrc.id
       if not alreadyPushed[demandSrc.id]
-        console.log 'push2'
         newDst.push demandSrc
     return newDst
 
-  $scope.results = recursive_merge(demands_default, demands, {demands: demandArraysMerge})[0]
+  $scope.results = recursive_merge(demands_default, demands, {demands: demandArraysMerge}, true, false)[0]
   console.log $scope.results
 
   longPolling.setFilter('its/demands')
@@ -68,17 +64,17 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     if demand?
       Demand.get({
         view:        'all'
-        key:         [p_id, demand.lang, id]
+        key:         [p_id, (if _id? then 'default' else demand.lang), id]
         group_level: 3
       }).then(
         (data) -> #Success
-          $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge})
+          $scope.results = recursive_merge($scope.results, data, {demands: demandArraysMerge}, true, true)
       )
   )
 
   $scope.hasVote = (demand) ->
     id   = demand.id
-    vote = $scope.results.vote
-
-    return vote.hasOwnProperty(id) and vote[id].hasOwnProperty(login.getName())
+    votes = $scope.results.votes
+    console.log "hasVote", id, login.getName(), votes.hasOwnProperty(id), votes[id].hasOwnProperty(login.getName())
+    return votes.hasOwnProperty(id) and votes[id].hasOwnProperty(login.getName())
 )
