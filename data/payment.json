@@ -1,9 +1,9 @@
 [
 {
-   "_id": "payment:its.2-0ae6",
+   "_id": "payment:its.1-0ae6",
    "project_id": "its",
    "amount": 2500,
-   "demand_id": "its.2",
+   "card_id": "its.1",
    "type": "payment"
 }
 ]
