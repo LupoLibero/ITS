@@ -18,7 +18,7 @@
         </p>
         <span ng-show="results.cost_estimate[card.id] && !results.payment[card.id]">{{ results.cost_estimate[card.id] }}€</span>
         <span ng-show="results.payment[card.id]">{{ results.payment[card.id] }}€/{{ results.cost_estimate[card.id] }}€</span>
-        <vote id="card._id" check="results.votes[card.id][login.getName()]"></vote>
+        <vote id="card.id" element="card" check="results.votes[card.id][login.getName()]"></vote>
       </div>
     </content>
     <footer ng-show="$first" ng-controller="NewCardCtrl">
