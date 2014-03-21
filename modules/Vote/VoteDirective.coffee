@@ -46,7 +46,7 @@ directive('vote', ($rootScope, login, Vote, notification)->
         if login.isNotConnect()
           scope.messageTooltip = "You need to be connected"
         else if login.hasRole('sponsor')
-          scope.messageTooltip = "Vote for this demand"
+          scope.messageTooltip = "Vote for this card"
         else
           scope.messageTooltip = "You need to be a sponsor"
       )

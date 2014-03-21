@@ -1,47 +1,19 @@
-﻿<h2>{{ project.name }}</h2>
-<subscribe class="pull-right" id="card._id"></subscribe>
-<lang-bar lang="actualLang" all-langs="languages" langs="available" class="pull-right"></lang-bar>
-
-<tabset>
-  <!-- Information page -->
-  <tab heading="Information" ng-click="loadInformation()">
-    <div ng-include="'partials/card/show/information.html'"></div>
-  </tab>
-
-  <!-- History page -->
-  <tab heading="History" ng-click="loadHistory()" active="historyTab">
-    <div ng-include="'partials/card/show/history.html'"></div>
-  </tab>
-</tabset>
-
-<div class="row">
-  <div class="col-xs-9">
-    <tabset>
-      <tab heading="Comments" ng-controller="CommentCtrl">
-        <!-- Comments -->
-        <div class="row" ng-repeat="comment in comments">
-          <div class="col-xs-2">
-            <p>{{ comment.created_at | date }}</p>
-            <p>{{ comment.author }}</p>
-          </div>
-          <div class="col-xs-10">{{ comment.message }}</div>
-
-          <div class="col-xs-10">
-            <button ng-click="votedown($index)" class="btn btn-link" style="color:red;">{{ comment.votedown }}<i class="glyphicon glyphicon-chevron-down"></i></button>
-            <button ng-click="voteup($index)" class="btn btn-link" style="color:green;"><i class="glyphicon glyphicon-chevron-up"></i>{{ comment.voteup }}</button>
-          </div>
-        </div>
-
-        <!-- Comment form -->
-        <div class="row">
-          <form ng-submit="addComment()">
-            <textarea ng-model="newComment.message"></textarea><br/>
-            <button type="submit">Submit</button>
-          </form>
-        </div>
-
-      </tab>
-    </tabset>
-  </div>
+﻿<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h3><edit-field type="input" ng-model="card.title" save="save()"><edit-field></h3>
 </div>
-
+<div class="modal-body">
+  <p>One fine body&hellip;</p>
+  <p>One fine body&hellip;</p>
+  <p>One fine body&hellip;</p>
+  <p>One fine body&hellip;</p>
+  <p>One fine body&hellip;</p>
+  <p>One fine body&hellip;</p>
+  <p>One fine body&hellip;</p>
+  <p>One fine body&hellip;</p>
+  <p>One fine body&hellip;</p>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  <button type="button" class="btn btn-primary">Save changes</button>
+</div>
