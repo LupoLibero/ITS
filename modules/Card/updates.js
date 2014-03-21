@@ -38,12 +38,12 @@ exports.card_update_field = function (doc, req) {
       throw({forbidden: 'Request incomplete'});
     }
     if (doc._rev !== form._rev) {
-      var vers = parseInt(form._rev.split('-')[0]);
+      var vers = parseInt(form._rev);
       for (key in doc.activity) {
         act = doc.activity[key];
         if(
           act[0] == form.element &&
-          parseInt(act[3].split('-')[0]) >= vers
+          parseInt(act[3]) >= vers
         ) {
           throw({forbidden: 'Already modify'});
         }

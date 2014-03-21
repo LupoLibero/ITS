@@ -1,7 +1,6 @@
 [
 {
    "_id": "payment:its.2-0ae6",
-   "_rev": "1-2d8bf03c5df46598351be072339112c0",
    "project_id": "its",
    "amount": 2500,
    "demand_id": "its.2",

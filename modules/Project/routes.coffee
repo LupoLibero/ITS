@@ -7,14 +7,14 @@ config( ($routeProvider)->
       name:        'project.list'
       resolve: {
         projects_default: (Project)->
-          return Project.view({
-            view: 'get'
+          return Project.all({
+            view: 'all'
             startkey: ['default', ""]
             endkey:   ['default', {}]
           })
         projects: (Project)->
-          return Project.view({
-            view: 'get'
+          return Project.all({
+            view: 'all'
             startkey: [window.navigator.language, ""]
             endkey:   [window.navigator.language, {}]
           })
@@ -27,12 +27,12 @@ config( ($routeProvider)->
       resolve: {
         project_default: (Project, $route) ->
           return Project.get({
-            key: ['default', "project-#{$route.current.params.project_id}"]
+            view: 'all'
+            key:  ['default', "project:#{$route.current.params.project_id}"]
           })
         project: (Project, $route) ->
-          return Project.view({
-            view: 'get'
-            key: [window.navigator.language, "project-#{$route.current.params.project_id}"]
+          return Project.all({
+            key: [window.navigator.language, "project:#{$route.current.params.project_id}"]
           })
         activities: (Activity, $route) ->
           id = $route.current.params.project_id

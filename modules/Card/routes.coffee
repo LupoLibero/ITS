@@ -27,7 +27,7 @@ config( ($routeProvider, $translateProvider)->
           })
         config: ($http, db, $q) ->
           defer = $q.defer()
-          $http.get(db.url+'/_design/'+db.name+'/_view/config', {
+          $http.get("#{db.url}/_design/#{db.name}/_view/config", {
             cache: true
           }).then(
             (data) -> #Success

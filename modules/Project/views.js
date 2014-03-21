@@ -1,4 +1,4 @@
-exports.project_get = {
+exports.project_all = {
   map: function(doc) {
     var translation = require('views/lib/translation').translation();
     if(doc.type && doc.type == 'project'){
