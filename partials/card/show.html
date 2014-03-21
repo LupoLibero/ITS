@@ -1,16 +1,16 @@
 ﻿<h2>{{ project.name }}</h2>
-<subscribe class="pull-right" id="demand._id"></subscribe>
+<subscribe class="pull-right" id="card._id"></subscribe>
 <lang-bar lang="actualLang" all-langs="languages" langs="available" class="pull-right"></lang-bar>
 
 <tabset>
   <!-- Information page -->
   <tab heading="Information" ng-click="loadInformation()">
-    <div ng-include="'partials/demand/show/information.html'"></div>
+    <div ng-include="'partials/card/show/information.html'"></div>
   </tab>
 
   <!-- History page -->
   <tab heading="History" ng-click="loadHistory()" active="historyTab">
-    <div ng-include="'partials/demand/show/history.html'"></div>
+    <div ng-include="'partials/card/show/history.html'"></div>
   </tab>
 </tabset>
 

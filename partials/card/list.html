@@ -1,0 +1,32 @@
+<div class="lists col-md-9">
+  <section class="list" ng-repeat="list in results.lists">
+    <header>
+      {{ list.name }}
+    </header>
+    <content>
+      <div ng-repeat="card in results.cards |list:results.list_id:list.id |orderBy:orderByRank()">
+        <header>
+          <h5>{{card.id}}</h5>
+          <span class="pull-right">{{results.rank[card.id]}}</span>
+        </header>
+        {{ card }}
+        <p>{{ results.list_id[card.id] }}{{ card.title }}</p>
+        <p>
+          <span style="background-color:red" ng-repeat="tag in card.tag_list">{{tag}}</span>
+          <span ng-show="results.cost_estimate[id] && !results.payment[card.id]">{{ results.cost_estimate[card.id] }}€</span>
+          <!--<div ng-show="results.cost_estimate[card.id] && results.payment[card.id]" class="col-sm-8" tooltip="{{ results.cost_estimate[card.id] }} €">
+            <progressbar class="progress-striped active" max="results.cost_estimate[card.id]" value="results.payment[card.id]" type="danger" ><i>{{ results.payment[card.id] }}€</i></progressbar>
+          </div>-->
+        </p>
+        <vote id="card._id" check="results.votes[card.id][login.getName()]"></vote>
+      </div>
+    </content>
+    <footer ng-show="$first" ng-controller="NewCardCtrl">
+      <button class="btn btn-link" ng-disabled="login.isNotConnect()" ng-hide="showForm" ng-click="addCard()">Add card</button>
+      <div ng-show="showForm">
+        <textarea ng-disabled="loading" focus="showForm" ng-model="card.title" ng-keypress="save($event)"></textarea>
+        <span us-spinner ng-show="loading"></span>
+      </div>
+    </footer>
+  </section>
+</div>
