@@ -1,0 +1,24 @@
+{
+   "_id": "demand:its.12",
+   "id": "its.12",
+   "project_id": "its",
+   "title": {
+       "fr": "youhou !! On dirait que ça marche",
+       "it": "tutto a posto !"
+   },
+   "type": "demand",
+   "author": "bobby",
+   "created_at": 1395395118856,
+   "votes": {
+       "bobby": true
+   },
+   "description": {
+       "fr": ""
+   },
+   "activity": [
+   ],
+   "list_id": "ideas",
+   "tag_list": [
+   ],
+   "init_lang": "fr"
+}

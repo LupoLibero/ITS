@@ -1,0 +1,8 @@
+{
+   "_id": "card_list:todo",
+   "name": {
+       "en": "ToDo"
+   },
+   "id": "todo",
+   "type": "card_list"
+}
