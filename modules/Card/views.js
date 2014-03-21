@@ -110,6 +110,9 @@ exports.card_all = {
       }
       return newDst;
     }
+    addingMerge = function (element, dstParent, srcParent) {
+      return (dstParent[element] || 0) + (srcParent[element] || 0);
+    }
 
     var idx, id, e, i, doc;
     var result = {
@@ -121,7 +124,7 @@ exports.card_all = {
         {id: 'doing'},
         {id: 'done'},
       ],*/
-      list: ['ideas', 'todo', 'estimated', 'funded', 'doing', 'done'],
+      lists: ['ideas', 'todo', 'estimated', 'funded', 'doing', 'done'],
       cards: [],
       cost_estimate: {},
       votes: {},
@@ -175,7 +178,7 @@ exports.card_all = {
             result.cost_estimate[doc.card_id] = doc.estimate;
             break;
           case 'payment':
-            result.payment[doc.card_id] = doc.amount;
+            result.payment[doc.card_id] = (result.payment[doc.card_id] || 0) + doc.amount;
             break;
           case 'vote':
             result.votes[doc.card_id] = result.votes[doc.card_id] || {};
@@ -196,6 +199,7 @@ exports.card_all = {
       for(idx = 0 ; idx < values.length ; idx++){
         result = recursive_merge(result, values[idx],{
           cards: mergeArrayById,
+          payment: addingMerge
         });
       }
     }

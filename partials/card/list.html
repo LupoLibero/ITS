@@ -4,19 +4,20 @@
       {{ list }}
     </header>
     <content>
-      <div ng-repeat="card in results.cards |list:results.list_id:list.id |orderBy:orderByRank()">
+      <div ng-repeat="card in results.cards |list:results.list_id:list |orderBy:orderByRank()">
         <header>
-          <h5>{{card.id}}</h5>
-          <span class="pull-right">{{results.rank[card.id]}}</span>
+          <span style="background-color:white">{{ card.id.split('.')[1] }}</span>
+          <span class="pull-right"><b>{{results.rank[card.id]}}</b></span>
         </header>
-        <p>{{ results.list_id[card.id] }}{{ card.title }}</p>
+        <p>{{ card.title }}</p>
         <p>
-          <span style="background-color:red" ng-repeat="tag in card.tag_list">{{ tag }}</span>
-          <span ng-show="results.cost_estimate[id] && !results.payment[card.id]">{{ results.cost_estimate[card.id] }}€</span>
+          <span style="background-color:red;color:white" ng-repeat="tag in card.tag_list">{{ tag }}</span>
           <!--<div ng-show="results.cost_estimate[card.id] && results.payment[card.id]" class="col-sm-8" tooltip="{{ results.cost_estimate[card.id] }} €">
             <progressbar class="progress-striped active" max="results.cost_estimate[card.id]" value="results.payment[card.id]" type="danger" ><i>{{ results.payment[card.id] }}€</i></progressbar>
           </div>-->
         </p>
+        <span ng-show="results.cost_estimate[card.id] && !results.payment[card.id]">{{ results.cost_estimate[card.id] }}€</span>
+        <span ng-show="results.payment[card.id]">{{ results.payment[card.id] }}€/{{ results.cost_estimate[card.id] }}€</span>
         <vote id="card._id" check="results.votes[card.id][login.getName()]"></vote>
       </div>
     </content>
