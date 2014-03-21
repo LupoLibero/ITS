@@ -25,7 +25,7 @@
     <footer ng-show="$first" ng-controller="NewDemandCtrl">
       <a ng-hide="showForm" ng-click="addDemand()">Add demand</a>
       <div ng-show="showForm">
-        <textarea ng-model="demand.title" ng-keypress="save($event)"></textarea>
+        <textarea focus="showForm" ng-model="demand.title" ng-keypress="save($event)"></textarea>
       </div>
     </footer>
   </section>
