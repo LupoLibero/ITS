@@ -1,9 +1,0 @@
-{
-   "_id": "card_list:doing",
-   "name": {
-       "en": "Doing",
-       "fr": "En cours"
-   },
-   "id": "doing",
-   "type": "card_list"
-}
