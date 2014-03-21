@@ -15,20 +15,13 @@ factory('login', ($q, User, $rootScope, $timeout) ->
     signIn: (user, password) ->
       defer = $q.defer()
       _this = this
-      User.getDoc({
-        id: user
-      }).then(
-        (data) -> #Success
-          _this.session.login(user, password, (err, response) ->
-            if not err
-              _this.actualUser = response
-              $rootScope.$broadcast('SignIn', _this.getName() )
-              $rootScope.$broadcast('SessionChanged', _this.getName())
-              defer.resolve(response)
-            else
-              defer.reject(err)
-          )
-        ,(err) -> #Error
+      this.session.login(user, password, (err, response) ->
+        if not err
+          _this.actualUser = response
+          $rootScope.$broadcast('SignIn', _this.getName() )
+          $rootScope.$broadcast('SessionChanged', _this.getName())
+          defer.resolve(response)
+        else
           defer.reject(err)
       )
       return defer.promise
@@ -37,28 +30,15 @@ factory('login', ($q, User, $rootScope, $timeout) ->
       defer = $q.defer()
       _this = this
       # Create the user inside _users db
-      this.users.create(user.name, user.password, {}, (err, response) ->
+      this.users.create(user.name, user.password, {email: user.email}, (err, response) ->
         if err
           defer.reject(err)
         else
-          # Create the user inside the db of the project
-          User.update({
-            _id:    ''
-            update: 'create'
-            name:   user.name
-            email:  user.email
-          }).then(
+          _this.signIn(user.name, user.password).then(
             (data) -> #Success
-              # Sign In the user
-              _this.signIn(user.name, user.password).then(
-                (data) -> #Success
-                  defer.resolve(data)
-                ,(err) -> #Error
-                  defer.reject(err)
-              )
-
+              defer.resolve(data)
             ,(err) -> #Error
-              defer.resolve(err)
+              defer.reject(err)
           )
       )
       return defer.promise
@@ -118,6 +98,7 @@ factory('login', ($q, User, $rootScope, $timeout) ->
 
   $rootScope.$on('$routeChangeSuccess', ->
     $timeout( ->
+      $rootScope.$broadcast('SessionChanged', login.getName())
       if login.isConnect()
         $rootScope.$broadcast('SignIn', login.getName())
       else

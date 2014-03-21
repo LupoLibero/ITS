@@ -9,7 +9,6 @@
           <h5>{{demand.id}}</h5>
           <span class="pull-right">{{results.rank[demand.id]}}</span>
         </header>
-        {{ demand }}
         <p>{{ results.list_id[demand.id] }}{{ demand.title }}</p>
         <p>
           <span style="background-color:red" ng-repeat="tag in demand.tag_list">{{tag}}</span>

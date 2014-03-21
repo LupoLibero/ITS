@@ -32,7 +32,7 @@ directive('vote', ($rootScope, login, Vote, notification)->
         else
           promise = Vote.update({
             update: 'delete'
-            _id:    "vote:#{scope.id}-#{scope.element}-#{login.getName()}"
+            _id:    "vote:#{scope.element}:#{scope.id}-#{login.getName()}"
           })
 
         promise.then(

@@ -8,8 +8,8 @@ exports.vote_create = function(doc, req) {
     doc.voter        = author;
     doc.vote         = true;
     doc.id           = form.element+':'+form.object_id+'-'+author;
-    doc.voted_doc_id = form.object_id;
-    doc._id          = doc.type +':'+ doc.id;
+    doc.voted_doc_id = form.element+':'+form.object_id;
+    doc._id          = doc.type+':'+doc.id;
 
     return [doc, 'ok'];
   }
