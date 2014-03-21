@@ -24,7 +24,7 @@ factory('longPolling', (db, $http, $rootScope, $q) ->
         (data) -> #Success
           if data.data.hasOwnProperty('last_seq')
             last = data.data.last_seq
-
+          console.log "changeObject", typeof data.data.results, data.data.results
           if typeof data.data.results == 'object'
             for change in data.data.results
               $rootScope.$broadcast("Changes", change.id)
@@ -33,6 +33,7 @@ factory('longPolling', (db, $http, $rootScope, $q) ->
             _this.changes(last)
 
         ,(err) -> #Error
+          console.log 'changeError', err
           _this.changes(last)
       )
   }

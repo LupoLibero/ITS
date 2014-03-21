@@ -65,12 +65,11 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, project, $moda
 
   $scope.$on('Changes', ($event, _id)->
     console.log _id
-    type  = _id.split('-')[0]
-    if type != 'card'
-      _id = _id.split('--')[1]
-    id   = _id.split('-')[1]
-    p_id = id.split('-')[0]
+    type      = _id.split(':')[0]
+    id        = _id.split(':')[-1..-1][0].split('-')[0]
+    projectId = id.split('.')[0]
 
+    console.log type, _id, id, projectId
     card = null
     for piece in $scope.results.cards
       if piece.id == id
@@ -78,9 +77,9 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, project, $moda
         break
 
     if card?
-      Demand.get({
+      Card.get({
         view:        'all'
-        key:         [p_id, (if type != 'card' then 'default' else card.lang), id]
+        key:         [projectId, (if type != 'card' then 'default' else card.lang), id]
         group_level: 3
       }).then(
         (data) -> #Success
