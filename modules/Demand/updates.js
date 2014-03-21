@@ -10,7 +10,7 @@ exports.demand_create = function(doc, req) {
     throw({forbidden: 'New demand only'});
   } else {
     form.type        = 'demand';
-    form._id         = form.type + '-' + form.id;
+    form._id         = form.type + ':' + form.id;
     form.author      = req.userCtx.name;
     form.created_at  = new Date().getTime();
     form.votes       = {};

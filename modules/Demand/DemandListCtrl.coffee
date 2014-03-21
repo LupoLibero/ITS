@@ -7,15 +7,11 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     if !dst
       return src
     if !src
-      #console.log 'src empty', dst, src, emptyIfSrcEmpty
       if emptyIfSrcEmpty
-        #console.log 'so empty dst'
         return src
       return dst
     if typeof(src) == 'object' and typeof src == 'object'
       for e of src
-        if e == "votes"
-          #console.log e, dst, src
         if e of special_merge
           dst[e] = special_merge[e](e, dst, src)
         else
@@ -46,18 +42,14 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
     newDst = {}
     dst    = dstParent[element]
     src    = srcParent[element]
-    #console.log "mergeVotes", dst, src
     for demandId, dstVotes of dst
-      #console.log demandId, dstVotes
       if demandId of src
         newDst[demandId] = {}
         for voter, vote of dstVotes
-          #console.log "dst", voter, vote
           if voter not in src[demandId]
             continue
           newDst[demandId][voter] = vote
         for voter, vote of src[demandId]
-          #console.log "src", voter, vote
           newDst[demandId][voter] = vote
       else
         newDst[demandId] = dstVotes
@@ -98,39 +90,4 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
           }, true, true)
       )
   )
-
-  $scope.addingComment = ->
-    $scope.adding = true
-
-  $scope.addDemand = ($event) ->
-    if $event.key == 'Enter'
-      $event.preventDefault()
-
-      Demand.view({
-        view: 'ids'
-        key:  project.id
-      }).then(
-        (data) -> #Success
-          # If it's the first demand of the project
-          if data.length == 0
-            count = 1
-          else
-            count = data[0].max + 1
-
-          id = project.id+'-'+count
-          # Create Demand
-          Demand.update({
-            update: 'create'
-
-            id:          id
-            project_id:  project.id
-            title:       $scope.newDemand
-            lang:        window.navigator.language
-          }).then(
-            (data) -> #Success
-              $scope.newDemand = ''
-              $scope.adding    = false
-              console.log data
-          )
-      )
 )

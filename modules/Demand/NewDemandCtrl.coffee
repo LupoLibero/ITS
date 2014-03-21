@@ -1,16 +1,21 @@
 angular.module('demand').
-controller('NewDemandCtrl', ($modalInstance, $scope, $route, Demand, login) ->
-
+controller('NewDemandCtrl', ($scope, $route, Demand, notification) ->
   # Initialize
-  project = $route.current.locals.project
-  $scope.categories = $route.current.locals.config[0].value
+  project      = $route.current.locals.project
   $scope.demand=
-    title:     ''
-    category:  ''
+    title: ''
 
-  $scope.save = ->
-    if $scope.demand.title == '' or $scope.demand.category == ''
-      $scope.notif.setAlert('You need to fill both fields', 'danger')
+  $scope.addDemand = ->
+    $scope.showForm = true
+
+  $scope.save = ($event) ->
+    if $event.key != 'Enter'
+      return false
+
+    $event.preventDefault()
+
+    if $scope.demand.title == ''
+      notification.setAlert('You need to fill the field', 'danger')
       return false
 
     Demand.view({
@@ -24,7 +29,7 @@ controller('NewDemandCtrl', ($modalInstance, $scope, $route, Demand, login) ->
         else
           count = data[0].max + 1
 
-        id = project.id.toUpperCase() + '#' + count
+        id = project.id+'.'+count
         # Create Demand
         Demand.update({
           update: 'create'
@@ -32,24 +37,11 @@ controller('NewDemandCtrl', ($modalInstance, $scope, $route, Demand, login) ->
           id:          id
           project_id:  project.id
           title:       $scope.demand.title
-          category:    $scope.demand.category
           lang:        window.navigator.language
         }).then(
           (data) -> #Success
-            data.id       = id
-            data.title    = $scope.demand.title
-            data.category = $scope.demand.category
-            data.rank     = 1
-            data.status   = 'draft'
-            data.votes    = {}
-
-            delete data.newrev
-            delete data.ok
-            data.votes[login.getName()] = true
-            $modalInstance.close(data)
+            $scope.showForm     = false
+            $scope.demand.title = ''
         )
     )
-
-  $scope.cancel = ->
-    $modalInstance.dismiss('cancel')
 )

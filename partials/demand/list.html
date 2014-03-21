@@ -22,10 +22,10 @@
         <vote id="demand._id" check="results.votes[demand.id][login.getName()]"></vote>
       </div>
     </content>
-    <footer ng-show="$first">
-      <a ng-hide="adding" ng-click="addingComment()">Add demand</a>
-      <div ng-show="adding">
-        <textarea ng-model="newDemand" ng-keypress="addDemand($event)"></textarea>
+    <footer ng-show="$first" ng-controller="NewDemandCtrl">
+      <a ng-hide="showForm" ng-click="addDemand()">Add demand</a>
+      <div ng-show="showForm">
+        <textarea ng-model="demand.title" ng-keypress="save($event)"></textarea>
       </div>
     </footer>
   </section>
