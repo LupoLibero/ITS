@@ -22,9 +22,10 @@
       </div>
     </content>
     <footer ng-show="$first" ng-controller="NewDemandCtrl">
-      <a ng-hide="showForm" ng-click="addDemand()">Add demand</a>
+      <button class="btn btn-link" ng-disabled="login.isNotConnect()" ng-hide="showForm" ng-click="addDemand()">Add demand</button>
       <div ng-show="showForm">
-        <textarea focus="showForm" ng-model="demand.title" ng-keypress="save($event)"></textarea>
+        <textarea ng-disabled="loading" focus="showForm" ng-model="demand.title" ng-keypress="save($event)"></textarea>
+        <span us-spinner ng-show="loading"></span>
       </div>
     </footer>
   </section>
