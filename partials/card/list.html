@@ -1,7 +1,7 @@
 <div class="lists col-md-9">
   <section class="list" ng-repeat="list in results.lists">
     <header>
-      {{ list.name }}
+      {{ list }}
     </header>
     <content>
       <div ng-repeat="card in results.cards |list:results.list_id:list.id |orderBy:orderByRank()">

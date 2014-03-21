@@ -5,7 +5,7 @@ exports.card_all = {
 
     if (doc.type) {
       switch(doc.type) {
-        case 'card_list':
+        /*case 'card_list':
           translation.emitTranslatedDoc(
             [doc.project_id, translation._keyTag],
             {
@@ -15,7 +15,7 @@ exports.card_all = {
             },
             {name: true}
           );
-          break;
+          break;*/
         case 'card':
           translation.emitTranslatedDoc(
             [doc.project_id, translation._keyTag, doc.id],
@@ -39,12 +39,12 @@ exports.card_all = {
           emit([doc.project_id, 'default', doc.card_id], doc);
           break;
         case 'vote':
-          if (doc.voted_doc_id.split('-')[0] == 'card') {
+          if (doc.voted_doc_id.split(':')[0] == 'card') {
             (function() {
-              var cardId = doc.voted_doc_id.split('-')[1];
+              var cardId = doc.voted_doc_id.split(':')[2];
               emit(
                 [
-                  cardId.split('#')[0].toLowerCase(),
+                  cardId.split('.')[0],
                   "default",
                   cardId
                 ],
@@ -113,14 +113,15 @@ exports.card_all = {
 
     var idx, id, e, i, doc;
     var result = {
-      lists: [
+      /*lists: [
         {id: 'ideas'},
         {id: 'todo'},
         {id: 'estimated'},
         {id: 'funded'},
         {id: 'doing'},
         {id: 'done'},
-      ],
+      ],*/
+      list: ['ideas', 'todo', 'estimated', 'funded', 'doing', 'done'],
       cards: [],
       cost_estimate: {},
       votes: {},
@@ -163,25 +164,22 @@ exports.card_all = {
       for(idx = 0 ; idx < values.length ; idx++){
         doc = values[idx];
         switch(doc.type) {
-          case 'card_list':
+          /*case 'card_list':
             for (var id in result.lists) {
               if (doc.id == result.lists[id].id) {
                 result.lists[id] = recursive_merge(result.lists[id], doc, {});
               }
             }
-            break;
+            break;*/
           case 'cost_estimate':
             result.cost_estimate[doc.card_id] = doc.estimate;
-            //applyWorkflowRules(doc.card_id);
             break;
           case 'payment':
             result.payment[doc.card_id] = doc.amount;
-            //applyWorkflowRules(doc.card_id);
             break;
           case 'vote':
             result.votes[doc.card_id] = result.votes[doc.card_id] || {};
             result.votes[doc.card_id][doc.voter] = doc.vote;
-            //recalculateRank(doc.card_id);
             break;
           case 'card':
             i = result.cards.push(doc);
@@ -190,8 +188,6 @@ exports.card_all = {
             result.payment[doc.id] = result.payment[doc.id] || 0;
             result.rank[doc.id] = result.rank[doc.id] || 0;
             result.votes[doc.id] = result.votes[doc.id] || {};
-            //recalculateRank(doc.id);
-            //applyWorkflowRules(doc.id);
             break;
         }
       }
@@ -200,7 +196,6 @@ exports.card_all = {
       for(idx = 0 ; idx < values.length ; idx++){
         result = recursive_merge(result, values[idx],{
           cards: mergeArrayById,
-          lists: mergeArrayById
         });
       }
     }
