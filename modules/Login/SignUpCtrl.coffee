@@ -3,8 +3,8 @@ controller('SignUpCtrl', ($scope, notification, $modalInstance, login) ->
   $scope.user=
     pseudo:        ""
     password:      ""
+    email:         ""
     passwordconf:  ""
-  $scope.alert= {}
 
   # On click on SignUp
   $scope.signup = ->
@@ -25,7 +25,6 @@ controller('SignUpCtrl', ($scope, notification, $modalInstance, login) ->
       (data) -> #Sucess
         $modalInstance.close(data)
       ,(err) -> #Error
-        console.log err
         $scope.notif.setAlert('This username is already taken!', 'danger')
     )
 
