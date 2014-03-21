@@ -12,7 +12,8 @@
   border: 1px solid black;
   height: 100%;
   background-color: grey;
-  text-align: center
+  text-align: center;
+  overflow-y: scroll;
 }
 .list>header {
   text-align: center;
@@ -21,9 +22,6 @@
   padding: 3px 10px;
   text-transform: capitalize;
   background-color: lightgrey;
-}
-.list>content {
-  overflow-y: scroll;
 }
 .list>footer {
   bottom: 0;

@@ -12,6 +12,7 @@ controller('NewDemandCtrl', ($scope, $route, Demand, notification) ->
     if $event.key != 'Enter'
       return false
 
+    $scope.loading = true
     $event.preventDefault()
 
     if $scope.demand.title == ''
@@ -41,7 +42,10 @@ controller('NewDemandCtrl', ($scope, $route, Demand, notification) ->
         }).then(
           (data) -> #Success
             $scope.showForm     = false
+            $scope.loading      = false
             $scope.demand.title = ''
+          ,(err) -> #Error
+            $scope.loading      = false
         )
     )
 )
