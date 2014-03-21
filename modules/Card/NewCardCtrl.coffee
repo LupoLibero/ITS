@@ -1,11 +1,11 @@
-angular.module('demand').
-controller('NewDemandCtrl', ($scope, $route, Demand, notification) ->
+angular.module('card').
+controller('NewCardCtrl', ($scope, $route, Card, notification) ->
   # Initialize
   project      = $route.current.locals.project
-  $scope.demand=
+  $scope.card=
     title: ''
 
-  $scope.addDemand = ->
+  $scope.addCard = ->
     $scope.showForm = true
 
   $scope.save = ($event) ->
@@ -15,11 +15,11 @@ controller('NewDemandCtrl', ($scope, $route, Demand, notification) ->
     $scope.loading = true
     $event.preventDefault()
 
-    if $scope.demand.title == ''
+    if $scope.card.title == ''
       notification.setAlert('You need to fill the field', 'danger')
       return false
 
-    Demand.view({
+    Card.view({
       view: 'ids'
       key:  project.id
     }).then(
@@ -32,18 +32,18 @@ controller('NewDemandCtrl', ($scope, $route, Demand, notification) ->
 
         id = project.id+'.'+count
         # Create Demand
-        Demand.update({
+        Card.update({
           update: 'create'
 
           id:          id
           project_id:  project.id
-          title:       $scope.demand.title
+          title:       $scope.card.title
           lang:        window.navigator.language
         }).then(
           (data) -> #Success
             $scope.showForm     = false
             $scope.loading      = false
-            $scope.demand.title = ''
+            $scope.card.title = ''
           ,(err) -> #Error
             $scope.loading      = false
         )

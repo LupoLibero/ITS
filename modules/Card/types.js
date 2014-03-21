@@ -5,9 +5,9 @@ var permissions       = require('couchtypes/permissions');
 var _                 = require('underscore');
 var translatableField = require('../Translation/fields').translatableField;
 var activityField     = require('../Activity/fields').activityField;
-var votingField        = require('../Voting/fields').votingField;
+var votingField        = require('../Vote/fields').votingField;
 
-exports.demand = new Type('demand', {
+exports.card = new Type('card', {
   permissions: {
     add: permissions.loggedIn(),
     update: permissions.loggedIn(),
@@ -41,7 +41,7 @@ exports.demand = new Type('demand', {
 });
 
 
-exports.demand_list = new Type('demand_list', {
+exports.card_list = new Type('card_list', {
   permissions: {
     add: permissions.hasRole('_admin'),
     update: permissions.hasRole('_admin'),
@@ -65,7 +65,7 @@ exports.cost_estimate = new Type('cost_estimate', {
     project_id: fields.string(),
     estimate: fields.number(),
     //id: fields.string(),
-    demand_id: fields.string(),
+    card_id: fields.string(),
   }
 });
 
@@ -78,6 +78,6 @@ exports.payment = new Type('payment', {
   fields: {
     project_id: fields.string(),
     amount: fields.number(),
-    demand_id: fields.string(),
+    card_id: fields.string(),
   }
 });

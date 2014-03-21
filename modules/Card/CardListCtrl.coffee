@@ -1,5 +1,5 @@
-angular.module('demand').
-controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal, login, config, Demand, longPolling) ->
+angular.module('card').
+controller('CardListCtrl', ($scope, cards_default, cards, project, $modal, login, config, Card, longPolling) ->
   $scope.login      = login
   $scope.project    = project
 
@@ -54,9 +54,9 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       else
         newDst[demandId] = dstVotes
     return newDst
-  $scope.results = recursive_merge(demands_default, demands, {demands: mergeArrayById}, true, false)[0]
+  $scope.results = recursive_merge(cards_default, cards, {cards: mergeArrayById}, true, false)[0]
 
-  longPolling.setFilter('its/demands')
+  longPolling.setFilter('its/cards')
   longPolling.start()
 
   $scope.orderByRank = () ->
@@ -64,28 +64,28 @@ controller('DemandListCtrl', ($scope, demands_default, demands, project, $modal,
       -1*$scope.results.rank[doc.id]
 
   $scope.$on('Changes', ($event, _id)->
+    console.log _id
     type  = _id.split('-')[0]
-    if type != 'demand'
+    if type != 'card'
       _id = _id.split('--')[1]
     id   = _id.split('-')[1]
     p_id = id.split('-')[0]
 
-    demand = null
-    for piece in $scope.results.demands
+    card = null
+    for piece in $scope.results.cards
       if piece.id == id
-        demand = piece
+        card = piece
         break
 
-    if demand?
+    if card?
       Demand.get({
         view:        'all'
-        key:         [p_id, (if type != 'demand' then 'default' else demand.lang), id]
+        key:         [p_id, (if type != 'card' then 'default' else card.lang), id]
         group_level: 3
       }).then(
         (data) -> #Success
-          console.log "data", data
           $scope.results = recursive_merge($scope.results, data, {
-            demands: mergeArrayById
+            cards: mergeArrayById
             votes: mergeVotes
           }, true, true)
       )

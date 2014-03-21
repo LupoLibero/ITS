@@ -9,7 +9,7 @@ angular.module('its', [
   'ngCouchDB'
   'notification'
   'translation'
-  'demand'
+  'card'
   'mailer'
   'ngStorage'
 ])
