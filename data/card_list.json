@@ -11,7 +11,7 @@
 {
    "_id": "card_list:done",
    "name": {
-       "en": "Done",
+       "en": "Done"
    },
    "id": "done",
    "type": "card_list"
