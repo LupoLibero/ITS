@@ -3,7 +3,7 @@ var fields      = require('couchtypes/fields');
 var widgets     = require('couchtypes/widgets');
 var permissions = require('couchtypes/permissions');
 var _           = require('underscore');
-var votingField = require('../Voting/fields').votingField;
+var votingField = require('../Vote/fields').votingField;
 
 
 exports.authorCantVote = function() {

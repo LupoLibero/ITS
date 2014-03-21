@@ -3,14 +3,16 @@ directive('vote', ($rootScope, login, Vote, notification)->
   return {
     restrict: 'E'
     scope: {
-      id:    '='
-      check: '='
+      id:      '='
+      check:   '='
+      element: '@'
     }
     template: '<span>'+
                 '<button popover="{{ messageTooltip }}" popover-trigger="mouseenter"'+
                       ' ng-click="vote()" ng-hide="loading" ng-class="{active: check}" class="btn btn-default">+1</button>'+
                 '<span us-spinner="{radius:6,width:4,length:6,lines:10}" ng-show="loading"></span>'+
               '</span>'
+
     link:  (scope, element, attrs) ->
       scope.loading = false
 
@@ -25,11 +27,12 @@ directive('vote', ($rootScope, login, Vote, notification)->
           promise = Vote.update({
             update:    'create'
             object_id: scope.id
+            element:   scope.element
           })
         else
           promise = Vote.update({
             update: 'delete'
-            _id:    "vote--#{scope.id}--#{login.getName()}"
+            _id:    "vote:#{scope.id}-#{scope.element}-#{login.getName()}"
           })
 
         promise.then(

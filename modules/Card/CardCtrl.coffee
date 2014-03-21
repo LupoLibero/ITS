@@ -1,5 +1,5 @@
-angular.module('demand').
-controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login, url) ->
+angular.module('card').
+controller('CardCtrl', ($scope, $route, Activity, $location, Card, $q, login, url) ->
   $scope.project     = $route.current.locals.project
   $scope.categories  = $route.current.locals.config[0].value
   $scope.statuses    = $route.current.locals.config[2].value
@@ -8,14 +8,14 @@ controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login
   $scope.login = login
 
   # If a traduction is available
-  if $route.current.locals.demand.length != 0
-    $scope.demand = $route.current.locals.demand[0]
+  if $route.current.locals.card.length != 0
+    $scope.card = $route.current.locals.card[0]
   else
-    $scope.demand = $route.current.locals.demand_default
+    $scope.card = $route.current.locals.card_default
 
   # Languages
-  $scope.actualLang = $scope.demand.lang
-  $scope.available  = angular.copy($scope.demand.avail_langs)
+  $scope.actualLang = $scope.card.lang
+  $scope.available  = angular.copy($scope.card.avail_langs)
   $scope.languages  = $route.current.locals.config[1].value
 
   # On select new language in the langbar
@@ -28,12 +28,12 @@ controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login
   $scope.$on('ChangeLanguage', ($event, key) ->
     $scope.actualLang = key
 
-    Demand.get({
-      key: [$scope.demand.id, key]
+    Card.get({
+      key: [$scope.card.id, key]
     }).then(
       (data) -> #Success
         $scope.$broadcast('EditFieldChangeLanguage', key)
-        $scope.demand     = data
+        $scope.card = data
       ,(err) -> #Error
         $scope.$broadcast('EditFieldTranslationOn', key)
     )
@@ -65,19 +65,19 @@ controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login
   $scope.change = (field) ->
     defer = $q.defer()
     $scope.startLoading(field)
-    Demand.update({
+    Card.update({
       update:  'update_field'
-      id:      $scope.demand.id
+      id:      $scope.card.id
       element: field
-      value:   $scope.demand[field]
+      value:   $scope.card[field]
       lang:    $scope.actualLang
-      _rev:    $scope.demand._rev
+      _rev:    $scope.card._rev
     }).then(
       (data) -> #Success
         $scope.updated_at  = new Date().getTime()
         defer.resolve(data)
         $scope.endLoading(field)
-        $route.current.locals.demand[field] = $scope.demand[field]
+        $route.current.locals.card[field] = $scope.card[field]
       ,(err) -> #Error
         console.log "Conflict"
         defer.reject(err)
@@ -96,15 +96,15 @@ controller('DemandCtrl', ($scope, $route, Activity, $location, Demand, $q, login
   $scope.historyTab = $route.current.params.onglet == 'history'
 
   $scope.loadInformation = ->
-    url.redirect('demand.show', {
+    url.redirect('card.show', {
       project_id: $scope.project.id
-      demand_id:  $scope.demand.id
+      card_id:    $scope.card.id
     })
 
   $scope.loadHistory = ->
-    url.redirect('demand.show', {
+    url.redirect('card.show', {
       project_id: $scope.project.id
-      demand_id:  $scope.demand.id
+      card_id:    $scope.card.id
       onglet:     'history'
     })
 )

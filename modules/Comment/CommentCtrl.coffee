@@ -21,13 +21,13 @@ controller('CommentCtrl', ($scope, $route, Comment, login) ->
 
   # Create a new comment with the form
   $scope.addComment = ->
-    console.log $route.current.locals.demand[0]._id
+    console.log $route.current.locals.card[0]._id
     if $scope.newComment.message != ''
       Comment.update({
         update: 'create'
 
         message:     $scope.newComment.message
-        parent_id:   $route.current.locals.demand[0]._id
+        parent_id:   $route.current.locals.card[0]._id
       }).then(
         (data) -> #Success
           data.votes    = {}

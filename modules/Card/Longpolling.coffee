@@ -1,4 +1,4 @@
-angular.module('demand').
+angular.module('card').
 factory('longPolling', (db, $http, $rootScope, $q) ->
   return {
     filter: ''

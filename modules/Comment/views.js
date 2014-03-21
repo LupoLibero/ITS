@@ -1,4 +1,3 @@
-
 exports.comment_all = {
   map: function(doc) {
     if(doc.type == 'comment') {

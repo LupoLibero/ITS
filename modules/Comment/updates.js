@@ -1,4 +1,3 @@
-
 exports.comment_create = function(doc, req) {
   var form = JSON.parse(req.body);
   if(doc === null) {

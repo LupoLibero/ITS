@@ -3,13 +3,13 @@ var fields              = require('lib/types');
 var registerTranslation = require('../Translation/utils').registerTranslation;
 var updateActivity      = require('../Activity/utils').updateActivity;
 
-exports.demand_create = function(doc, req) {
+exports.card_create = function(doc, req) {
   var attr;
   var form = JSON.parse(req.body);
   if(doc !== null){
-    throw({forbidden: 'New demand only'});
+    throw({forbidden: 'New Card only'});
   } else {
-    form.type        = 'demand';
+    form.type        = 'card';
     form._id         = form.type + ':' + form.id;
     form.author      = req.userCtx.name;
     form.created_at  = new Date().getTime();
@@ -19,7 +19,7 @@ exports.demand_create = function(doc, req) {
     form.list_id     = 'ideas';
     form.tag_list    = [];
     form.init_lang   = form.lang;
-    registerTranslation(form, form, 'demand', 'title', form.lang);
+    registerTranslation(form, form, 'card', 'title', form.lang);
     // Add the vote of the creator
     form.description[form.lang]  = '';
     form.votes[req.userCtx.name] = true;
@@ -28,7 +28,7 @@ exports.demand_create = function(doc, req) {
   }
 }
 
-exports.demand_update_field = function (doc, req) {
+exports.card_update_field = function (doc, req) {
   var form = JSON.parse(req.body);
   if (doc !== null) {
     if (!form.hasOwnProperty('element') ||
@@ -52,13 +52,13 @@ exports.demand_update_field = function (doc, req) {
 
     doc.updated_at = new Date().getTime();
     updateActivity(doc, req, form.element, form._rev);
-    if (fields['demand'].fields[form.element].translatable) {
-      registerTranslation(doc, form, 'demand', form.element, form.lang);
+    if (fields['card'].fields[form.element].translatable) {
+      registerTranslation(doc, form, 'card', form.element, form.lang);
     } else {
       doc[form.element] = form.value;
     }
 
     return [doc, 'ok'];
   }
-  throw({forbidden: 'Not for demand creation'});
+  throw({forbidden: 'Not for card creation'});
 }

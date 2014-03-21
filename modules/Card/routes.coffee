@@ -1,24 +1,24 @@
-angular.module('demand').
+angular.module('card').
 config( ($routeProvider, $translateProvider)->
   $routeProvider
-    .when('/project/:project_id/demand', {
-      templateUrl: 'partials/demand/list.html'
-      controller:  'DemandListCtrl'
-      name:        'demand.list'
+    .when('/project/:project_id/card', {
+      templateUrl: 'partials/card/list.html'
+      controller:  'CardListCtrl'
+      name:        'card.list'
       resolve: {
-        demands_default: (Demand, $route) ->
-          id = $route.current.params.project_id
-          return Demand.all({
-            startkey:    [id, 'default']
-            endkey:      [id, 'default', {}]
+        cards_default: (Card, $route) ->
+          project_id = $route.current.params.project_id
+          return Card.all({
+            startkey:    [project_id, 'default']
+            endkey:      [project_id, 'default', {}]
             group_level: 2
           })
-        demands: (Demand, $route) ->
-          lang = window.navigator.language
-          id   = $route.current.params.project_id
-          return Demand.all({
-            startkey:    [id, lang]
-            endkey:      [id, lang, {}]
+        cards: (Card, $route) ->
+          language   = window.navigator.language
+          project_id = $route.current.params.project_id
+          return Card.all({
+            startkey:    [project_id, language]
+            endkey:      [project_id, language, {}]
             group_level: 2
           })
         project: (Project, $route) ->
@@ -39,26 +39,26 @@ config( ($routeProvider, $translateProvider)->
           return defer.promise
       }
     })
-    .when('/project/:project_id/demand/:demand_id/:onglet?', {
-      templateUrl: 'partials/demand/show.html'
-      controller:  'DemandCtrl'
-      name:        'demand.show'
+    .when('/project/:project_id/card/:card_id/:onglet?', {
+      templateUrl: 'partials/card/show.html'
+      controller:  'CardCtrl'
+      name:        'card.show'
       resolve: {
-        demand_default: (Demand, $route) ->
-          return Demand.get({
-            key: [$route.current.params.demand_id, 'default']
+        card_default: (Card, $route) ->
+          return Card.get({
+            key: [$route.current.params.card_id, 'default']
           })
-        demand: (Demand, $route) ->
-          return Demand.view({
+        card: (Card, $route) ->
+          return Card.view({
             view: 'get'
-            key:  [$route.current.params.demand_id, window.navigator.language]
+            key:  [$route.current.params.card_id, window.navigator.language]
           })
         project: (Project, $route) ->
           return Project.getDoc({
             id: $route.current.params.project_id
           })
         comments: (Comment, $route) ->
-          id = "demand-#{$route.current.params.demand_id}"
+          id = "card-#{$route.current.params.card_id}"
           return Comment.all({
             endkey:   [id, 0]
             startkey: [id, {}]
@@ -79,7 +79,7 @@ config( ($routeProvider, $translateProvider)->
         histories: ($q, Activity, $route) ->
           if not $route.current.params.onglet
             return false
-          id = "demand-#{$route.current.params.demand_id}"
+          id = "card-#{$route.current.params.card_id}"
           return Activity.all({
             descending: true
             startkey: [id, {}]
