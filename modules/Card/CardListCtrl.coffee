@@ -1,5 +1,5 @@
 angular.module('card').
-controller('CardListCtrl', ($scope, $route, cards_default, cards, project, $modal, login, config, Card, longPolling) ->
+controller('CardListCtrl', ($scope, $route, $location, cards_default, cards, project, $modal, login, config, Card, longPolling, url) ->
   $scope.login      = login
   $scope.project    = project
 
@@ -91,7 +91,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, project, $moda
   )
 
   if $route.current.params.card_num != undefined
-    $modal.open({
+    modal = $modal.open({
       templateUrl: 'partials/card/show.html'
       controller:  'CardCtrl'
       resolve:
@@ -100,4 +100,9 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, project, $moda
         card: ->
           return $route.current.locals.card
     })
+    modal.result.then((->), () ->
+      route = url.get('card.list', {
+        project_id: 'its'})
+      $location.path(route)
+    )
 )
