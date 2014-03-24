@@ -120,6 +120,13 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
               view: 'get'
               key: ["#{project_id}.#{card_num}", 'default']
             })
+          comments: (Comment, $route) ->
+            card_num   = $route.current.params.card_num
+            project_id = $route.current.params.project_id
+            return Comment.all({
+              startkey: ["card:#{project_id}.#{card_num}", 0]
+              endkey:   ["card:#{project_id}.#{card_num}", {}]
+            })
       })
 
       modal.result.then( (->), ->

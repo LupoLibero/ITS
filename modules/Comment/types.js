@@ -3,17 +3,6 @@ var fields      = require('couchtypes/fields');
 var widgets     = require('couchtypes/widgets');
 var permissions = require('couchtypes/permissions');
 var _           = require('underscore');
-var votingField = require('../Vote/fields').votingField;
-
-
-exports.authorCantVote = function() {
-  return function (newDoc, oldDoc, newValue, oldValue, userCtx) {
-    if (userCtx.name == newDoc.author) {
-      throw new Error('Author can\'t vote for his comment');
-    }
-  }
-}
-
 
 exports.Comment = function () {
   return new Type('comment', {
@@ -41,11 +30,6 @@ exports.Comment = function () {
           ])
         }
       }),
-      votes: votingField({
-        permissions: {
-          update: exports.authorCantVote()
-        }
-      })
     }
   });
 }

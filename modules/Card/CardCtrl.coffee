@@ -1,5 +1,5 @@
 angular.module('card').
-controller('CardCtrl', (parent, card, card_default, $scope, $route, $modalInstance, url, $q, Card) ->
+controller('CardCtrl', (parent, card, card_default, comments, $scope, $modalInstance,  $q, Card, Comment, login) ->
   $scope.card = angular.extend(parent, card_default)
   $scope.card = angular.extend($scope.card, card[0])
 
@@ -27,4 +27,31 @@ controller('CardCtrl', (parent, card, card_default, $scope, $route, $modalInstan
         defer.reject(err)
     )
     return defer.promise
+
+
+  console.log comments
+  $scope.comments = comments
+
+  $scope.newComment=
+    message: ''
+    parent_id: ''
+
+  $scope.addComment = ->
+    if $scope.newComment.message != ''
+      $scope.loading = true
+      Comment.update({
+        update: 'create'
+
+        message:     $scope.newComment.message
+        parent_id:   $scope.card._id
+      }).then(
+        (data) -> #Success
+          data.author   = login.getName()
+          data.message  = $scope.newComment.message
+          $scope.comments.unshift(data)
+          $scope.newComment.message = ''
+          $scope.loading = false
+        ,(err) -> #Error
+          $scope.loading = false
+      )
 )
