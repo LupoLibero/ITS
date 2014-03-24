@@ -5,8 +5,7 @@ controller('ProjectListCtrl', ($scope, projects_default, projects, url) ->
 
   # If only one project go directly to him
   if projects.length == 1
-    route = url.get('project.show', {
-      project_id: project.id
+    url.redirect('project.show', {
+      project_id: projects[0].id
     })
-    $location.path(route)
 )

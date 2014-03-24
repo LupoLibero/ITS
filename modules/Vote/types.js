@@ -3,7 +3,7 @@ var fields            = require('couchtypes/fields');
 var widgets           = require('couchtypes/widgets');
 var permissions       = require('couchtypes/permissions');
 
-exports.cost_estimate = new Type('vote', {
+exports.vote = new Type('vote', {
   permissions: {
     add:    permissions.loggedIn(),
     update: permissions.usernameMatchesField('voter'),

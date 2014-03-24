@@ -109,27 +109,18 @@ exports.card_all = {
       }
       return newDst;
     }
-    addingMerge = function (element, dstParent, srcParent) {
-      return (dstParent[element] || 0) + (srcParent[element] || 0);
-    }
+
 
     var idx, id, e, i, doc;
     var result = {
-      /*lists: [
-        {id: 'ideas'},
-        {id: 'todo'},
-        {id: 'estimated'},
-        {id: 'funded'},
-        {id: 'doing'},
-        {id: 'done'},
-      ],*/
       lists: ['ideas', 'todo', 'estimated', 'funded', 'doing', 'done'],
       cards: [],
       cost_estimate: {},
       votes: {},
       payment: {},
       rank: {},
-      list_id: {}
+      list_id: {},
+      langs: {}
     };
     var reverseMapping = {};
 
@@ -202,12 +193,14 @@ exports.card_all = {
         });
       }
     }
-    log(result.cost_estimate);
+
     for (idx = 0 ; idx < result.cards.length ; idx++) {
       doc = result.cards[idx]
-      log(doc);
       recalculateRank(doc.id);
       applyWorkflowRules(doc.id);
+      for (lang in doc.avail_langs) {
+        result.langs[lang] = (result.langs[lang] || 0) + doc.avail_langs[lang];
+      }
     }
     return result;
   }
@@ -216,27 +209,56 @@ exports.card_all = {
 exports.card_get = {
   map: function(doc) {
     var translation = require('views/lib/translation').translation();
-    if(doc.type && doc.type == 'card'){
-      if(doc.project_id && doc.id) {
-        translation.emitTranslatedDoc(
-          [doc.id, translation._keyTag],
-          {
-            _rev:         doc._rev,
-            _id:          doc._id,
-            project_id:   doc.project_id,
-            id:           doc.id,
-            category:     doc.category,
-            description:  doc.description,
-            status:       doc.status,
-            title:        doc.title,
-            created_at:   doc.created_at,
-            updated_at:   doc.updated_at,
-            init_lang:    doc.init_lang,
-          },
-          {title: true, description:true}
-        );
+    if (doc.type) {
+      switch(doc.type) {
+        case 'card':
+          translation.emitTranslatedDoc(
+            [doc.id, translation._keyTag],
+            {
+              _rev:         doc._rev,
+              _id:          doc._id,
+              id:           doc.id,
+              description:  doc.description,
+              created_at:   doc.created_at,
+              updated_at:   doc.updated_at,
+              init_lang:    doc.init_lang,
+              activity:     doc.activity
+            },
+            {description:true}
+          );
+          break;
+        case 'comment':
+          emit([doc.parent_id, 'default', doc.created_at], doc);
+          break;
       }
     }
+  },
+  reduce: function (keys, values, rereduce) {
+    recursive_merge = function(dst, src, special_merge){
+      var e;
+      if(!dst){
+        return src
+      }
+      if(!src){
+        return dst
+      }
+      if(typeof(src) == 'object'){
+        for(e in src){
+          if(special_merge && e in special_merge){
+            dst[e] = special_merge[e](e, dst, src);
+          } else {
+            dst[e] = recursive_merge(dst[e], src[e], special_merge)
+          }
+        }
+      }
+      return dst;
+    }
+
+    var result = {};
+    for(idx = 0 ; idx < values.length ; idx++){
+      result = recursive_merge(result, values[idx]);
+    }
+    return result;
   }
 }
 

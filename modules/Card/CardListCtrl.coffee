@@ -101,8 +101,7 @@ controller('CardListCtrl', ($scope, $route, $location, cards_default, cards, pro
           return $route.current.locals.card
     })
     modal.result.then((->), () ->
-      route = url.get('card.list', {
+      url.redirect('card.list', {
         project_id: 'its'})
-      $location.path(route)
     )
 )
