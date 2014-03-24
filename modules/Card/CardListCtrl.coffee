@@ -92,7 +92,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
 
   $scope.$watch($route.current.params.card_num, (card_num) ->
     if card_num != undefined
-      $modal.open({
+      modal = $modal.open({
         templateUrl: 'partials/card/show.html'
         controller:  'CardCtrl'
         resolve:
@@ -121,5 +121,11 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
               key: ["#{project_id}.#{card_num}", 'default']
             })
       })
+
+    modal.result.then( (->), ->
+      url.redirect('card.list', {
+        project_id: $route.current.locals.project.id
+      })
+    )
   )
 )

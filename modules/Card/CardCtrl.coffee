@@ -4,10 +4,7 @@ controller('CardCtrl', (parent, card, card_default, $scope, $route, $modalInstan
   $scope.card = angular.extend($scope.card, card[0])
 
   $scope.close = ->
-    url.redirect('card.list', {
-      project_id: $route.current.locals.project.id
-    })
-    $modalInstance.close()
+    $modalInstance.dismiss()
 
   $scope.saveTitle = ->
     return $scope.save('title')
