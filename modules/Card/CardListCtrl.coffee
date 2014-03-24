@@ -1,7 +1,7 @@
 angular.module('card').
-controller('CardListCtrl', ($scope, $route, $location, cards_default, cards, project, $modal, login, config, Card, longPolling, url) ->
-  $scope.login      = login
-  $scope.project    = project
+controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login, Card, longPolling, url) ->
+  $scope.login      = $route.current.locals.login
+  $scope.project    = $route.current.locals.project
 
   recursive_merge = (dst, src, special_merge, overwrite, emptyIfSrcEmpty) ->
     if !dst
@@ -90,18 +90,36 @@ controller('CardListCtrl', ($scope, $route, $location, cards_default, cards, pro
       )
   )
 
-  if $route.current.params.card_num != undefined
-    modal = $modal.open({
-      templateUrl: 'partials/card/show.html'
-      controller:  'CardCtrl'
-      resolve:
-        card_default: ->
-          return $route.current.locals.card_default
-        card: ->
-          return $route.current.locals.card
-    })
-    modal.result.then((->), () ->
-      url.redirect('card.list', {
-        project_id: 'its'})
-    )
+  $scope.$watch($route.current.params.card_num, (card_num) ->
+    if card_num != undefined
+      $modal.open({
+        templateUrl: 'partials/card/show.html'
+        controller:  'CardCtrl'
+        resolve:
+          parent: ($q) ->
+            defer = $q.defer()
+            card_num   = $route.current.params.card_num
+            project_id = $route.current.params.project_id
+            found = false
+            for card in $scope.results.cards
+              if card.id == "#{project_id}.#{card_num}"
+                defer.resolve(angular.copy(card))
+                found = true
+            if not found then defer.reject()
+            return defer.promise
+          card_default: (Card, $route) ->
+            card_num   = $route.current.params.card_num
+            project_id = $route.current.params.project_id
+            return Card.get({
+              key: ["#{project_id}.#{card_num}", 'default']
+            })
+          card: (Card, $route) ->
+            card_num   = $route.current.params.card_num
+            project_id = $route.current.params.project_id
+            return Card.view({
+              view: 'get'
+              key: ["#{project_id}.#{card_num}", 'default']
+            })
+      })
+  )
 )

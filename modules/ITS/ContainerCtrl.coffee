@@ -42,7 +42,10 @@ controller('ContainerCtrl', ($rootScope, notification, $translate, $location, Em
   )
 
   $rootScope.$on('DatabaseError', (event, err) ->
-    console.log "DatabaseError", event, err
+    if err.reason == 'You must be logged in'
+      notification.addAlert('You need to be connected!', 'danger')
+    else
+      console.log "DatabaseError", event, err
   )
 
   $rootScope.$on('$routeChangeError', (event, err) ->

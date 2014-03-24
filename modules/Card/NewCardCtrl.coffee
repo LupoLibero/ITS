@@ -1,6 +1,7 @@
 angular.module('card').
-controller('NewCardCtrl', ($scope, $route, Card, notification) ->
+controller('NewCardCtrl', ($scope, $route, Card, notification, login) ->
   # Initialize
+  $scope.login = login
   project      = $route.current.locals.project
   $scope.card=
     title: ''
