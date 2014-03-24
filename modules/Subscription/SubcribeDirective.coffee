@@ -26,8 +26,8 @@ directive('subscribe', ($rootScope, login, Subscription) ->
       else
         onSignOut()
 
-      $rootScope.$on('SignIn',  onSignIn)
-      $rootScope.$on('SignOut', onSignOut)
+      $rootScope.$on('SignIn', -> onSignIn())
+      $rootScope.$on('SignOut',-> onSignOut())
 
       scope.click = ->
         if not scope.value
