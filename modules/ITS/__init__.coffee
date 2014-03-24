@@ -2,7 +2,6 @@ angular.module('its', [
   'ngRoute'
   'dbSelect'
   'url'
-  'breadcrumb'
   'pascalprecht.translate'
   'navbar'
   'project'
