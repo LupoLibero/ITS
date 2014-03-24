@@ -208,6 +208,7 @@ exports.card_all = {
 
 exports.card_get = {
   map: function(doc) {
+    var change;
     var translation = require('views/lib/translation').translation();
     if (doc.type) {
       switch(doc.type) {
@@ -222,13 +223,15 @@ exports.card_get = {
               created_at:   doc.created_at,
               updated_at:   doc.updated_at,
               init_lang:    doc.init_lang,
-              activity:     doc.activity
             },
             {description:true}
           );
+          for (change in doc.activity) {
+            emit([doc.id, 'default', doc.date], {activity: [doc.activity[change]]})
+          }
           break;
         case 'comment':
-          emit([doc.parent_id, 'default', doc.created_at], doc);
+          emit([doc.parent_id, 'default', doc.created_at], {activity: [doc]});
           break;
       }
     }
@@ -254,9 +257,43 @@ exports.card_get = {
       return dst;
     }
 
+    var mergeArrayById = function (key) {
+      return function (element, dstParent, srcParent) {
+        var newDst = [];
+        var dst    = dstParent[element];
+        var src    = srcParent[element];
+        var alreadyPushed   = {};
+        var cardDst, cardSrc, idDst, idSrc;
+        //log([dst, "             ", src]);
+        for (idDst in dst) {
+          cardDst = dst[idDst];
+          for (idSrc in src) {
+            cardSrc = src[idSrc];
+            if (cardDst[key] == cardSrc[key]) {
+              newDst.push(cardSrc);
+              alreadyPushed[cardDst[key]] = true;
+              continue;
+            }
+          }
+          if (!alreadyPushed[cardDst[key]]) {
+            newDst.push(cardDst);
+            alreadyPushed[cardDst[key]] = true;
+          }
+        }
+        for (idSrc in src) {
+          cardSrc = src[idSrc];
+          if (!alreadyPushed[cardSrc[key]]) {
+            newDst.push(cardSrc);
+          }
+        }
+        return newDst;
+      }
+    }
+
     var result = {};
     for(idx = 0 ; idx < values.length ; idx++){
-      result = recursive_merge(result, values[idx]);
+      result = recursive_merge(result, values[idx], {
+        activity: mergeArrayById('_rev')});
     }
     return result;
   }
