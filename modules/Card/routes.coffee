@@ -25,21 +25,6 @@ config( ($routeProvider, $translateProvider)->
           return Project.getDoc({
             id: $route.current.params.project_id
           })
-        card_default: (Card, $route) ->
-          card_num   = $route.current.params.card_num
-          project_id = $route.current.params.project_id
-          if card_num != undefined
-            return Card.get({
-              view: 'all'
-              key: [project_id, 'default', "#{project_id}.#{card_num}"]
-            })
-        card: (Card, $route) ->
-          card_num   = $route.current.params.card_num
-          project_id = $route.current.params.project_id
-          if card_num != undefined
-            return Card.all({
-              key: [project_id, window.navigator.language, "#{project_id}.#{card_num}"]
-            })
         config: ($http, db, $q) ->
           defer = $q.defer()
           $http.get("#{db.url}/_design/#{db.name}/_view/config", {
