@@ -122,10 +122,10 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
             })
       })
 
-    modal.result.then( (->), ->
-      url.redirect('card.list', {
-        project_id: $route.current.locals.project.id
-      })
-    )
+      modal.result.then( (->), ->
+        url.redirect('card.list', {
+          project_id: $route.current.locals.project.id
+        })
+      )
   )
 )

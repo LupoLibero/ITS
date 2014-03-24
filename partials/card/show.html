@@ -1,6 +1,7 @@
 ﻿<div class="modal-header">
   <button type="button" class="close" ng-click="close()" data-dismiss="modal" aria-hidden="true">&times;</button>
   <h3><edit-field type="input" ng-model="card.title" save="saveTitle()"><edit-field></h3>
+  <subscribe id="card._id"></subscribe>
 </div>
 <div class="modal-body">
   <p><edit-field type="textarea" ng-model="card.description" save="saveDescription()"><edit-field></p>

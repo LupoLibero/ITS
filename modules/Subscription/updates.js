@@ -5,7 +5,7 @@ exports.subscription_create = function(doc, req) {
       throw({forbidden: 'Request incomplete'});
     }
     doc = {
-      _id:        'subscription--'+form.object_key+'--'+req.userCtx.name,
+      _id:        'subscription:'+form.object_key+'-'+req.userCtx.name,
       object_key: form.object_key,
       subscriber: req.userCtx.name,
       type:       'subscription',
