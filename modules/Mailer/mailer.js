@@ -68,7 +68,6 @@ var setEmailOfSubscriber = function (emailObj, username) {
 
 var setNotificationAsDisplayed = function (docId) {
   var deferred = Q.defer();
-  console.log("displayed= true")
   db.merge(docId, {email_sent: true}, function (err, res) {
     console.log(err, res);
     if (err) {
@@ -109,7 +108,6 @@ function loopBody () {
       else {
         res.forEach(function (row) {
           console.log(row.type, row.subscriber);
-          //callback(type, doc, row);
           sendNotification(row);
         });
       }
