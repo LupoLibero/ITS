@@ -6,14 +6,14 @@
 <div class="modal-body">
   <p><edit-field type="textarea" ng-model="card.description" save="saveDescription()"><edit-field></p>
   <hr/>
-  <div class="comment" ng-repeat="comment in comments">
-    <p>{{ comment.author }}</p>
-    <p>{{ comment.message }}</p>
-  </div>
   <form ng-submit="addComment()">
     <textarea ng-disabled="loading" ng-model="newComment.message"></textarea>
     <input type="submit" class="btn btn-primary"/>
   </form>
+  <div class="comment" ng-repeat="comment in comments">
+    <p>{{ comment.author }}</p>
+    <p>{{ comment.message }}</p>
+  </div>
 </div>
 <div class="modal-footer">
   <button class="btn btn-default" ng-click="close()">Close</button>
