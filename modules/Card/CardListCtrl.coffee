@@ -114,17 +114,18 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
           card_default: (Card, $route) ->
             card_num   = $route.current.params.card_num
             project_id = $route.current.params.project_id
-            return Card.get({
-              startkey: ["#{project_id}.#{card_num}", window.navigator.language]
-              endkey: ["#{project_id}.#{card_num}", window.navigator.language, {}]
+            return Card.view({
+              view: 'get'
+              startkey: ["#{project_id}.#{card_num}", 'default']
+              endkey:   ["#{project_id}.#{card_num}", 'default', {}]
             })
           card: (Card, $route) ->
             card_num   = $route.current.params.card_num
             project_id = $route.current.params.project_id
             return Card.view({
               view: 'get'
-              startkey: ["#{project_id}.#{card_num}", 'default']
-              endkey: ["#{project_id}.#{card_num}", 'default', {}]
+              startkey: ["#{project_id}.#{card_num}", window.navigator.language]
+              endkey:   ["#{project_id}.#{card_num}", window.navigator.language, {}]
             })
           comments: (Comment, $route) ->
             card_num   = $route.current.params.card_num

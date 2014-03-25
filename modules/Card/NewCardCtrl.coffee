@@ -20,6 +20,8 @@ controller('NewCardCtrl', ($scope, $route, Card, notification, login) ->
       notification.setAlert('You need to fill the field', 'danger')
       return false
 
+    console.log $scope
+
     Card.view({
       view: 'ids'
       key:  project.id
