@@ -1,4 +1,4 @@
-angular.module('card').
+angular.module('directive').
 directive('focus', ->
   return {
     restrict: 'A'
