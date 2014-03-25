@@ -10,9 +10,14 @@
     <textarea ng-disabled="loading" ng-model="newComment.message"></textarea>
     <input type="submit" class="btn btn-primary"/>
   </form>
-  <div class="comment" ng-repeat="comment in comments">
-    <p>{{ comment.author }}</p>
-    <p>{{ comment.message }}</p>
+  <div ng-repeat="comment in card.activity">
+    <div class="activity" ng-show="comment.element">
+      <p>Change on {{ comment.element }} by {{ comment.author }}</p>
+    </div>
+    <div class="comment" ng-show="comment.message">
+      <p>{{ comment.author }}</p>
+      <p>{{ comment.message }}</p>
+    </div>
   </div>
 </div>
 <div class="modal-footer">

@@ -24,7 +24,7 @@
     <footer ng-show="$first" ng-controller="NewCardCtrl">
       <button class="btn btn-link" ng-disabled="login.isNotConnect()" ng-hide="showForm" ng-click="addCard()">Add card</button>
       <div ng-show="showForm">
-        <textarea ng-disabled="loading" focus="showForm" ng-model="card.title" ng-keypress="save($event)"></textarea>
+        <textarea ng-disabled="loading" ng-blur="showForm=false" focus="showForm" ng-model="card.title" ng-keypress="save($event)"></textarea>
         <span us-spinner ng-show="loading"></span>
       </div>
     </footer>

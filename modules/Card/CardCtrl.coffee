@@ -1,7 +1,15 @@
 angular.module('card').
 controller('CardCtrl', (parent, card, card_default, comments, $scope, $modalInstance,  $q, Card, Comment, login) ->
-  $scope.card = angular.extend(parent, card_default)
-  $scope.card = angular.extend($scope.card, card[0])
+
+  parent.activity = []
+
+  for element in card_default
+    if element.hasOwnProperty('activity')
+      parent.activity.push(element.activity[0])
+    else
+      parent = angular.extend(parent, element)
+
+  $scope.card = angular.extend(parent, card[0])
 
   $scope.close = ->
     $modalInstance.dismiss()
