@@ -28,8 +28,6 @@ controller('CardCtrl', (parent, card, card_default, comments, $scope, $modalInst
     )
     return defer.promise
 
-
-  console.log comments
   $scope.comments = comments
 
   $scope.newComment=
