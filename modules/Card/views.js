@@ -235,7 +235,7 @@ exports.card_get = {
           break;
       }
     }
-  },
+  }/*,
   reduce: function (keys, values, rereduce) {
     recursive_merge = function(dst, src, special_merge){
       var e;
@@ -260,10 +260,11 @@ exports.card_get = {
       var dst = dstParent[element] || [];
       var src = srcParent[element];
       var idSrc;
-
       for (idSrc = 0 ; idSrc < src.length ; idSrc++) {
+        log(src[idSrc]);
         dst.push(src[idSrc]);
       }
+      log([dstParent.id, dst]);
       return dst;
     }
 
@@ -276,7 +277,7 @@ exports.card_get = {
       });
     }
     return result;
-  }
+  }*/
 }
 
 exports.card_ids = {
