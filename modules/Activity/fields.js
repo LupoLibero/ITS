@@ -1,5 +1,5 @@
 var fields = require('couchtypes/fields');
-var utils  = require('lib/utils');
+var utils  = require('../ITS/utils');
 var assert = utils.assert;
 var _      = require('underscore')._;
 

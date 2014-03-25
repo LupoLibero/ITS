@@ -1,5 +1,5 @@
 var _                   = require('underscore')._;
-var fields              = require('lib/types');
+var fields              = require('../ITS/types');
 var registerTranslation = require('../Translation/utils').registerTranslation;
 var updateActivity      = require('../Activity/utils').updateActivity;
 

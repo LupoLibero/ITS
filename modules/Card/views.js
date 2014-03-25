@@ -231,7 +231,7 @@ exports.card_get = {
           }
           break;
         case 'comment':
-          emit([doc.parent_id, 'default', doc.created_at], {activity: [doc]});
+          emit([doc.parent_id.split(':')[1], 'default', doc.created_at], {activity: [doc]});
           break;
       }
     }
