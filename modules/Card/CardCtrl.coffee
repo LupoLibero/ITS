@@ -14,18 +14,18 @@ controller('CardCtrl', (parent, card, card_default, comments, $scope, $modalInst
   $scope.close = ->
     $modalInstance.dismiss()
 
-  $scope.saveTitle = ->
-    return $scope.save('title')
-  $scope.saveDescription = ->
-    return $scope.save('description')
+  $scope.saveTitle = (value) ->
+    return $scope.save('title', value)
+  $scope.saveDescription = (value) ->
+    return $scope.save('description', value)
 
-  $scope.save = (field) ->
+  $scope.save = (field, value) ->
     defer = $q.defer()
     Card.update({
       update:  'update_field'
       id:      $scope.card.id
       element: field
-      value:   $scope.card[field]
+      value:   value
       lang:    $scope.card.lang
       _rev:    $scope.card._rev
     }).then(

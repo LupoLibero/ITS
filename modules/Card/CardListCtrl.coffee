@@ -105,7 +105,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
             found = false
             for card in $scope.results.cards
               if card.id == "#{project_id}.#{card_num}"
-                defer.resolve(angular.copy(card))
+                defer.resolve(card)
                 found = true
             if not found then defer.reject()
             return defer.promise
