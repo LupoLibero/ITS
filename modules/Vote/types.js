@@ -5,7 +5,7 @@ var permissions       = require('couchtypes/permissions');
 
 exports.vote = new Type('vote', {
   permissions: {
-    add:    permissions.loggedIn(),
+    add:    permissions.hasRole('dev'),
     update: permissions.usernameMatchesField('voter'),
     remove: permissions.usernameMatchesField('voter'),
   },
