@@ -20,6 +20,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
       if overwrite
         dst = src
     return dst
+
   mergeArrayById = (element, dstParent, srcParent) ->
     newDst = []
     dst    = dstParent[element]
@@ -38,6 +39,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
       if not alreadyPushed[demandSrc.id]
         newDst.push demandSrc
     return newDst
+
   mergeVotes = (element, dstParent, srcParent) ->
     newDst = {}
     dst    = dstParent[element]
@@ -54,7 +56,9 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
       else
         newDst[demandId] = dstVotes
     return newDst
-  $scope.results = recursive_merge(cards_default, cards, {cards: mergeArrayById}, true, false)[0]
+
+  $scope.results = cards_default[0]
+  $scope.results.card = mergeArrayById('cards', $scope.results, cards[0])
 
   longPolling.setFilter('its/cards')
   longPolling.start()

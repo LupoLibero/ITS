@@ -235,49 +235,7 @@ exports.card_get = {
           break;
       }
     }
-  }/*,
-  reduce: function (keys, values, rereduce) {
-    recursive_merge = function(dst, src, special_merge){
-      var e;
-      if(!dst){
-        return src
-      }
-      if(!src){
-        return dst
-      }
-      if(typeof(src) == 'object'){
-        for(e in src){
-          if(special_merge && e in special_merge){
-            dst[e] = special_merge[e](e, dst, src);
-          } else {
-            dst[e] = recursive_merge(dst[e], src[e], special_merge)
-          }
-        }
-      }
-      return dst;
-    }
-    var pushAll = function (element, dstParent, srcParent) {
-      var dst = dstParent[element] || [];
-      var src = srcParent[element];
-      var idSrc;
-      for (idSrc = 0 ; idSrc < src.length ; idSrc++) {
-        log(src[idSrc]);
-        dst.push(src[idSrc]);
-      }
-      log([dstParent.id, dst]);
-      return dst;
-    }
-
-
-    var result = {};
-    for(idx = 0 ; idx < values.length ; idx++){
-      result = recursive_merge(result, values[idx], {
-        //activity: mergeArrayByKey('_rev')});
-        activity: pushAll
-      });
-    }
-    return result;
-  }*/
+  }
 }
 
 exports.card_ids = {
