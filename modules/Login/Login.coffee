@@ -85,7 +85,10 @@ factory('login', ($q, User, $rootScope, $timeout) ->
       return this.actualUser.name? and this.actualUser.name != ''
 
     isNotConnect: ->
-      return !this.isConnect()
+      if not this.actualUser.hasOwnProperty('name')
+        return false
+      else
+        return !this.isConnect()
 
     hasRole: (role) ->
       if this.actualUser.hasOwnProperty('roles')
