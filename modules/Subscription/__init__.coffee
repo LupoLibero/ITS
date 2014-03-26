@@ -1,1 +1,1 @@
-angular.module('subscription', ['login', 'ngCouchDB'])
+angular.module('subscription', ['login', 'ngCouchDB', 'notification'])
