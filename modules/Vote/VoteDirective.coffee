@@ -38,6 +38,7 @@ directive('vote', ($rootScope, login, Vote, notification)->
         promise.then(
           (data) -> #Success
             scope.loading = false
+            scope.check = !scope.check
           ,(err) -> #Error
             scope.loading = false
         )
