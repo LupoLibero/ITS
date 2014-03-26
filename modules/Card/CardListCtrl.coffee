@@ -1,6 +1,6 @@
 angular.module('card').
 controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login, Card, longPolling, url) ->
-  $scope.login      = $route.current.locals.login
+  $scope.login      = login
   $scope.project    = $route.current.locals.project
 
   recursive_merge = (dst, src, special_merge, overwrite, emptyIfSrcEmpty) ->
@@ -58,7 +58,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
     return newDst
 
   $scope.results = cards_default[0]
-  $scope.results.card = mergeArrayById('cards', $scope.results, cards[0])
+  $scope.results.cards = mergeArrayById('cards', $scope.results, cards[0])
 
   longPolling.setFilter('its/cards')
   longPolling.start()
