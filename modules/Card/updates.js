@@ -39,13 +39,18 @@ exports.card_update_field = function (doc, req) {
     }
     if (doc._rev !== form._rev) {
       var vers = parseInt(form._rev);
-      for (key in doc.activity) {
-        act = doc.activity[key];
-        if(
-          act[0] == form.element &&
-          parseInt(act[3]) >= vers
-        ) {
-          throw({forbidden: 'Already modify'});
+      acts = doc.activity;
+      for(var i = acts.length-1; 0 <= i; i--) {
+        act = acts[i];
+        if ( parseInt(act._rev) > vers) {
+          if (
+            act.author !== req.userCtx.name &&
+            act.element === form.element
+          ) {
+            throw({forbidden: 'Conflict'});
+          }
+        } else {
+          break;
         }
       }
     }
