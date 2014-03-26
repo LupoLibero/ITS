@@ -24,3 +24,5 @@ reExports(exports, '../Comment/views');
 reExports(exports, '../Activity/views');
 
 reExports(exports, '../Subscription/views');
+
+reExports(exports, '../Notification/views');

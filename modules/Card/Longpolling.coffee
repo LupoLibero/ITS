@@ -42,10 +42,7 @@ factory('longPolling', (db, $http, $rootScope, $q) ->
     eventsource: ->
       _this = this
 
-      event = EventSource("#{db.url}/_changes?filter=#{@filter}&feed=eventsource&since=now")
-
-      event.onerror = (e) ->
-        console.log e
+      event = new EventSource("#{db.url}/_changes?filter=#{@filter}&feed=eventsource&since=now")
 
       event.onmessage = (e) ->
         change = JSON.parse(e.data)

@@ -77,7 +77,17 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
     id        = _id.split(':')[-1..-1][0].split('-')[0]
     projectId = id.split('.')[0]
 
-    lang = (if type != 'card' then 'default' else card.lang)
+    card = null
+    for piece in $scope.results.cards
+      if piece.id == id
+        card = piece
+        break
+
+    if card?
+      lang = (if type != 'card' then 'default' else card.lang)
+    else
+      lang = 'default'
+
     Card.get({
       view:        'all'
       key:         [projectId, lang, id]
