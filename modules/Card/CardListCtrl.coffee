@@ -69,6 +69,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
 
   $scope.$on('addCard', ($event, card)->
     $scope.results.cards.push(card)
+    $scope.results.list_id[card.id] = 'ideas'
   )
 
   $scope.$on('Changes', ($event, _id)->
@@ -76,28 +77,21 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
     id        = _id.split(':')[-1..-1][0].split('-')[0]
     projectId = id.split('.')[0]
 
-    card = null
-    for piece in $scope.results.cards
-      if piece.id == id
-        card = piece
-        break
-
-    if card?
-      lang = (if type != 'card' then 'default' else card.lang)
-      Card.get({
-        view:        'all'
-        key:         [projectId, lang, id]
-        group_level: 3
-      }).then(
-        (data) -> #Success
-          if lang == 'default'
-            $scope.results = recursive_merge($scope.results, data, {
-              cards: mergeArrayById
-              votes: mergeVotes
-            }, true, true)
-          else
-            $scope.results.cards = mergeArrayById('cards', $scope.results, data)
-      )
+    lang = (if type != 'card' then 'default' else card.lang)
+    Card.get({
+      view:        'all'
+      key:         [projectId, lang, id]
+      group_level: 3
+    }).then(
+      (data) -> #Success
+        if lang == 'default'
+          $scope.results = recursive_merge($scope.results, data, {
+            cards: mergeArrayById
+            votes: mergeVotes
+          }, true, true)
+        else
+          $scope.results.cards = mergeArrayById('cards', $scope.results, data)
+    )
   )
 
   $scope.$watch($route.current.params.card_num, (card_num) ->
