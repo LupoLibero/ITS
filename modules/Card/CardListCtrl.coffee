@@ -67,13 +67,15 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
     (doc) ->
       -1*$scope.results.rank[doc.id]
 
+  $scope.$on('addCard', ($event, card)->
+    $scope.results.cards.push(card)
+  )
+
   $scope.$on('Changes', ($event, _id)->
-    console.log _id
     type      = _id.split(':')[0]
     id        = _id.split(':')[-1..-1][0].split('-')[0]
     projectId = id.split('.')[0]
 
-    console.log type, _id, id, projectId
     card = null
     for piece in $scope.results.cards
       if piece.id == id
@@ -111,7 +113,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
             found = false
             for card in $scope.results.cards
               if card.id == "#{project_id}.#{card_num}"
-                defer.resolve(angular.copy(card))
+                defer.resolve(card)
                 found = true
             if not found then defer.reject()
             return defer.promise

@@ -20,8 +20,6 @@ controller('NewCardCtrl', ($scope, $route, Card, notification, login) ->
       notification.setAlert('You need to fill the field', 'danger')
       return false
 
-    console.log $scope
-
     Card.view({
       view: 'ids'
       key:  project.id
@@ -44,9 +42,10 @@ controller('NewCardCtrl', ($scope, $route, Card, notification, login) ->
           lang:        window.navigator.language
         }).then(
           (data) -> #Success
-            $scope.showForm     = false
-            $scope.loading      = false
+            $scope.showForm   = false
+            $scope.loading    = false
             $scope.card.title = ''
+            $scope.$emit('addCard', data)
           ,(err) -> #Error
             $scope.loading      = false
         )
