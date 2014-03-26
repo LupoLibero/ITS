@@ -6,7 +6,10 @@ factory('longPolling', (db, $http, $rootScope, $q) ->
       this.filter = filter
 
     start: ->
-      @changes()
+      if not window.EventSource
+        @changes()
+      else
+        @eventsource()
 
     changes: (last = "now") ->
       _this = this
@@ -35,5 +38,17 @@ factory('longPolling', (db, $http, $rootScope, $q) ->
         ,(err) -> #Error
           _this.changes(last)
       )
+
+    eventsource: ->
+      _this = this
+
+      event = EventSource("#{db.url}/_changes?filter=#{@filter}&feed=eventsource&since=now")
+
+      event.onerror = (e) ->
+        console.log e
+
+      event.onmessage = (e) ->
+        change = JSON.parse(e.data)
+        $rootScope.$broadcast("Changes", change.id)
   }
 )
