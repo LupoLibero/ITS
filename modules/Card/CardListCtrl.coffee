@@ -81,16 +81,20 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
         break
 
     if card?
+      lang = (if type != 'card' then 'default' else card.lang)
       Card.get({
         view:        'all'
-        key:         [projectId, (if type != 'card' then 'default' else card.lang), id]
+        key:         [projectId, lang, id]
         group_level: 3
       }).then(
         (data) -> #Success
-          $scope.results = recursive_merge($scope.results, data, {
-            cards: mergeArrayById
-            votes: mergeVotes
-          }, true, true)
+          if lang == 'default'
+            $scope.results = recursive_merge($scope.results, data, {
+              cards: mergeArrayById
+              votes: mergeVotes
+            }, true, true)
+          else
+            $scope.results.cards = mergeArrayById('cards', $scope.results, data)
       )
   )
 

@@ -40,7 +40,7 @@ exports.card_all = {
         case 'vote':
           if (doc.voted_doc_id.split(':')[0] == 'card') {
             (function() {
-              var cardId = doc.voted_doc_id.split(':')[2];
+              var cardId = doc.voted_doc_id.split(':')[1];
               emit(
                 [
                   cardId.split('.')[0],
@@ -110,6 +110,9 @@ exports.card_all = {
       return newDst;
     }
 
+    addingMerge = function (element, dstParent, srcParent) {
+      return (dstParent[element] || 0) + (srcParent[element] || 0);
+    }
 
     var idx, id, e, i, doc;
     var result = {
