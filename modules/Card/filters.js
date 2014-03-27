@@ -1,4 +1,4 @@
-exports.notifications = function (doc, req) {
+exports.cards = function (doc, req) {
   var types = {
     card: null,
     card_list: null,
