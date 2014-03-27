@@ -1,11 +1,12 @@
 .lists {
   position: absolute;
-  top: 170px;
+  top: 120px;
   bottom: 50px;
+  left: 20px;
+  width: 100%;
 }
 .list {
-  position: relative;
-  width: 15%;
+  width: 16%;
   margin: 0 4px;
   float: left;
   border-radius: 5px;
@@ -13,7 +14,6 @@
   height: 100%;
   background-color: grey;
   text-align: center;
-  overflow-y: scroll;
 }
 .list>header {
   text-align: center;
@@ -27,17 +27,30 @@
   bottom: 0;
   background-color: lightgrey;
   height: 25px;
+  position: absolute;
 }
 .list>content>div {
-  text-align: left;
+  overflow-y: auto;
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  top: 40px;
   width: 100%;
-  margin: 10px auto;
+}
+.list>content>div>div {
+  text-align: left;
+  margin: 5px;
   padding: 8px 5px;
   border-radius: 5px;
   background-color: lightgrey;
 }
-.list>content>div>button {
+.list>content>div>div>button {
   float: right;
+}
+
+.container>footer {
+  position: absolute;
+  bottom: 5px;
 }
 
 .notif-overlay.ng-enter, .notif-overlay.ng-leave {
