@@ -5,7 +5,11 @@ var permissions       = require('couchtypes/permissions');
 var _                 = require('underscore');
 var translatableField = require('../Translation/fields').translatableField;
 var activityField     = require('../Activity/fields').activityField;
-var votingField        = require('../Vote/fields').votingField;
+var votingField       = require('../Vote/fields').votingField;
+var idField           = require('../ITS/fields').idField;
+
+
+
 
 exports.card = new Type('card', {
   permissions: {
@@ -19,14 +23,7 @@ exports.card = new Type('card', {
     updated_at: fields.number({
       required: false
     }),
-    id: fields.string({
-      validators: [function(doc, value) {
-          var id = value.split('.');
-          if (id[0] !== doc.project_id || isNaN(id[1])) {
-            throw new Error('Incorrect id '+value);
-          }
-        }]
-    }),
+    id: idField(/<project_id>\.\d+/),
     init_lang: fields.string(),
     project_id: fields.string(),
     description: translatableField({
