@@ -7,8 +7,6 @@ factory('longPolling', (db, $http, $rootScope, $q) ->
     start: (filter, params) ->
       @stop(filter)
 
-      window.EventSource = false
-
       if not window.EventSource
         @changes(filter, params)
       else
