@@ -12,6 +12,12 @@ module.exports = {
         return true;
       }
       return false;
+    },
+    notifications: function (doc, req) {
+      if (doc.type && doc.type == 'notification' && !doc.displayed && doc.subscriber == req.query.user) {
+        return true;
+      }
+      return false;
     }
   }
 };

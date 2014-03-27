@@ -60,8 +60,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
   $scope.results = cards_default[0]
   $scope.results.cards = mergeArrayById('cards', $scope.results, cards[0])
 
-  longPolling.setFilter('its/cards')
-  longPolling.start()
+  longPolling.start('cards')
 
   $scope.orderByRank = () ->
     (doc) ->
@@ -72,7 +71,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
     $scope.results.list_id[card.id] = 'ideas'
   )
 
-  $scope.$on('Changes', ($event, _id)->
+  $scope.$on('ChangesOnCards', ($event, _id)->
     type      = _id.split(':')[0]
     id        = _id.split(':')[-1..-1][0].split('-')[0]
     projectId = id.split('.')[0]
