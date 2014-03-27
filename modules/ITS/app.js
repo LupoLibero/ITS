@@ -5,19 +5,5 @@ module.exports = {
   types: require('./types'),
   validate_doc_update: require('./validate').validate_doc_update,
   language: "javascript",
-  filters: {
-    cards: function (doc, req) {
-      var types = {card: null, card_list: null, vote: null, cost_estimate: null, payment: null}
-      if (doc.type in types) {
-        return true;
-      }
-      return false;
-    },
-    notifications: function (doc, req) {
-      if (doc.type && doc.type == 'notification' && !doc.displayed && doc.subscriber == req.query.user) {
-        return true;
-      }
-      return false;
-    }
-  }
+  filters: require('./filters'),
 };
