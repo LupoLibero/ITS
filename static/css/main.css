@@ -1,3 +1,16 @@
+#loader {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,0.4);
+  z-index: 8888;
+}
+#loader>div {
+  margin: 300px auto;
+}
+
 .lists {
   position: absolute;
   top: 120px;

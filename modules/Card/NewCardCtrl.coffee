@@ -42,6 +42,8 @@ controller('NewCardCtrl', ($scope, $route, Card, notification, login) ->
           lang:        window.navigator.language
         }).then(
           (data) -> #Success
+            data.list_id = "ideas"
+
             $scope.showForm   = false
             $scope.loading    = false
             $scope.card.title = ''
