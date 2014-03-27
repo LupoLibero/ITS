@@ -21,10 +21,10 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
         dst = src
     return dst
 
-  mergeArrayById = (element, dstParent, srcParent) ->
+  mergeArrayById = (element, dstParent ={}, srcParent ={}) ->
     newDst = []
-    dst    = dstParent[element]
-    src    = srcParent[element]
+    dst    = dstParent[element] || []
+    src    = srcParent[element] || []
     alreadyPushed   = {}
     for demandDst in dst
       for demandSrc in src
