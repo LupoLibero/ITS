@@ -1,5 +1,5 @@
 angular.module('card').
-config( ($routeProvider, $translateProvider)->
+config( ($routeProvider)->
   $routeProvider
     .when('/project/:project_id/:card_num?', {
       templateUrl: 'partials/card/list.html'

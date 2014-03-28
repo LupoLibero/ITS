@@ -32,9 +32,9 @@ controller('ContainerCtrl', ($scope, $rootScope, notification, $translate, $loca
       $rootScope.$broadcast('LoadingEnd')
   )
 
-  $translate.use(window.navigator.language)
+  $rootScope.$broadcast('$ChangeLanguage', window.navigator.language)
   $rootScope.$on('$translateChangeError', ->
-    $translate.use('en')
+    $rootScope.$broadcast('$ChangeLanguage', 'en')
     notification.addAlert("You're favorite language is not available!", 'warning')
   )
 

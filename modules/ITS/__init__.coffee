@@ -2,7 +2,6 @@ angular.module('its', [
   'ngRoute'
   'dbSelect'
   'url'
-  'pascalprecht.translate'
   'navbar'
   'project'
   'ngCouchDB'
