@@ -1,7 +1,7 @@
 <div class="lists row">
   <lang-bar nb-card="nbCard" lang="currentLang" langs="langs" all-langs="allLangs"></lang-bar>
 
-  <section class="list" ng-repeat="list in default.lists">
+  <section class="list col-md-2 col-xs-12" ng-repeat="list in default.lists" ng-controller="NewCardCtrl">
     <header>
       {{ list }}
     </header>
@@ -12,7 +12,9 @@
             <span style="background-color:white">{{ card.num }}</span>
             <span class="pull-right"><b>{{ default.rank[card.id] }}</b></span>
           </header>
-          <p><a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">{{ card.title }}</a></p>
+          <p><a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">
+            <translated field="title" default="card" translated="trad.cards"></translated>
+          </a></p>
           <p>
             <span style="background-color:red;color:white" ng-repeat="tag in card.tag_list">{{ tag }}</span>
           </p>
