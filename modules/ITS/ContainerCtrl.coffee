@@ -1,5 +1,5 @@
 angular.module('its').
-controller('ContainerCtrl', ($scope, $rootScope, notification, $translate, $location, Email, $localStorage) ->
+controller('ContainerCtrl', ($scope, $rootScope, notification, $location, Email, $localStorage) ->
   $rootScope.notif = notification
   $scope.loader = true
 
