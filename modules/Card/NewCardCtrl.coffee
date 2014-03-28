@@ -25,7 +25,6 @@ controller('NewCardCtrl', ($scope, $route, Card, notification, login) ->
       key:  project.id
     }).then(
       (data) -> #Success
-        # If it's the first demand of the project
         if data.length == 0
           count = 1
         else
@@ -43,6 +42,8 @@ controller('NewCardCtrl', ($scope, $route, Card, notification, login) ->
         }).then(
           (data) -> #Success
             data.list_id = "ideas"
+            data.num     = count
+            data._id     = "#{data.project_id}.#{data.id}"
 
             $scope.showForm   = false
             $scope.loading    = false

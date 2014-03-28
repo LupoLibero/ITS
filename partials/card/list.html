@@ -1,24 +1,28 @@
 <div class="lists col-md-9">
-  <section class="list" ng-repeat="list in results.lists">
+  <lang-bar nb-card="nbCard" lang="currentLang" langs="langs" all-langs="allLangs"></lang-bar>
+
+  <section class="list" ng-repeat="list in default.lists">
     <header>
       {{ list }}
     </header>
     <content>
-      <div ng-repeat="card in results.cards |list:results.list_id:list |orderBy:orderByRank()">
+      <div ng-repeat="card in default.cards |list:default.list_id:list |orderBy:orderByRank()">
         <header>
-          <span style="background-color:white">{{ card.id.split('.')[1] }}</span>
-          <span class="pull-right"><b>{{results.rank[card.id]}}</b></span>
+          <span style="background-color:white">{{ card.num }}</span>
+          <span class="pull-right"><b>{{ default.rank[card.id] }}</b></span>
         </header>
-        <p><a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.id.split('.')[1] }}">{{ card.title }}</a></p>
+        <p><a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">
+          <translated field="title" default="card" translated="trad.cards"></translated>
+        </a></p>
         <p>
           <span style="background-color:red;color:white" ng-repeat="tag in card.tag_list">{{ tag }}</span>
-          <!--<div ng-show="results.cost_estimate[card.id] && results.payment[card.id]" class="col-sm-8" tooltip="{{ results.cost_estimate[card.id] }} €">
-            <progressbar class="progress-striped active" max="results.cost_estimate[card.id]" value="results.payment[card.id]" type="danger" ><i>{{ results.payment[card.id] }}€</i></progressbar>
+          <!--<div ng-show="default.cost_estimate[card.id] && default.payment[card.id]" class="col-sm-8" tooltip="{{ default.cost_estimate[card.id] }} €">
+            <progressbar class="progress-striped active" max="default.cost_estimate[card.id]" value="default.payment[card.id]" type="danger" ><i>{{ default.payment[card.id] }}€</i></progressbar>
           </div>-->
         </p>
-        <span ng-show="results.cost_estimate[card.id] && !results.payment[card.id]">{{ results.cost_estimate[card.id] }}€</span>
-        <span ng-show="results.payment[card.id]">{{ results.payment[card.id] }}€/{{ results.cost_estimate[card.id] }}€</span>
-        <vote id="card.id" element="card" check="results.votes[card.id][login.getName()]"></vote>
+        <span ng-show="default.cost_estimate[card.id] && !default.payment[card.id]">{{ default.cost_estimate[card.id] }}€</span>
+        <span ng-show="default.payment[card.id]">{{ default.payment[card.id] }}€/{{ default.cost_estimate[card.id] }}€</span>
+        <vote id="card.id" element="card" check="default.votes[card.id][login.getName()]"></vote>
       </div>
     </content>
     <footer ng-show="$first" ng-controller="NewCardCtrl">
