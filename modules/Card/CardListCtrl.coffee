@@ -63,21 +63,39 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal
   $scope.allLangs    = config[1].value
   $scope.nbCard      = $scope.default.cards.length
 
-  $scope.$on('LangBarChangeLanguage', ($event, lang) ->
-    Card.all({
-      startkey:    [$scope.project.id, lang]
-      endkey:      [$scope.project.id, lang, {}]
-      group_level: 2
+  $scope.titleSave = (id, text) ->
+    return $scope.save(id, 'title', text)
+
+  $scope.save = (id, field, text) ->
+    Card.update({
+      update: 'update_field'
+
+      id:      id
+      _rev:    $scope.translation[id]._rev
+      element: field
+      value:   text
+      lang:    $scope.currentLang
     }).then(
       (data) -> #Success
-        $scope.trad = data[0]
+        console.log "success"
+    )
+
+  $scope.$on('LangBarChangeLanguage', ($event, lang) ->
+    Card.all({
+      startkey: [$scope.project.id, lang]
+      endkey:   [$scope.project.id, lang, {}]
+      reduce: false
+    }).then(
+      (data) -> #Success
+        $scope.translation = toObject(data)
+        $scope.$emit('LanguageChangeSuccess')
     )
   )
 
+
   $scope.$on('addCard', ($event, card)->
     $scope.default.cards.push(card)
-    $scope.default.list_id[card.id] = 'ideas'
-    $scope.default.rank[card.id]    = 0
+    $scope.nbCard = $scope.default.cards.length
   )
 
 

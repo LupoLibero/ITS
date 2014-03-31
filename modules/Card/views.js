@@ -22,6 +22,7 @@ exports.card_all = {
             {
               project_id:  doc.project_id,
               id:          doc.id,
+              _rev:        doc._rev,
               title:       doc.title,
               init_lang:   doc.init_lang,
               type:        doc.type,
