@@ -7,14 +7,16 @@
     </header>
     <content>
       <div>
-        <div ng-repeat="card in default.cards |list:default.list_id:list |orderBy:orderByRank()">
+        <div ng-repeat="card in default.cards |list:list |orderBy:orderByRank()">
           <header>
             <span style="background-color:white">{{ card.num }}</span>
-            <span class="pull-right"><b>{{ default.rank[card.id] }}</b></span>
+            <span class="pull-right"><b>{{ default.rank[card.id] || 0 }}</b></span>
           </header>
-          <p><a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">
-            <translated field="title" default="card" translated="trad.cards"></translated>
-          </a></p>
+          <translation save="titleSave(card.id, text)">
+            <a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">
+              {{ translation[card.id].title || card.title }}
+            </a>
+          </translation>
           <p>
             <span style="background-color:red;color:white" ng-repeat="tag in card.tag_list">{{ tag }}</span>
           </p>
@@ -28,7 +30,7 @@
         </div>
       </div>
     </content>
-    <footer ng-show="$first" >
+    <footer ng-show="$first">
       <button class="btn btn-link" ng-disabled="login.isNotConnect()" ng-hide="showForm" ng-click="addCard()">Add card</button>
     </footer>
   </section>
