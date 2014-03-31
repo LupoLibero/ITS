@@ -1,211 +1,96 @@
-exports.card_all = {
+exports.card_workflow = {
   map: function(doc) {
-    var translation = require('views/lib/translation').translation();
-    var rank, list_id;
-
+    var obj;
     if (doc.type) {
+      obj = {};
       switch(doc.type) {
-        /*case 'card_list':
-          translation.emitTranslatedDoc(
-            [doc.project_id, translation._keyTag],
-            {
-              id:    doc.id,
-              name:  doc.name,
-              type:  doc.type,
-            },
-            {name: true}
-          );
-          break;*/
         case 'card':
-          translation.emitTranslatedDoc(
-            [doc.project_id, translation._keyTag, doc.id],
-            {
-              project_id:  doc.project_id,
-              id:          doc.id,
-              title:       doc.title,
-              init_lang:   doc.init_lang,
-              type:        doc.type,
-              list_id:     doc.list_id,
-              tag_list:    doc.tag_list,
-            },
-            {title: true}
-          );
+          obj[doc.id] = {
+            id: doc.id,
+            list_id: doc.list_id,
+            tag_list: doc.tag_list
+          };
+          emit(doc.id, {
+            cards: obj
+          });
           break;
         case 'cost_estimate':
-          emit([doc.project_id, 'default', doc.card_id], doc);
+          obj[doc.card_id] = doc.estimate
+          emit(doc.card_id, {cost_estimate: obj});
           break;
         case 'payment':
-          emit([doc.project_id, 'default', doc.card_id], doc);
-          break;
-        case 'vote':
-          if (doc.voted_doc_id.split(':')[0] == 'card') {
-            (function() {
-              var cardId = doc.voted_doc_id.split(':')[1];
-              emit(
-                [
-                  cardId.split('.')[0],
-                  "default",
-                  cardId
-                ],
-                {
-                  voter: doc.voter,
-                  vote: doc.vote,
-                  card_id: cardId,
-                  type: doc.type
-              });
-            })();
-          }
+          obj[doc.card_id] = doc.amount
+          emit(doc.card_id, {payment: obj});
           break;
       }
     }
   },
   reduce: function (keys, values, rereduce) {
-    recursive_merge = function(dst, src, special_merge){
-      var e;
-      if(!dst){
-        return src
-      }
-      if(!src){
-        return dst
-      }
-      if(typeof(src) == 'object'){
-        for(e in src){
-          if(e in special_merge){
-            dst[e] = special_merge[e](e, dst, src);
-          } else {
-            dst[e] = recursive_merge(dst[e], src[e], special_merge)
-          }
-        }
-      }
-      return dst;
-    }
-    var mergeArrayById = function (element, dstParent, srcParent) {
-      var newDst = [];
-      var dst    = dstParent[element];
-      var src    = srcParent[element];
-      var alreadyPushed   = {};
-      var cardDst, cardSrc, idDst, idSrc;
-      //log([dst, "             ", src]);
-      for (idDst in dst) {
-        cardDst = dst[idDst];
-        for (idSrc in src) {
-          cardSrc = src[idSrc];
-          if (cardDst.id == cardSrc.id) {
-            newDst.push(cardSrc);
-            alreadyPushed[cardDst.id] = true;
-            continue;
-          }
-        }
-        if (!alreadyPushed[cardDst.id]) {
-          newDst.push(cardDst);
-          alreadyPushed[cardDst.id] = true;
-        }
-      }
-      for (idSrc in src) {
-        cardSrc = src[idSrc];
-        if (!alreadyPushed[cardSrc.id]) {
-          newDst.push(cardSrc);
-        }
-      }
-      return newDst;
-    }
-
-    addingMerge = function (element, dstParent, srcParent) {
-      return (dstParent[element] || 0) + (srcParent[element] || 0);
-    }
-
-    var idx, id, e, i, doc;
+    var idx, id, e, i, cardId, doc;
     var result = {
-      lists: ['ideas', 'todo', 'estimated', 'funded', 'doing', 'done'],
-      cards: [],
+      cards: {},
       cost_estimate: {},
-      votes: {},
       payment: {},
-      rank: {},
-      list_id: {},
-      langs: {}
     };
-    var reverseMapping = {};
 
-    function recalculateRank (docId) {
-      result.rank[docId] = Object.keys(result.votes[docId] || {}).length;
-    }
-    function applyWorkflowRules (docId) {
-      var i = reverseMapping[docId];
-      var tagList = [];
-      var listId;
-      if (!isNaN(i)) {
-        tagList = result.cards[i].tag_list;
-        listId  = result.cards[i].list_id;
-      }
-      listId = result.list_id[docId] || listId;
-      log([docId, listId, tagList, result.cost_estimate[docId]]);
+    function applyWorkflowRules (card) {
+      var listId = card.list_id;
+
       if (listId != 'doing' && listId != 'done') {
         listId = 'ideas';
-        if (tagList.length) {
+        if (card.tag_list.length) {
           listId = 'todo';
-          if (result.cost_estimate[docId]) {
+          if (result.cost_estimate[card.id]) {
             listId = 'estimated';
-            if (result.payment[docId] &&
-                result.payment[docId] >= result.cost_estimate[docId]) {
+            if (result.payment[card.id] &&
+                result.payment[card.id] >= result.cost_estimate[card.id]) {
               listId = 'funded';
             }
           }
         }
       }
-      result.list_id[docId] = listId;
+      card.list_id = listId;
     }
 
-    if (!rereduce) {
-      for(idx = 0 ; idx < values.length ; idx++){
-        doc = values[idx];
-        switch(doc.type) {
-          /*case 'card_list':
-            for (var id in result.lists) {
-              if (doc.id == result.lists[id].id) {
-                result.lists[id] = recursive_merge(result.lists[id], doc, {});
-              }
-            }
-            break;*/
-          case 'cost_estimate':
-            result.cost_estimate[doc.card_id] = doc.estimate;
-            break;
-          case 'payment':
-            result.payment[doc.card_id] = (result.payment[doc.card_id] || 0) + doc.amount;
-            break;
-          case 'vote':
-            result.votes[doc.card_id] = result.votes[doc.card_id] || {};
-            result.votes[doc.card_id][doc.voter] = doc.vote;
-            break;
-          case 'card':
-            i = result.cards.push(doc);
-            reverseMapping[doc.id] = i - 1;
-            result.cost_estimate[doc.id] = result.cost_estimate[doc.id] || 0;
-            result.payment[doc.id] = result.payment[doc.id] || 0;
-            result.rank[doc.id] = result.rank[doc.id] || 0;
-            result.votes[doc.id] = result.votes[doc.id] || {};
-            break;
-        }
+    for(idx = 0 ; idx < values.length ; idx++){
+      for (cardId in values[idx].cost_estimate) {
+        result.cost_estimate[cardId] = values[idx].cost_estimate[cardId];
+      }
+      for (cardId in values[idx].payment) {
+        result.payment[cardId] = (result.payment[cardId] || 0) + values[idx].payment[cardId];
+      }
+      for (cardId in values[idx].cards) {
+        result.cards[cardId] = values[idx].cards[cardId];
       }
     }
-    else {
-      for(idx = 0 ; idx < values.length ; idx++){
-        result = recursive_merge(result, values[idx],{
-          cards: mergeArrayById,
-          payment: addingMerge
-        });
-      }
-    }
-
-    for (idx = 0 ; idx < result.cards.length ; idx++) {
-      doc = result.cards[idx]
-      recalculateRank(doc.id);
-      applyWorkflowRules(doc.id);
-      for (lang in doc.avail_langs) {
-        result.langs[lang] = (result.langs[lang] || 0) + doc.avail_langs[lang];
-      }
+    for (cardId in result.cards) {
+      applyWorkflowRules(result.cards[cardId]);
     }
     return result;
+  }
+};
+
+exports.card_all = {
+  map: function(doc) {
+    var translation = require('views/lib/translation').translation();
+
+    if (doc.type && doc.type == 'card') {
+      for (var lang in doc.title) {
+        newTitle = {};
+        newTitle[lang] = doc.title[lang];
+        newDoc = {
+          id:          doc.id,
+          title:       newTitle,
+          init_lang:   doc.init_lang,
+          type:        doc.type,
+        };
+        if (lang != doc.init_lang) {
+          newDoc.title.default = doc.title[doc.init_lang];
+        }
+        emit([lang, doc.id], newDoc);
+        emit(["default", lang, doc.id], newDoc);
+      }
+    }
   }
 };
 
@@ -227,7 +112,11 @@ exports.card_get = {
               updated_at:   doc.updated_at,
               init_lang:    doc.init_lang,
             },
-            {description:true}
+            {
+              id: false,
+              type: false,
+              description:true
+            }
           );
           for (change in doc.activity) {
             emit([doc.id, 'default', doc.activity[change].date], {activity: [doc.activity[change]]})

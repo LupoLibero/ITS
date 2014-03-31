@@ -25,8 +25,13 @@ exports.translation = function () {
     },
 
     isTranslated: function (doc, fieldName, translatableFields) {
-      return translatableFields.hasOwnProperty(fieldName) &&
-        typeof doc[fieldName] == 'object';
+      if (translatableFields.hasOwnProperty(fieldName)) {
+        if (translatableFields[fieldName] &&
+            typeof doc[fieldName] == 'object') {
+          return true;
+        }
+      }
+      return false;
     },
 
     collectLangs: function (doc, fieldName) {
@@ -69,11 +74,13 @@ exports.translation = function () {
       }
     },
 
-    copyNonTranslatedContent: function (newDoc, doc, fieldName) {
-      newDoc[fieldName] = doc[fieldName];
+    copyNonTranslatedContent: function (newDoc, doc, fieldName, translatableFields, isDefaultLang) {
+      if (isDefaultLang || translatableFields.hasOwnProperty(fieldName) && !translatableFields[fieldName]) {
+        newDoc[fieldName] = doc[fieldName];
+      }
     },
 
-    createTranslatedDoc: function (doc, lang, translatableFields) {
+    createTranslatedDoc: function (doc, lang, translatableFields, isDefaultLang) {
       var fieldName;
       newDoc = {lang: lang};
       for (fieldName in doc) {
@@ -91,7 +98,7 @@ exports.translation = function () {
           }
         }
         else {
-          this.copyNonTranslatedContent(newDoc, doc, fieldName);
+          this.copyNonTranslatedContent(newDoc, doc, fieldName, translatableFields, isDefaultLang);
         }
       }
       return newDoc;
@@ -121,15 +128,17 @@ exports.translation = function () {
       if (atLeastOneTranslatedField) {
         this.guessDefaultLang(doc);
         for (lang in this.langs) {
-          newDoc = this.createTranslatedDoc(doc, lang, translatableFields);
+          newDoc = this.createTranslatedDoc(doc, lang, translatableFields, false);
           newDoc.avail_langs = this.langs;
           emit(this.keyReplacement(key, lang), newDoc);
           if (lang == this.defaultLang) {
+            newDoc = this.createTranslatedDoc(doc, lang, translatableFields, true);
             emit(this.keyReplacement(key, 'default'), newDoc);
           }
         }
       }
       else {
+        newDoc = this.createTranslatedDoc(doc, lang, translatableFields, true);
         emit(this.keyReplacement(key, 'default'), doc);
       }
     }
