@@ -1,5 +1,5 @@
 angular.module('card').
-config( ($routeProvider, $translateProvider)->
+config( ($routeProvider)->
   $routeProvider
     .when('/project/:project_id/:card_num?', {
       templateUrl: 'partials/card/list.html'
@@ -11,7 +11,7 @@ config( ($routeProvider, $translateProvider)->
           return Card.all({
             startkey:    [project_id, 'default']
             endkey:      [project_id, 'default', {}]
-            group_level: 2
+            reduce:      false
           })
         cards: (Card, $route) ->
           language   = window.navigator.language
@@ -19,7 +19,7 @@ config( ($routeProvider, $translateProvider)->
           return Card.all({
             startkey:    [project_id, language]
             endkey:      [project_id, language, {}]
-            group_level: 2
+            reduce:      false
           })
         project: (Project, $route) ->
           return Project.getDoc({

@@ -16,23 +16,20 @@
     "tests"
   ],
   "dependencies": {
-    "angular-resource": "~1.2.13",
-    "angular": "1.2.14",
+    "angular-resource": "~1.2.15",
+    "angular": "1.2.15",
     "bootstrap": "~3.1.1",
-    "angular-route": "~1.2.13",
-    "angular-translate": "~2.0.0",
+    "angular-route": "~1.2.15",
     "angular-bootstrap": "~0.10.0",
-    "angular-sanitize": "~1.2.13",
+    "angular-sanitize": "~1.2.15",
     "angular-spinner": "~0.3.1",
     "angular-couchdb": "LupoLibero/ngCouch",
     "ngstorage": "~0.3.0",
-    "angular-animate": "~1.2.14",
-    "animate.css": "~3.1.0"
+    "angular-animate": "~1.2.15",
+    "animate.css": "~3.1.0",
+    "angular-gettext": "~0.2.7"
   },
   "devDependencies": {
-    "angular-mocks": "~1.2.13"
-  },
-  "resolutions": {
-    "angular": "1.2.14"
+    "angular-mocks": "~1.2.15"
   }
 }

@@ -1,75 +1,105 @@
 angular.module('card').
-controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login, Card, longPolling, url) ->
+controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal, login, Card, longPolling, url) ->
   $scope.login      = login
   $scope.project    = $route.current.locals.project
 
-  recursive_merge = (dst, src, special_merge, overwrite, emptyIfSrcEmpty) ->
-    if !dst
-      return src
-    if !src
-      if emptyIfSrcEmpty
-        return src
-      return dst
-    if typeof(src) == 'object' and typeof src == 'object'
-      for e of src
-        if e of special_merge
-          dst[e] = special_merge[e](e, dst, src)
+  makeObject = (cards) ->
+    results = {
+      lists: ["ideas", "todo", "estimated", "funded", "done"]
+      cards: []
+      rank:  {}
+      cost_estimate: {}
+      payment: {}
+      votes: {}
+      langs: {}
+    }
+
+    for card in cards
+      if card.type == 'vote'
+        if results.rank.hasOwnProperty(card.card_id)
+          results.rank[card.card_id] += 1
         else
-          dst[e] = recursive_merge(dst[e], src[e], special_merge, overwrite, emptyIfSrcEmpty)
-    else
-      if overwrite
-        dst = src
-    return dst
+          results.rank[card.card_id] = 1
 
-  mergeArrayById = (element, dstParent ={}, srcParent ={}) ->
-    newDst = []
-    dst    = dstParent[element] || []
-    src    = srcParent[element] || []
-    alreadyPushed   = {}
-    for demandDst in dst
-      for demandSrc in src
-        if demandDst.id == demandSrc.id
-          newDst.push demandSrc
-          alreadyPushed[demandDst.id] = true
-          continue
-      if not alreadyPushed[demandDst.id]
-        newDst.push demandDst
-        alreadyPushed[demandDst.id] = true
-    for demandSrc in src
-      if not alreadyPushed[demandSrc.id]
-        newDst.push demandSrc
-    return newDst
+      if card.type == 'card'
+        card.num = card.id.split('.')[1]
+        for lang of card.avail_langs
+          if results.langs.hasOwnProperty(lang)
+            results.langs[lang] += 1
+          else
+            results.langs[lang] = 1
 
-  mergeVotes = (element, dstParent, srcParent) ->
-    newDst = {}
-    dst    = dstParent[element]
-    src    = srcParent[element]
-    for demandId, dstVotes of dst
-      if demandId of src
-        newDst[demandId] = {}
-        for voter, vote of dstVotes
-          if voter not in src[demandId]
-            continue
-          newDst[demandId][voter] = vote
-        for voter, vote of src[demandId]
-          newDst[demandId][voter] = vote
-      else
-        newDst[demandId] = dstVotes
-    return newDst
+      if card.type == 'cost_estimate'
+        results[card.type][card.card_id] = card.estimate
+      else if card.type == 'payment'
+        results[card.type][card.card_id] = card.amount
+      else if card.type == 'vote'
+        if not results.votes.hasOwnProperty(card.card_id)
+          results.votes[card.card_id] = {}
+        results.votes[card.card_id][card.voter] = card.vote
+      else if card.type == 'card'
+        results["#{card.type}s"].push(card)
 
-  $scope.results = cards_default[0]
-  $scope.results.cards = mergeArrayById('cards', $scope.results, cards[0])
+    return results
 
-  longPolling.start('cards')
+  toObject = (cards) ->
+    results = {}
+    for card in cards
+      results[card.id] = card
+    return results
+
+  $scope.default     = makeObject(cards_default)
+  $scope.translation = toObject(cards)
+
 
   $scope.orderByRank = () ->
     (doc) ->
-      -1*$scope.results.rank[doc.id]
+      -1*$scope.default.rank[doc.id]
+
+
+  # Translate
+  $scope.currentLang = window.navigator.language
+  $scope.langs       = $scope.default.langs
+  $scope.allLangs    = config[1].value
+  $scope.nbCard      = $scope.default.cards.length
+
+  $scope.titleSave = (id, text) ->
+    return $scope.save(id, 'title', text)
+
+  $scope.save = (id, field, text) ->
+    Card.update({
+      update: 'update_field'
+
+      id:      id
+      _rev:    $scope.translation[id]._rev
+      element: field
+      value:   text
+      lang:    $scope.currentLang
+    }).then(
+      (data) -> #Success
+        console.log "success"
+    )
+
+  $scope.$on('LangBarChangeLanguage', ($event, lang) ->
+    Card.all({
+      startkey: [$scope.project.id, lang]
+      endkey:   [$scope.project.id, lang, {}]
+      reduce: false
+    }).then(
+      (data) -> #Success
+        $scope.translation = toObject(data)
+        $scope.$emit('LanguageChangeSuccess')
+    )
+  )
+
 
   $scope.$on('addCard', ($event, card)->
-    $scope.results.cards.push(card)
-    $scope.results.list_id[card.id] = 'ideas'
+    $scope.default.cards.push(card)
+    $scope.nbCard = $scope.default.cards.length
   )
+
+
+  longPolling.start('cards')
 
   $scope.$on('ChangesOnCards', ($event, _id)->
     type      = _id.split(':')[0]
@@ -77,7 +107,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
     projectId = id.split('.')[0]
 
     card = null
-    for piece in $scope.results.cards
+    for piece in $scope.default.cards
       if piece.id == id
         card = piece
         break
@@ -93,28 +123,30 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
       group_level: 3
     }).then(
       (data) -> #Success
-        if lang == 'default'
-          $scope.results = recursive_merge($scope.results, data, {
-            cards: mergeArrayById
-            votes: mergeVotes
-          }, true, true)
-        else
-          $scope.results.cards = mergeArrayById('cards', $scope.results, data)
+        # if lang == 'default'
+        #   $scope.results = recursive_merge($scope.results, data, {
+        #     cards: mergeArrayById
+        #     votes: mergeVotes
+        #   }, true, true)
+        # else
+        #   $scope.default.cards = mergeArrayById('cards', $scope.results, data)
     )
   )
+
 
   $scope.$watch($route.current.params.card_num, (card_num) ->
     if card_num != undefined
       modal = $modal.open({
         templateUrl: 'partials/card/show.html'
         controller:  'CardCtrl'
+        keyboard:    false
         resolve:
           parent: ($q) ->
-            defer = $q.defer()
+            defer      = $q.defer()
             card_num   = $route.current.params.card_num
             project_id = $route.current.params.project_id
-            found = false
-            for card in $scope.results.cards
+            found      = false
+            for card in $scope.default.cards
               if card.id == "#{project_id}.#{card_num}"
                 defer.resolve(card)
                 found = true
@@ -151,4 +183,5 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, $modal, login,
         })
       )
   )
+
 )
