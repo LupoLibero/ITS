@@ -3,66 +3,54 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal
   $scope.login      = login
   $scope.project    = $route.current.locals.project
 
-  recursive_merge = (dst, src, special_merge, overwrite, emptyIfSrcEmpty) ->
-    if !dst
-      return src
-    if !src
-      if emptyIfSrcEmpty
-        return src
-      return dst
-    if typeof(src) == 'object' and typeof src == 'object'
-      for e of src
-        if e of special_merge
-          dst[e] = special_merge[e](e, dst, src)
+  makeObject = (cards) ->
+    results = {
+      lists: ["ideas", "todo", "estimated", "funded", "done"]
+      cards: []
+      rank:  {}
+      cost_estimate: {}
+      payment: {}
+      votes: {}
+      langs: {}
+    }
+
+    for card in cards
+      if card.type == 'vote'
+        if results.rank.hasOwnProperty(card.card_id)
+          results.rank[card.card_id] += 1
         else
-          dst[e] = recursive_merge(dst[e], src[e], special_merge, overwrite, emptyIfSrcEmpty)
-    else
-      if overwrite
-        dst = src
-    return dst
+          results.rank[card.card_id] = 1
 
-  mergeArrayById = (element, dstParent ={}, srcParent ={}) ->
-    newDst = []
-    dst    = dstParent[element] || []
-    src    = srcParent[element] || []
-    alreadyPushed   = {}
-    for demandDst in dst
-      for demandSrc in src
-        if demandDst.id == demandSrc.id
-          newDst.push demandSrc
-          alreadyPushed[demandDst.id] = true
-          continue
-      if not alreadyPushed[demandDst.id]
-        newDst.push demandDst
-        alreadyPushed[demandDst.id] = true
-    for demandSrc in src
-      if not alreadyPushed[demandSrc.id]
-        newDst.push demandSrc
-    return newDst
+      if card.type == 'card'
+        card.num = card.id.split('.')[1]
+        for lang of card.avail_langs
+          if results.langs.hasOwnProperty(lang)
+            results.langs[lang] += 1
+          else
+            results.langs[lang] = 1
 
-  mergeVotes = (element, dstParent, srcParent) ->
-    newDst = {}
-    dst    = dstParent[element]
-    src    = srcParent[element]
-    for demandId, dstVotes of dst
-      if demandId of src
-        newDst[demandId] = {}
-        for voter, vote of dstVotes
-          if voter not in src[demandId]
-            continue
-          newDst[demandId][voter] = vote
-        for voter, vote of src[demandId]
-          newDst[demandId][voter] = vote
-      else
-        newDst[demandId] = dstVotes
-    return newDst
+      if card.type == 'cost_estimate'
+        results[card.type][card.card_id] = card.estimate
+      else if card.type == 'payment'
+        results[card.type][card.card_id] = card.amount
+      else if card.type == 'vote'
+        if not results.votes.hasOwnProperty(card.card_id)
+          results.votes[card.card_id] = {}
+        results.votes[card.card_id][card.voter] = card.vote
+      else if card.type == 'card'
+        results["#{card.type}s"].push(card)
 
+    return results
 
-  $scope.default = cards_default[0]
-  $scope.trad    = cards[0]
+  toObject = (cards) ->
+    results = {}
+    for card in cards
+      results[card.id] = card
+    return results
 
-  for card in $scope.default.cards
-    card.num = card.id.split('.')[1]
+  $scope.default     = makeObject(cards_default)
+  $scope.translation = toObject(cards)
+
 
   $scope.orderByRank = () ->
     (doc) ->
