@@ -1,16 +1,16 @@
 [
-{
-  "_id": "project:its",
-  "name": "Lupo Libero's Issue Tracking System",
-  "type": "project",
-  "prefix": "ITS",
-  "id": "its"
-},
-{
-  "_id": "project:net",
-  "name": "LupoLibero.net",
-  "type": "project",
-  "prefix": "NET",
-  "id": "net"
-}
+  {
+    "_id": "project:its",
+    "name": "Lupo Libero's Issue Tracking System",
+    "type": "project",
+    "prefix": "ITS",
+    "id": "its"
+  },
+  {
+    "_id": "project:net",
+    "name": "LupoLibero.net",
+    "type": "project",
+    "prefix": "NET",
+    "id": "net"
+  }
 ]

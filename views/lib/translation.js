@@ -7,7 +7,6 @@ exports.translation = function () {
     maxNbOfTranslations: 0,
 
    isTranslatableType: function (doc) {
-      //return doc.type && types.hasOwnProperty(doc.type)
       return doc.hasOwnProperty('type') && doc.type == 'demand';
     },
 
@@ -54,7 +53,10 @@ exports.translation = function () {
     },
 
     setTranslation: function (newDoc, doc, fieldName, lang) {
-      newDoc[fieldName] = doc[fieldName][lang];
+      newDoc[fieldName] = doc[fieldName][lang].content;
+      if(doc[fieldName].hasOwnProperty('_rev')) {
+        newDoc._rev = doc[fieldName]._rev;
+      }
     },
 
     setDefaultTranslation: function (newDoc, doc, fieldName) {

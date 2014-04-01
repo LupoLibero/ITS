@@ -1,51 +1,66 @@
 [
-{
-   "_id": "card:its.11",
-   "id": "its.11",
-   "project_id": "its",
-   "title": {
-       "fr": "Post-it numéro 11",
-       "en": "Card number 11"
-   },
-   "type": "card",
-   "author": "bobby",
-   "created_at": 1395395095774,
-   "votes": {
-       "bobby": true
-   },
-   "description": {
-       "fr": "French desc",
-       "en": "texte en anglais"
-   },
-   "activity": [
-   ],
-   "list_id": "ideas",
-   "tag_list": ["bug"
-   ],
-   "init_lang": "fr"
-},
-{
-   "_id": "card:its.12",
-   "id": "its.12",
-   "project_id": "its",
-   "title": {
-       "fr": "youhou !! On dirait que ça marche",
-       "it": "tutto a posto !"
-   },
-   "type": "card",
-   "author": "bobby",
-   "created_at": 1395395118856,
-   "votes": {
-       "bobby": true
-   },
-   "description": {
-       "fr": ""
-   },
-   "activity": [
-   ],
-   "list_id": "ideas",
-   "tag_list": [
-   ],
-   "init_lang": "fr"
-}
+  {
+    "_id": "card:its.11",
+    "id": "its.11",
+    "project_id": "its",
+    "title": {
+      "fr": {
+        "content": "Post-it numéro 11"
+      },
+      "en": {
+        "content": "Card number 11"
+      }
+    },
+    "type": "card",
+    "author": "bobby",
+    "created_at": 1395395095774,
+    "votes": {
+      "bobby": true
+    },
+    "description": {
+      "fr": {
+        "content": "French desc"
+      },
+      "en": {
+        "content": "texte en anglais"
+      }
+    },
+    "activity": [
+    ],
+    "list_id": "ideas",
+    "tag_list": [
+      "bug"
+    ],
+    "init_lang": "fr"
+  },
+  {
+    "_id": "card:its.12",
+    "id": "its.12",
+    "project_id": "its",
+    "title": {
+      "fr": {
+        "content": "youhou !! On dirait que ça marche"
+      },
+      "it": {
+        "content": "tutto a posto !"
+      }
+    },
+    "type": "card",
+    "author": "bobby",
+    "created_at": 1395395118856,
+    "votes": {
+      "bobby": true
+    },
+    "description": {
+      "fr": {
+        "content": ""
+      }
+    },
+    "activity": [
+    ],
+    "list_id": "ideas",
+    "tag_list": [
+    ],
+    "init_lang": "fr"
+  }
 ]
