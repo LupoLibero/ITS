@@ -3,6 +3,7 @@ var fields            = require('couchtypes/fields');
 var widgets           = require('couchtypes/widgets');
 var permissions       = require('couchtypes/permissions');
 var translatableField = require('../Translation/fields').translatableField;
+var idField           = require('../ITS/fields').idField;
 
 
 exports.Project = function () {
@@ -13,7 +14,7 @@ exports.Project = function () {
       remove: permissions.hasRole('_admin')
     },
     fields: {
-      id: fields.string(),
+      id: idField(/\w+/),
       name: translatableField(),
       init_lang: fields.string({
         required: false
