@@ -9,6 +9,7 @@ angular.module('its', [
   'translation'
   'card'
   'mailer'
+  'error'
   'ngStorage'
 ])
 

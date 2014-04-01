@@ -7,7 +7,7 @@ exports.card_create = function(doc, req) {
   var attr;
   var form = JSON.parse(req.body);
   if(doc !== null){
-    throw({forbidden: 'New Card only'});
+    throw({forbidden: '345: New Card only'});
   } else {
     form.type        = 'card';
     form._id         = form.type + ':' + form.id;
@@ -35,7 +35,7 @@ exports.card_update_field = function (doc, req) {
         !form.hasOwnProperty('value')   ||
         !form.hasOwnProperty('_rev')
     ) {
-      throw({forbidden: 'Request incomplete'});
+      throw({forbidden: '111: Request incomplete'});
     }
     if (doc._rev !== form._rev) {
       var vers = parseInt(form._rev);
@@ -47,7 +47,7 @@ exports.card_update_field = function (doc, req) {
             act.author !== req.userCtx.name &&
             act.element === form.element
           ) {
-            throw({forbidden: 'Conflict'});
+            throw({forbidden: '001: Conflict'});
           }
         } else {
           break;
@@ -65,5 +65,5 @@ exports.card_update_field = function (doc, req) {
 
     return [doc, 'ok'];
   }
-  throw({forbidden: 'Not for card creation'});
+  throw({forbidden: '346: Not for card creation'});
 }
