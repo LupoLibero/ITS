@@ -9,7 +9,7 @@ run( ($rootScope, notification)->
       error = parseInt(error.data.reason)
 
     message = switch error
-      when 001 then 'Conflict: Already modify'
+      when 1 then 'Conflict: Already modify'
 
     if message?
       notification.addAlert(message, 'danger')
