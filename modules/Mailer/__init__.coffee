@@ -1,1 +1,1 @@
-angular.module('mailer', ['ngCouchDB'])
+angular.module('mailer', ['ngCouchDB', 'login'])

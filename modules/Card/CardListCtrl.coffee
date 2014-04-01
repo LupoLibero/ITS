@@ -31,12 +31,15 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal
 
       if card.type == 'cost_estimate'
         results[card.type][card.card_id] = card.estimate
+
       else if card.type == 'payment'
         results[card.type][card.card_id] = card.amount
+
       else if card.type == 'vote'
         if not results.votes.hasOwnProperty(card.card_id)
           results.votes[card.card_id] = {}
         results.votes[card.card_id][card.voter] = card.vote
+
       else if card.type == 'card'
         results["#{card.type}s"].push(card)
 
@@ -78,7 +81,6 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal
     )
 
   $scope.$on('LangBarChangeLanguage', ($event, lang) ->
-    $scope.$emit('$ChangeLanguage', lang)
     Card.all({
       startkey: [$scope.project.id, lang]
       endkey:   [$scope.project.id, lang, {}]
@@ -86,7 +88,6 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal
     }).then(
       (data) -> #Success
         $scope.translation = toObject(data)
-        $scope.$emit('LanguageChangeSuccess')
     )
   )
 
