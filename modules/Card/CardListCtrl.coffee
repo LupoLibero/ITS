@@ -63,9 +63,6 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal
   $scope.allLangs    = config[1].value
   $scope.nbCard      = $scope.default.cards.length
 
-  $scope.titleSave = (id, text) ->
-    return $scope.save(id, 'title', text)
-
   $scope.save = (id, field, text) ->
     Card.update({
       update: 'update_field'
@@ -81,6 +78,7 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal
     )
 
   $scope.$on('LangBarChangeLanguage', ($event, lang) ->
+    $scope.$emit('$ChangeLanguage', lang)
     Card.all({
       startkey: [$scope.project.id, lang]
       endkey:   [$scope.project.id, lang, {}]
