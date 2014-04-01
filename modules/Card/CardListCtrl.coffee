@@ -44,9 +44,6 @@ controller('CardListCtrl', ($scope, $route, cardUtils, config, $modal, login, Ca
     title: ''
   }
 
-  $scope.showForm = ->
-    $scope.showAddCard = true
-
   $scope.saveNewCard = ($event) ->
     if $event.keyCode != 13
       return false
