@@ -54,9 +54,6 @@ exports.translation = function () {
 
     setTranslation: function (newDoc, doc, fieldName, lang) {
       newDoc[fieldName] = doc[fieldName][lang].content;
-      if(doc[fieldName].hasOwnProperty('_rev')) {
-        newDoc._rev = doc[fieldName]._rev;
-      }
     },
 
     setDefaultTranslation: function (newDoc, doc, fieldName) {

@@ -14,9 +14,6 @@ controller('ContainerCtrl', ($scope, $rootScope, notification, Local) ->
   $rootScope.$on('LangBarChangeLanguage', ($event, lang) ->
     $rootScope.$broadcast('$ChangeLanguage', lang)
   )
-  $rootScope.$on('LangBarNewLanguage', ($event, lang) ->
-    $rootScope.$broadcast('$ChangeLanguage', lang)
-  )
 
   # Change for language of the navigator
   $rootScope.$broadcast('$ChangeLanguage', window.navigator.language)

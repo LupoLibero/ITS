@@ -32,6 +32,7 @@ controller('CardListCtrl', ($scope, $route, cardUtils, config, $modal, login, Ca
 
       id:      id
       _rev:    $scope.translation[id]._rev
+      from:    $scope.translation[id]._rev
       element: field
       value:   text
       lang:    $scope.currentLang

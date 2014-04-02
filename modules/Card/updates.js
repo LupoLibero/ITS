@@ -19,7 +19,7 @@ exports.card_create = function(doc, req) {
     form.list_id     = 'ideas';
     form.tag_list    = [];
     form.init_lang   = form.lang;
-    registerTranslation(form, form, 'card', 'title', form.lang);
+    registerTranslation(form, form, 'card', 'title', form.lang, '1');
     // Add the vote of the creator
     form.description[form.lang]  = '';
     form.votes[req.userCtx.name] = true;
@@ -58,7 +58,7 @@ exports.card_update_field = function (doc, req) {
     doc.updated_at = new Date().getTime();
     updateActivity(doc, req, form.element, form._rev);
     if (fields['card'].fields[form.element].translatable) {
-      registerTranslation(doc, form, 'card', form.element, form.lang);
+      registerTranslation(doc, form, 'card', form.element, form.lang, form.from);
     } else {
       doc[form.element] = form.value;
     }
