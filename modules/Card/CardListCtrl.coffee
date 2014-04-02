@@ -26,13 +26,19 @@ controller('CardListCtrl', ($scope, $route, cardUtils, config, $modal, login, Ca
     )
   )
   # If the user translate something
-  $scope.save = (id, field, text) ->
+  $scope.save = (id, field, text, rev) ->
+    _rev = null
+    for card in $scope.default.cards
+      if card.id == id
+        _rev = card._rev
+        break
+
     Card.update({
       update: 'update_field'
 
       id:      id
-      _rev:    $scope.translation[id]._rev
-      from:    $scope.translation[id]._rev
+      _rev:    _rev
+      from:    rev
       element: field
       value:   text
       lang:    $scope.currentLang

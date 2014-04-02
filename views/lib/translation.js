@@ -53,7 +53,7 @@ exports.translation = function () {
     },
 
     setTranslation: function (newDoc, doc, fieldName, lang) {
-      newDoc[fieldName] = doc[fieldName][lang].content;
+      newDoc[fieldName] = doc[fieldName][lang];
     },
 
     setDefaultTranslation: function (newDoc, doc, fieldName) {

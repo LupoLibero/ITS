@@ -5,10 +5,12 @@
     "project_id": "its",
     "title": {
       "fr": {
-        "content": "Post-it numéro 11"
+        "content": "Post-it numéro 11",
+        "_rev": "1"
       },
       "en": {
-        "content": "Card number 11"
+        "content": "Card number 11",
+        "_rev": "1"
       }
     },
     "type": "card",
@@ -19,10 +21,12 @@
     },
     "description": {
       "fr": {
-        "content": "French desc"
+        "content": "French desc",
+        "_rev": "1"
       },
       "en": {
-        "content": "texte en anglais"
+        "content": "texte en anglais",
+        "_rev": "1"
       }
     },
     "activity": [
@@ -39,10 +43,12 @@
     "project_id": "its",
     "title": {
       "fr": {
-        "content": "youhou !! On dirait que ça marche"
+        "content": "youhou !! On dirait que ça marche",
+        "_rev": "1"
       },
       "it": {
-        "content": "tutto a posto !"
+        "content": "tutto a posto !",
+        "_rev": "1"
       }
     },
     "type": "card",
@@ -53,7 +59,8 @@
     },
     "description": {
       "fr": {
-        "content": ""
+        "content": "",
+        "_rev": "1"
       }
     },
     "activity": [

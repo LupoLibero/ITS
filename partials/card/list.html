@@ -11,9 +11,9 @@
           <span style="background-color:white">{{ card.num }}</span>
           <span class="pull-right"><b>{{ default.rank[card.id] || 0 }}</b></span>
         </header>
-        <translation field="title" default="card" other="translation" save="save(id, field, text)">
+        <translation field="title" default="card" other="translation" save="save(id, field, text, rev)">
           <a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">
-            {{ translation[card.id].title || card.title }}
+            {{ translation[card.id].title.content || card.title.content }}
           </a>
         </translation>
         <p>
