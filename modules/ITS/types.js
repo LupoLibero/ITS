@@ -10,4 +10,6 @@ reExports(exports, '../Login/types');
 
 reExports(exports, '../Subscription/types');
 
+reExports(exports, '../Translation/types');
+
 reExports(exports, '../Vote/types');

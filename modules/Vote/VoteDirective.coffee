@@ -17,10 +17,6 @@ directive('vote', ($rootScope, login, Vote, notification)->
       scope.loading = false
 
       scope.vote = ->
-        if login.isNotConnect()
-          notification.addAlert('You need to be connected!', 'danger')
-          return false
-
         scope.loading = true
         promise       = null
         if not scope.check

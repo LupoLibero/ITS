@@ -8,4 +8,6 @@ reExports(exports, '../Login/updates');
 
 reExports(exports, '../Subscription/updates');
 
+reExports(exports, '../Translation/updates');
+
 reExports(exports, '../Vote/updates');

@@ -7,7 +7,6 @@ exports.translation = function () {
     maxNbOfTranslations: 0,
 
    isTranslatableType: function (doc) {
-      //return doc.type && types.hasOwnProperty(doc.type)
       return doc.hasOwnProperty('type') && doc.type == 'demand';
     },
 

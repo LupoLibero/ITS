@@ -3,6 +3,7 @@ var fields      = require('couchtypes/fields');
 var widgets     = require('couchtypes/widgets');
 var permissions = require('couchtypes/permissions');
 var _           = require('underscore');
+var idField     = require('../ITS/fields').idField;
 
 exports.Comment = function () {
   return new Type('comment', {
@@ -15,6 +16,7 @@ exports.Comment = function () {
       ]),
     },
     fields: {
+      id: idField(/<parent_id>\-<author>\-\w+/),
       author: fields.creator(),
       created_at: fields.createdTime(),
       parent_id: fields.string({

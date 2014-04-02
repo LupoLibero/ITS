@@ -1,77 +1,44 @@
 angular.module('card').
-controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal, login, Card, longPolling, url) ->
-  $scope.login      = login
-  $scope.project    = $route.current.locals.project
-
-  makeObject = (cards) ->
-    results = {
-      lists: ["ideas", "todo", "estimated", "funded", "done"]
-      cards: []
-      rank:  {}
-      cost_estimate: {}
-      payment: {}
-      votes: {}
-      langs: {}
-    }
-
-    for card in cards
-      if card.type == 'vote'
-        if results.rank.hasOwnProperty(card.card_id)
-          results.rank[card.card_id] += 1
-        else
-          results.rank[card.card_id] = 1
-
-      if card.type == 'card'
-        card.num = card.id.split('.')[1]
-        for lang of card.avail_langs
-          if results.langs.hasOwnProperty(lang)
-            results.langs[lang] += 1
-          else
-            results.langs[lang] = 1
-
-      if card.type == 'cost_estimate'
-        results[card.type][card.card_id] = card.estimate
-      else if card.type == 'payment'
-        results[card.type][card.card_id] = card.amount
-      else if card.type == 'vote'
-        if not results.votes.hasOwnProperty(card.card_id)
-          results.votes[card.card_id] = {}
-        results.votes[card.card_id][card.voter] = card.vote
-      else if card.type == 'card'
-        results["#{card.type}s"].push(card)
-
-    return results
-
-  toObject = (cards) ->
-    results = {}
-    for card in cards
-      results[card.id] = card
-    return results
-
-  $scope.default     = makeObject(cards_default)
-  $scope.translation = toObject(cards)
-
+controller('CardListCtrl', ($scope, $route, cardUtils, config, $modal, login, Card, longPolling, url) ->
+  $scope.login       = login
+  $scope.project     = $route.current.locals.project
+  $scope.default     = cardUtils.makeObject($route.current.locals.cards_default)
+  $scope.translation = cardUtils.toObject($route.current.locals.cards)
 
   $scope.orderByRank = () ->
     (doc) ->
       -1*$scope.default.rank[doc.id]
-
 
   # Translate
   $scope.currentLang = window.navigator.language
   $scope.langs       = $scope.default.langs
   $scope.allLangs    = config[1].value
   $scope.nbCard      = $scope.default.cards.length
+  # If the user change of lang
+  $scope.$on('LangBarChangeLanguage', ($event, lang) ->
+    Card.all({
+      startkey: [$scope.project.id, lang]
+      endkey:   [$scope.project.id, lang, {}]
+      reduce: false
+    }).then(
+      (data) -> #Success
+        $scope.translation = cardUtils.toObject(data)
+    )
+  )
+  # If the user translate something
+  $scope.save = (id, field, text, rev) ->
+    _rev = null
+    for card in $scope.default.cards
+      if card.id == id
+        _rev = card._rev
+        break
 
-  $scope.titleSave = (id, text) ->
-    return $scope.save(id, 'title', text)
-
-  $scope.save = (id, field, text) ->
     Card.update({
       update: 'update_field'
 
       id:      id
-      _rev:    $scope.translation[id]._rev
+      _rev:    _rev
+      from:    rev
       element: field
       value:   text
       lang:    $scope.currentLang
@@ -80,27 +47,58 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal
         console.log "success"
     )
 
-  $scope.$on('LangBarChangeLanguage', ($event, lang) ->
-    Card.all({
-      startkey: [$scope.project.id, lang]
-      endkey:   [$scope.project.id, lang, {}]
-      reduce: false
+  $scope.newcard= {
+    title: ''
+  }
+
+  $scope.saveNewCard = ($event) ->
+    if $event.keyCode != 13
+      return false
+
+    $event.preventDefault()
+    if $scope.newcard.title == ''
+      notification.setAlert('You need to fill the field', 'danger')
+      return false
+
+    $scope.loading = true
+    Card.view({
+      view: 'ids'
+      key:  $scope.project.id
     }).then(
       (data) -> #Success
-        $scope.translation = toObject(data)
-        $scope.$emit('LanguageChangeSuccess')
+        if data.length == 0
+          count = 1
+        else
+          count = data[0].max + 1
+
+        id = $scope.project.id+'.'+count
+        # Create Demand
+        Card.update({
+          update: 'create'
+
+          id:          id
+          project_id:  $scope.project.id
+          title:       $scope.newcard.title
+          lang:        window.navigator.language
+        }).then(
+          (data) -> #Success
+            data.list_id = "ideas"
+            data.num     = count
+            data._id     = "#{data.project_id}.#{data.id}"
+
+            $scope.default.cards.push(data)
+            $scope.nbCard = $scope.default.cards.length
+
+            $scope.showAddCard   = false
+            $scope.loading       = false
+            $scope.newcard.title = ''
+          ,(err) -> #Error
+            $scope.loading      = false
+        )
     )
-  )
-
-
-  $scope.$on('addCard', ($event, card)->
-    $scope.default.cards.push(card)
-    $scope.nbCard = $scope.default.cards.length
-  )
 
 
   longPolling.start('cards')
-
   $scope.$on('ChangesOnCards', ($event, _id)->
     type      = _id.split(':')[0]
     id        = _id.split(':')[-1..-1][0].split('-')[0]
@@ -123,13 +121,6 @@ controller('CardListCtrl', ($scope, $route, cards_default, cards, config, $modal
       group_level: 3
     }).then(
       (data) -> #Success
-        # if lang == 'default'
-        #   $scope.results = recursive_merge($scope.results, data, {
-        #     cards: mergeArrayById
-        #     votes: mergeVotes
-        #   }, true, true)
-        # else
-        #   $scope.default.cards = mergeArrayById('cards', $scope.results, data)
     )
   )
 

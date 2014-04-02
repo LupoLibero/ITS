@@ -8,9 +8,6 @@ var activityField     = require('../Activity/fields').activityField;
 var votingField       = require('../Vote/fields').votingField;
 var idField           = require('../ITS/fields').idField;
 
-
-
-
 exports.card = new Type('card', {
   permissions: {
     add: permissions.loggedIn(),

@@ -1,7 +1,7 @@
 <div class="lists row">
   <lang-bar nb-card="nbCard" lang="currentLang" langs="langs" all-langs="allLangs"></lang-bar>
 
-  <section class="list col-md-2 col-xs-12" ng-repeat="list in default.lists" ng-controller="NewCardCtrl">
+  <section class="list col-md-2 col-xs-12" ng-repeat="list in default.lists">
     <header>
       {{ list }}
     </header>
@@ -11,25 +11,27 @@
           <span style="background-color:white">{{ card.num }}</span>
           <span class="pull-right"><b>{{ default.rank[card.id] || 0 }}</b></span>
         </header>
-        <translation save="titleSave(card.id, text)">
+        <translation field="title" default="card" other="translation" save="save(id, field, text, rev)">
           <a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">
-            {{ translation[card.id].title || card.title }}
+            {{ translation[card.id].title.content || card.title.content }}
           </a>
         </translation>
         <p>
-          <span style="background-color:red;color:white" ng-repeat="tag in card.tag_list">{{ tag }}</span>
+          <span style="background-color:red;color:white" ng-repeat="tag in card.tag_list">{{ tag |translate }}</span>
         </p>
         <span ng-show="default.cost_estimate[card.id] && !default.payment[card.id]">{{ default.cost_estimate[card.id] }}€</span>
         <span ng-show="default.payment[card.id]">{{ default.payment[card.id] }}€/{{ default.cost_estimate[card.id] }}€</span>
         <vote id="card.id" element="card" check="default.votes[card.id][login.getName()]"></vote>
       </div>
-      <div ng-show="showForm">
-        <textarea ng-disabled="loading" ng-blur="showForm=false" focus="showForm" ng-model="card.title" ng-keypress="save($event)"></textarea>
+
+      <!-- Add Card -->
+      <div ng-show="showAddCard && $first">
+        <textarea ng-disabled="loading" ng-blur="showAddCard=false" focus="showAddCard" ng-model="newcard.title" ng-keypress="saveNewCard($event)"></textarea>
         <span us-spinner ng-show="loading"></span>
       </div>
     </content>
     <footer ng-show="$first">
-      <button class="btn btn-link" ng-disabled="login.isNotConnect()" ng-hide="showForm" ng-click="addCard()">Add card</button>
+      <button class="btn btn-link" ng-disabled="login.isNotConnect()" ng-hide="showAddCard" ng-click="showAddCard=true">Add card</button>
     </footer>
   </section>
 </div>
