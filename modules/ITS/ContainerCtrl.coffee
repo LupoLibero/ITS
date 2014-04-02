@@ -1,11 +1,20 @@
 angular.module('its').
-controller('ContainerCtrl', ($scope, $rootScope, notification) ->
-  $rootScope.notif = notification
+controller('ContainerCtrl', ($scope, $rootScope, notification, Local) ->
   $scope.loader = true
+
+  $rootScope.saveTranslation = (key, text, lang) ->
+    Local.update({
+      update: 'update'
+      id: lang
+
+      key:  key
+      text: text
+    })
 
   $scope.$on('LangBarChangeLanguage', ($event, lang) ->
     $scope.$broadcast('$ChangeLanguage', lang)
   )
+
   # Change for language of the navigator
   $rootScope.$broadcast('$ChangeLanguage', window.navigator.language)
   # On error change for english and display an message
