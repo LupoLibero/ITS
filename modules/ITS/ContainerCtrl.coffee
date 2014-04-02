@@ -11,16 +11,20 @@ controller('ContainerCtrl', ($scope, $rootScope, notification, Local) ->
       text: text
     })
 
-  $scope.$on('LangBarChangeLanguage', ($event, lang) ->
-    $scope.$broadcast('$ChangeLanguage', lang)
+  $rootScope.$on('LangBarChangeLanguage', ($event, lang) ->
+    $rootScope.$broadcast('$ChangeLanguage', lang)
+  )
+  $rootScope.$on('LangBarNewLanguage', ($event, lang) ->
+    $rootScope.$broadcast('$ChangeLanguage', lang)
   )
 
   # Change for language of the navigator
   $rootScope.$broadcast('$ChangeLanguage', window.navigator.language)
   # On error change for english and display an message
-  $rootScope.$on('$translateChangeError', ->
-    $rootScope.$broadcast('$ChangeLanguage', 'en')
-    notification.addAlert("You're favorite language is not available!", 'warning')
+  $rootScope.$on('$translateChangeError', ($event, lang)->
+    if lang isnt 'en'
+      $rootScope.$broadcast('$ChangeLanguage', 'en')
+      notification.addAlert("You're favorite language is not available!", 'warning')
   )
 
   $rootScope.$on('$routeChangeStart', (event, err) ->
