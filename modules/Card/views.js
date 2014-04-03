@@ -74,7 +74,7 @@ exports.card_all = {
   map: function(doc) {
     if (doc.type && doc.type == 'card') {
       for (var lang in doc.title) {
-        function buildNewDoc (doc, lang, def) {
+        function buildNewDoc (doc, lang) {
           var newDoc;
           var newTitle = {};
           newTitle[lang] = doc.title[lang];
@@ -85,13 +85,12 @@ exports.card_all = {
             type:        doc.type,
             avail_langs: Object.keys(doc.title)
           };
-          if (lang != doc.init_lang && def) {
-            newDoc.title = {default: doc.title[doc.init_lang]};
-          }
           return newDoc
         }
         emit([lang, doc.id], buildNewDoc(doc, lang, false));
-        emit(["default", doc.id], buildNewDoc(doc, lang, true));
+        if (lang == doc.init_lang) {
+          emit(["default", doc.id], buildNewDoc(doc, lang, true));
+        }
       }
     }
   }
