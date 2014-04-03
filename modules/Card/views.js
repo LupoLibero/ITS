@@ -72,52 +72,42 @@ exports.card_workflow = {
 
 exports.card_all = {
     map: function(doc) {
-    var translation = require('views/lib/translation').translation();
-    var rank, list_id;
+      //var translation = require('views/lib/translation').translation();
+      var rank, list_id;
 
-    if (doc.type) {
-      switch(doc.type) {
-        case 'card':
-          translation.emitTranslatedDoc(
-            [doc.project_id, translation._keyTag, doc.id],
-            {
-              project_id: doc.project_id,
-              id: doc.id,
-              _rev: doc._rev,
-              title: doc.title,
-              init_lang: doc.init_lang,
-              type: doc.type,
-              list_id: doc.list_id,
-              tag_list: doc.tag_list,
-            },
-            {title: true}
-          );
-          break;
-        case 'cost_estimate':
-          emit([doc.project_id, 'default', doc.card_id], doc);
-          break;
-        case 'payment':
-          emit([doc.project_id, 'default', doc.card_id], doc);
-          break;
-        case 'vote':
-          if (doc.voted_doc_id.split(':')[0] == 'card') {
-            (function() {
-              var cardId = doc.voted_doc_id.split(':')[1];
-              emit(
-                [
-                  cardId.split('.')[0],
-                  "default",
-                  cardId
-                ],
-                {
-                  voter: doc.voter,
-                  vote: doc.vote,
-                  card_id: cardId,
-                  type: doc.type
-              });
-            })();
+     /* if (doc.type && doc.type == 'card') {
+        translation.emitTranslatedDoc(
+          [doc.project_id, translation._keyTag, doc.id],
+          {
+            id: doc.id,
+            _rev: doc._rev,
+            title: doc.title,
+            init_lang: doc.init_lang,
+            type: doc.type,
+          },
+          {title: true}
+        );
+      }
+    }*/
+    if (doc.type && doc.type == 'card') {
+      for (var lang in doc.title) {
+        function buildNewDoc (doc, lang, def) {
+          newTitle = {};
+          newTitle[lang] = doc.title[lang];
+          newDoc = {
+            id:          doc.id,
+            title:       newTitle,
+            init_lang:   doc.init_lang,
+            type:        doc.type,
+            avail_langs: Object.keys(doc.title)
+          };
+          if (lang != doc.init_lang && def) {
+            newDoc.title = {default: doc.title[doc.init_lang]};
           }
-          break;
+          return newDoc
+        }
+        emit([lang, doc.id], buildNewDoc(doc, lang, false));
+        emit(["default", lang, doc.id], buildNewDoc(doc, lang, true));
       }
     }
   }
