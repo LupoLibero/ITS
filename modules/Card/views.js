@@ -71,28 +71,12 @@ exports.card_workflow = {
 };
 
 exports.card_all = {
-    map: function(doc) {
-      //var translation = require('views/lib/translation').translation();
-      var rank, list_id;
-
-     /* if (doc.type && doc.type == 'card') {
-        translation.emitTranslatedDoc(
-          [doc.project_id, translation._keyTag, doc.id],
-          {
-            id: doc.id,
-            _rev: doc._rev,
-            title: doc.title,
-            init_lang: doc.init_lang,
-            type: doc.type,
-          },
-          {title: true}
-        );
-      }
-    }*/
+  map: function(doc) {
     if (doc.type && doc.type == 'card') {
       for (var lang in doc.title) {
         function buildNewDoc (doc, lang, def) {
-          newTitle = {};
+          var newDoc;
+          var newTitle = {};
           newTitle[lang] = doc.title[lang];
           newDoc = {
             id:          doc.id,
@@ -107,7 +91,7 @@ exports.card_all = {
           return newDoc
         }
         emit([lang, doc.id], buildNewDoc(doc, lang, false));
-        emit(["default", lang, doc.id], buildNewDoc(doc, lang, true));
+        emit(["default", doc.id], buildNewDoc(doc, lang, true));
       }
     }
   }
