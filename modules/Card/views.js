@@ -80,6 +80,7 @@ exports.card_all = {
           newTitle[lang] = doc.title[lang];
           newDoc = {
             id:          doc.id,
+            _rev:          doc._rev,
             title:       newTitle,
             init_lang:   doc.init_lang,
             type:        doc.type,

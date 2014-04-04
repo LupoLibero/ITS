@@ -7,7 +7,7 @@ exports.translation = function () {
     maxNbOfTranslations: 0,
 
    isTranslatableType: function (doc) {
-      return doc.hasOwnProperty('type') && doc.type == 'demand';
+      return doc.hasOwnProperty('type') && doc.type == 'card';
     },
 
     guessDefaultLang: function (doc) {

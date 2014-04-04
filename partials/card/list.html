@@ -1,19 +1,19 @@
 <div class="lists row">
   <lang-bar nb-card="nbCard" lang="currentLang" langs="langs" all-langs="allLangs"></lang-bar>
 
-  <section class="list col-md-2 col-xs-12" ng-repeat="list in default.lists">
+  <section class="list col-md-2 col-xs-12" ng-repeat="list in lists">
     <header>
       {{ list }}
     </header>
     <content>
-      <div ng-repeat="card in default.cards |list:list |orderBy:orderByRank()">
+      <div ng-repeat="card in cards |list:workflow:list |orderBy:rank()">
         <header>
           <span style="background-color:white">{{ card.num }}</span>
           <span class="pull-right"><b>{{ default.rank[card.id] || 0 }}</b></span>
         </header>
-        <translation field="title" default="card" other="translation" save="save(id, field, text, rev)">
+        <translation field="title" object="card" save="save(id, field, text, from)">
           <a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">
-            {{ translation[card.id].title.content || card.title.content }}
+            {{ card.title.content }}
           </a>
         </translation>
         <p>

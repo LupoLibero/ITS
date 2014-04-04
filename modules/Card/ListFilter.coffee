@@ -1,9 +1,9 @@
 angular.module('card').
 filter('list', () ->
-  return (cards, list_id) ->
+  return (cards, workflow, list_id) ->
     results = []
     for card in cards
-      if card.list_id == list_id
+      if workflow[0].cards[card.id].list_id == list_id
         results.push(card)
 
     return results

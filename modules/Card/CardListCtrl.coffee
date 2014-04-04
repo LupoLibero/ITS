@@ -1,34 +1,41 @@
 angular.module('card').
-controller('CardListCtrl', ($scope, $route, cardUtils, config, $modal, login, Card, longPolling, url) ->
+controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, longPolling, url) ->
   $scope.login       = login
   $scope.project     = $route.current.locals.project
-  $scope.default     = cardUtils.makeObject($route.current.locals.cards_default)
-  $scope.translation = cardUtils.toObject($route.current.locals.cards)
+  $scope.lists       = ['ideas', 'estimated', 'funded', 'todo', 'doing', 'done']
+  $scope.cards       = cardUtils.makeCards(
+                        $route.current.locals.cards_default,
+                        $route.current.locals.cards
+                      )
+  $scope.workflow    = $route.current.locals.workflow
 
-  $scope.orderByRank = () ->
+  $scope.rank = () ->
     (doc) ->
-      -1*$scope.default.rank[doc.id]
+      -1*$scope.workflow.rank[doc.id]
 
   # Translate
   $scope.currentLang = window.navigator.language
-  $scope.langs       = $scope.default.langs
-  $scope.allLangs    = config[1].value
-  $scope.nbCard      = $scope.default.cards.length
+  $scope.langs       = cardUtils.getLangs($scope.cards)
+  $scope.allLangs    = $route.current.locals.config[1].value
+  $scope.nbCard      = $scope.cards.length
   # If the user change of lang
   $scope.$on('LangBarChangeLanguage', ($event, lang) ->
     Card.all({
-      startkey: [$scope.project.id, lang]
-      endkey:   [$scope.project.id, lang, {}]
-      reduce: false
+      startkey: [lang, "#{$scope.project.id}."]
+      endkey:   [lang, "#{$scope.project.id}.a"]
     }).then(
       (data) -> #Success
-        $scope.translation = cardUtils.toObject(data)
+        $scope.translation = cardUtils.makeCards(
+                              $route.current.locals.cards_default,
+                              data
+                            )
+        $scope.$emit('ChangeLanguageSuccess')
     )
   )
   # If the user translate something
-  $scope.save = (id, field, text, rev) ->
+  $scope.save = (id, field, text, from) ->
     _rev = null
-    for card in $scope.default.cards
+    for card in $scope.cards
       if card.id == id
         _rev = card._rev
         break
@@ -38,7 +45,7 @@ controller('CardListCtrl', ($scope, $route, cardUtils, config, $modal, login, Ca
 
       id:      id
       _rev:    _rev
-      from:    rev
+      from:    from
       element: field
       value:   text
       lang:    $scope.currentLang
@@ -84,10 +91,22 @@ controller('CardListCtrl', ($scope, $route, cardUtils, config, $modal, login, Ca
           (data) -> #Success
             data.list_id = "ideas"
             data.num     = count
-            data._id     = "#{data.project_id}.#{data.id}"
+            data._id     = "card:#{data.id}"
+            data.title   = {
+              content: data.title
+              _rev:    1
+            }
 
-            $scope.default.cards.push(data)
-            $scope.nbCard = $scope.default.cards.length
+            $scope.langs[data.lang] ? 0
+            $scope.langs[data.lang] += 1
+
+            $scope.workflow[0].cards[data.id] = {
+              id:      data.id
+              list_id: "ideas"
+            }
+
+            $scope.cards.push(data)
+            $scope.nbCard = $scope.cards.length
 
             $scope.showAddCard   = false
             $scope.loading       = false
@@ -96,33 +115,6 @@ controller('CardListCtrl', ($scope, $route, cardUtils, config, $modal, login, Ca
             $scope.loading      = false
         )
     )
-
-
-  longPolling.start('cards')
-  $scope.$on('ChangesOnCards', ($event, _id)->
-    type      = _id.split(':')[0]
-    id        = _id.split(':')[-1..-1][0].split('-')[0]
-    projectId = id.split('.')[0]
-
-    card = null
-    for piece in $scope.default.cards
-      if piece.id == id
-        card = piece
-        break
-
-    if card?
-      lang = (if type != 'card' then 'default' else card.lang)
-    else
-      lang = 'default'
-
-    Card.get({
-      view:        'all'
-      key:         [projectId, lang, id]
-      group_level: 3
-    }).then(
-      (data) -> #Success
-    )
-  )
 
 
   $scope.$watch($route.current.params.card_num, (card_num) ->
@@ -137,27 +129,30 @@ controller('CardListCtrl', ($scope, $route, cardUtils, config, $modal, login, Ca
             card_num   = $route.current.params.card_num
             project_id = $route.current.params.project_id
             found      = false
-            for card in $scope.default.cards
+
+            for card in $scope.cards
               if card.id == "#{project_id}.#{card_num}"
                 defer.resolve(card)
                 found = true
-            if not found then defer.reject()
+
+            defer.reject() if not found
             return defer.promise
           card_default: (Card, $route) ->
             card_num   = $route.current.params.card_num
             project_id = $route.current.params.project_id
             return Card.view({
               view: 'get'
-              startkey: ["#{project_id}.#{card_num}", 'default']
-              endkey:   ["#{project_id}.#{card_num}", 'default', {}]
+              startkey: ['default', "#{project_id}.#{card_num}"]
+              endkey:   ['default', "#{project_id}.#{card_num}"]
             })
           card: (Card, $route) ->
             card_num   = $route.current.params.card_num
             project_id = $route.current.params.project_id
+            language   = window.navigator.language
             return Card.view({
               view: 'get'
-              startkey: ["#{project_id}.#{card_num}", window.navigator.language]
-              endkey:   ["#{project_id}.#{card_num}", window.navigator.language, {}]
+              startkey: [language, "#{project_id}.#{card_num}"]
+              endkey:   [language, "#{project_id}.#{card_num}"]
             })
           comments: (Comment, $route) ->
             card_num   = $route.current.params.card_num

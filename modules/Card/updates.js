@@ -19,7 +19,7 @@ exports.card_create = function(doc, req) {
     form.list_id     = 'ideas';
     form.tag_list    = [];
     form.init_lang   = form.lang;
-    registerTranslation(form, form, 'card', 'title', form.lang, '1');
+    registerTranslation(form, form, 'card', 'title', form.lang, form.lang);
     // Add the vote of the creator
     form.description[form.lang]  = '';
     form.votes[req.userCtx.name] = true;

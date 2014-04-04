@@ -9,17 +9,22 @@ config( ($routeProvider)->
         cards_default: (Card, $route) ->
           project_id = $route.current.params.project_id
           return Card.all({
-            startkey:    [project_id, 'default']
-            endkey:      [project_id, 'default', {}]
-            reduce:      false
+            startkey: ["default", "#{project_id}."]
+            endkey:   ["default", "#{project_id}.a"]
           })
         cards: (Card, $route) ->
           language   = window.navigator.language
           project_id = $route.current.params.project_id
           return Card.all({
-            startkey:    [project_id, language]
-            endkey:      [project_id, language, {}]
-            reduce:      false
+            startkey: [language, "#{project_id}."]
+            endkey:   [language, "#{project_id}.a"]
+          })
+        workflow: (Card, $route) ->
+          project_id = $route.current.params.project_id
+          return Card.view({
+            view:     'workflow'
+            startkey: "#{project_id}."
+            endkey:   "#{project_id}.a"
           })
         project: (Project, $route) ->
           return Project.getDoc({
