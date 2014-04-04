@@ -6,7 +6,13 @@
   "modules": ["modules", "views"],
   "attachments": ["static", "partials"],
   "shell": [
-    "grunt coffee"
+    "grunt coffee",
+    "node ./external_tools.js default"
+  ],
+  "bots": [
+    "./modules/Login/role_setter.js",
+    "./modules/Mailer/mailer.js",
+    "./modules/Notification/notification_creator.js"
   ],
   "dependencies": {
     "db": null,

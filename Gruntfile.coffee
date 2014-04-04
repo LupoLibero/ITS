@@ -38,16 +38,24 @@ module.exports = (grunt) ->
       options:
         stdout: true
       kansoDelete:{
-        command: 'kanso deletedb http://admin:admin@127.0.0.1:5984/lupolibero'
+        command: ->
+          name = grunt.option('db') || 'default'
+          return "kanso deletedb #{name}"
       }
       kansoCreate:{
-        command: 'kanso createdb http://admin:admin@127.0.0.1:5984/lupolibero'
+        command: ->
+          name = grunt.option('db') || 'default'
+          return "kanso createdb #{name}"
       }
       kansoInit:{
-        command: 'kanso upload ./data http://admin:admin@127.0.0.1:5984/lupolibero'
+        command: ->
+          name = grunt.option('db') || 'default'
+          return "kanso upload ./data #{name}"
       }
       kansoPush:{
-        command: 'kanso push http://admin:admin@127.0.0.1:5984/lupolibero'
+        command: ->
+          name = grunt.option('db') || 'default'
+          return "kanso push #{name}"
       }
     }
     # Testing
