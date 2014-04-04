@@ -1,7 +1,14 @@
 angular.module('card').
-controller('CardCtrl', (parent, card, card_default, comments, $scope, $modalInstance,  $q, Card, Comment, login) ->
+controller('CardCtrl', (parent, card, card_default, comments, $document, $scope, $modalInstance,  $q, Card, Comment, login) ->
 
   parent.activity = []
+
+  $document.bind('keypress', ($event) ->
+    if $event.keyCode == 27
+      target = $event.target.tagName.toLowerCase()
+      unless target in ['input', 'textarea']
+        $modalInstance.dismiss()
+  )
 
   for element in card_default
     if element.hasOwnProperty('activity')
