@@ -17,31 +17,22 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
   socket.emit('setLang', window.navigator.language)
   socket.emit('getAll', window.navigator.language)
 
-  socket.on('addCard', (card)->
-    $scope.cards.push(card)
+  socket.on('addCard', (data)->
+    found = false
+    for card, i in $scope.cards
+      if card.id == data.id
+        $scope.cards[i] = angular.extend(card, data)
+        found = true
+        break
+
+    $scope.cards.push(data) if not found
     $scope.langs  = cardUtils.getLangs($scope.cards)
     $scope.nbCard = $scope.cards.length
   )
 
-  # socket.on('setVote', (id)->
-  #   for card, i in $scope.cards
-  #     if card.id == id
-  #       $scope.cards.hasVote = true
-  #       $scope.cards.votes[login.getName()] = true
-  #       break
-  # )
-
-  # socket.on('setRank', (data)->
-  #   for card, i in $scope.cards
-  #     if card.id == data.id
-  #       $scope.cards.rank = data.rank
-  #       break
-  # )
-
   # If the user change of lang
   $scope.$on('LangBarChangeLanguage', ($event, lang) ->
-    $scope.cards = []
-    socket.emit('setLang', lang)
+    socket.emit('getTitle', lang)
   )
   # If the user translate something
   $scope.save = (id, field, text, from) ->

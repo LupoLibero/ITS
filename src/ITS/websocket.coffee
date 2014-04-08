@@ -21,6 +21,19 @@ getCard = (card, lang, username)->
   defer.resolve([card, lang, username])
   return defer.promise
 
+onlyTitle = (result) ->
+  card     = result[0]
+  lang     = result[1]
+  username = result[2]
+  defer = Q.defer()
+  card = {
+    id:     card.id
+    lang:   card.lang
+    title:  card.title
+  }
+  defer.resolve([card, lang, username])
+  return defer.promise
+
 getVote = (result) ->
   card     = result[0]
   lang     = result[1]
@@ -117,10 +130,21 @@ io.sockets.on('connection', (socket)->
       )
     )
 
-  # socket.on('saveCard', function(data){
-  #   saveCard(data).then(function(data){
-  #     console.log(data);
-  #   });
-  # });
+  socket.on 'getTitle', (data)->
+    lang = data
+
+    getCards(project).then( (cards)->
+      cards.forEach( (card) ->
+
+        getCard(card, lang, username)
+          .then(onlyTitle)
+          .then(
+            (card)-> #Success
+              socket.emit('addCard', card[0])
+            ,(err)-> #Error
+              console.log err
+          )
+      )
+    )
 
 ) #Socket on connection
