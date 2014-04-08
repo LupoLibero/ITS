@@ -1,12 +1,15 @@
-[submodule "modules/Notification"]
-	path = modules/Notification
+[submodule "src/Notification"]
+	path = src/Notification
 	url = https://github.com/LupoLibero/couch-ng-Notification.git
-[submodule "modules/dbSelect"]
-	path = modules/dbSelect
-	url = https://github.com/LupoLibero/couch-ng-dbSelect.git
-[submodule "modules/Translation"]
-	path = modules/Translation
-	url = https://github.com/LupoLibero/couch-ng-Translation.git
-[submodule "modules/Directive"]
-	path = modules/Directive
+[submodule "src/Url"]
+	path = src/Url
+	url = https://github.com/LupoLibero/couch-ng-Url.git
+[submodule "src/Directives"]
+	path = src/Directives
 	url = https://github.com/LupoLibero/directives.git
+[submodule "src/dbSelect"]
+	path = src/dbSelect
+	url = https://github.com/LupoLibero/couch-ng-dbSelect.git
+[submodule "src/Translation"]
+	path = src/Translation
+	url = https://github.com/LupoLibero/couch-ng-Translation.git

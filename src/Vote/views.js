@@ -18,6 +18,15 @@ exports.vote_by_doc_id = {
   }
 }
 
+exports.vote_all = {
+  map: function (doc) {
+    if (doc.type && doc.type == 'vote') {
+      votes = {};
+      votes[doc.voter] = doc.vote;
+      emit(doc.voted_doc_id, votes);
+    }
+  },
+}
 
 exports.vote_by_user = {
   map: function (doc) {

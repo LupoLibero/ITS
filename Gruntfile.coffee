@@ -1,16 +1,14 @@
 module.exports = (grunt) ->
   require('load-grunt-tasks')(grunt)
 
-  grunt.initConfig {
-    # Watcher
+  grunt.initConfig({
     watch: {
       options:
         livereload: true
-      html: {
+      all: {
         files: [
           './partials/{,*/}*.html'
-          './modules/{,*/}*'
-          './static/css/{,*/}*'
+          './src/{,*/}*'
           './lib/{,*/}*.js'
         ]
         tasks: [
@@ -18,19 +16,61 @@ module.exports = (grunt) ->
         ]
       }
     }
-    # Coffee
+    concat: {
+      dist: {
+        src: [
+          'temp/*/__init__.js'
+          'temp/*/config.js'
+          'temp/*/routes.js'
+          'temp/*/run.js'
+          'temp/*/*.js'
+        ]
+        dest: 'static/js/main.js'
+        options:
+          process: (content, src) ->
+            src = src.split('/') # Split on slash
+            src = src[src.length-1] # Get file name
+            if (src[0].toUpperCase() == src[0] or src == 'run.js' or src == 'config.js' or src == 'routes.js')
+              console.log src
+              return content
+            else
+              return ''
+      }
+    }
     coffee: {
       options:
-        join: true
         bare: true
       dist: {
-        files:
-          'static/js/main.js': [
-            'modules/*/__init__.coffee'
-            'modules/*/config.coffee'
-            'modules/*/routes.coffee'
-            'modules/*/*.coffee'
-          ]
+        expand: true
+        cwd: 'src/'
+        src: '*/*.coffee'
+        dest: 'temp/'
+        ext: '.js'
+      }
+      websocket: {
+        expand: true
+        cwd: './src/ITS/'
+        src: 'websocket.coffee'
+        dest: 'static/bots/'
+        ext: '.js'
+      }
+    }
+    copy: {
+      dist: {
+        expand: true
+        filter: 'isFile'
+        cwd: 'src/'
+        src: '*/*.js'
+        dest: 'temp/'
+      }
+    }
+    clean: {
+      options:
+        force: true
+      dist: {
+        src: [
+          "temp/"
+        ]
       }
     }
     # Kanso
@@ -75,14 +115,23 @@ module.exports = (grunt) ->
       e2e:{
       }
     }
-  }
+  })
+
+
+  grunt.registerTask('default', [
+    'watch'
+  ])
+
+  grunt.registerTask('compile', [
+    'copy'
+    'coffee'
+    'concat'
+    'clean'
+  ])
 
   grunt.registerTask('init', [
     'shell:kansoDelete'
     'shell:kansoCreate'
     'shell:kansoInit'
     'shell:kansoPush'
-  ])
-  grunt.registerTask('default', [
-    'watch'
   ])

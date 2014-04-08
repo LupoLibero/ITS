@@ -15,6 +15,7 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
   )
   socket.emit('setProject', $scope.project.id)
   socket.emit('setLang', window.navigator.language)
+  socket.emit('getAll', window.navigator.language)
 
   socket.on('addCard', (card)->
     $scope.cards.push(card)
