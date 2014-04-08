@@ -10,6 +10,7 @@ angular.module('its', [
   'card'
   'mailer'
   'error'
+  'socket'
   'ngStorage'
 ])
 

@@ -6,10 +6,10 @@
       {{ list }}
     </header>
     <content>
-      <div ng-repeat="card in cards |list:workflow:list |orderBy:rank()">
+      <div ng-repeat="card in cards |list:'':list |orderBy:rank()">
         <header>
           <span style="background-color:white">{{ card.num }}</span>
-          <span class="pull-right"><b>{{ default.rank[card.id] || 0 }}</b></span>
+          <span class="pull-right"><b>{{ card.rank || 0 }}</b></span>
         </header>
         <translation field="title" object="card" save="save(id, field, text, from)">
           <a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">

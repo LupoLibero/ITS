@@ -73,26 +73,14 @@ exports.card_workflow = {
 exports.card_all = {
   map: function(doc) {
     if (doc.type && doc.type == 'card') {
-      for (var lang in doc.title) {
-        function buildNewDoc (doc, lang) {
-          var newDoc;
-          var newTitle = {};
-          newTitle[lang] = doc.title[lang];
-          newDoc = {
-            id:          doc.id,
-            _rev:          doc._rev,
-            title:       newTitle,
-            init_lang:   doc.init_lang,
-            type:        doc.type,
-            avail_langs: Object.keys(doc.title)
-          };
-          return newDoc
-        }
-        emit([lang, doc.id], buildNewDoc(doc, lang, false));
-        if (lang == doc.init_lang) {
-          emit(["default", doc.id], buildNewDoc(doc, lang, true));
-        }
-      }
+      emit(doc.id, {
+        id:          doc.id,
+        _rev:        doc._rev,
+        title:       doc.title,
+        init_lang:   doc.init_lang,
+        type:        doc.type,
+        avail_langs: Object.keys(doc.title),
+      });
     }
   }
 };

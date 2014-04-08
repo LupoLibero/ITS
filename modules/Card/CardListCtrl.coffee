@@ -1,36 +1,46 @@
 angular.module('card').
-controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, longPolling, url) ->
+controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, socket, url) ->
   $scope.login       = login
-  $scope.project     = $route.current.locals.project
   $scope.lists       = ['ideas', 'estimated', 'funded', 'todo', 'doing', 'done']
-  $scope.cards       = cardUtils.makeCards(
-                        $route.current.locals.cards_default,
-                        $route.current.locals.cards
-                      )
-  $scope.workflow    = $route.current.locals.workflow
-
-  $scope.rank = () ->
-    (doc) ->
-      -1*$scope.workflow.rank[doc.id]
-
+  $scope.project     = $route.current.locals.project
+  $scope.cards       = []
   # Translate
   $scope.currentLang = window.navigator.language
-  $scope.langs       = cardUtils.getLangs($scope.cards)
   $scope.allLangs    = $route.current.locals.config[1].value
-  $scope.nbCard      = $scope.cards.length
+  $scope.langs       = {}
+  $scope.nbCard      = 0
+
+  $scope.$on('SessionChanged', ($event, name)->
+    socket.emit('setUsername', name)
+  )
+  socket.emit('setProject', $scope.project.id)
+  socket.emit('setLang', window.navigator.language)
+
+  socket.on('addCard', (card)->
+    $scope.cards.push(card)
+    $scope.langs  = cardUtils.getLangs($scope.cards)
+    $scope.nbCard = $scope.cards.length
+  )
+
+  # socket.on('setVote', (id)->
+  #   for card, i in $scope.cards
+  #     if card.id == id
+  #       $scope.cards.hasVote = true
+  #       $scope.cards.votes[login.getName()] = true
+  #       break
+  # )
+
+  # socket.on('setRank', (data)->
+  #   for card, i in $scope.cards
+  #     if card.id == data.id
+  #       $scope.cards.rank = data.rank
+  #       break
+  # )
+
   # If the user change of lang
   $scope.$on('LangBarChangeLanguage', ($event, lang) ->
-    Card.all({
-      startkey: [lang, "#{$scope.project.id}."]
-      endkey:   [lang, "#{$scope.project.id}.a"]
-    }).then(
-      (data) -> #Success
-        $scope.translation = cardUtils.makeCards(
-                              $route.current.locals.cards_default,
-                              data
-                            )
-        $scope.$emit('ChangeLanguageSuccess')
-    )
+    $scope.cards = []
+    socket.emit('setLang', lang)
   )
   # If the user translate something
   $scope.save = (id, field, text, from) ->
@@ -67,54 +77,11 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, long
       notification.setAlert('You need to fill the field', 'danger')
       return false
 
-    $scope.loading = true
-    Card.view({
-      view: 'ids'
-      key:  $scope.project.id
-    }).then(
-      (data) -> #Success
-        if data.length == 0
-          count = 1
-        else
-          count = data[0].max + 1
-
-        id = $scope.project.id+'.'+count
-        # Create Demand
-        Card.update({
-          update: 'create'
-
-          id:          id
-          project_id:  $scope.project.id
-          title:       $scope.newcard.title
-          lang:        window.navigator.language
-        }).then(
-          (data) -> #Success
-            data.list_id = "ideas"
-            data.num     = count
-            data._id     = "card:#{data.id}"
-            data.title   = {
-              content: data.title
-              _rev:    1
-            }
-
-            $scope.langs[data.lang] ? 0
-            $scope.langs[data.lang] += 1
-
-            $scope.workflow[0].cards[data.id] = {
-              id:      data.id
-              list_id: "ideas"
-            }
-
-            $scope.cards.push(data)
-            $scope.nbCard = $scope.cards.length
-
-            $scope.showAddCard   = false
-            $scope.loading       = false
-            $scope.newcard.title = ''
-          ,(err) -> #Error
-            $scope.loading      = false
-        )
-    )
+    socket.emit('saveCard', {
+      project_id:  $scope.project.id
+      title:       $scope.newcard.title
+      lang:        window.navigator.language
+    })
 
 
   $scope.$watch($route.current.params.card_num, (card_num) ->

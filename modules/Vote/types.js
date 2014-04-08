@@ -13,7 +13,7 @@ exports.vote = new Type('vote', {
   fields: {
     voter:         fields.creator(),
     vote:          fields.boolean(),
-    id:            idField(/<voted_doc_id>\-<author>/),
+    id:            idField(/<voted_doc_id>\-<voter>/),
     voted_doc_id:  fields.string(),
   }
 });
