@@ -97,6 +97,9 @@ module.exports = (grunt) ->
           name = grunt.option('db') || 'default'
           return "kanso push #{name}"
       }
+      websocket:{
+        command: 'node node_modules/nodemon/bin/nodemon src/ITS/websocket.coffee'
+      }
     }
     # Testing
     karma: {
@@ -120,6 +123,10 @@ module.exports = (grunt) ->
 
   grunt.registerTask('default', [
     'watch'
+  ])
+
+  grunt.registerTask('start', [
+    'shell:websocket'
   ])
 
   grunt.registerTask('compile', [

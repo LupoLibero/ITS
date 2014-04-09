@@ -2,6 +2,9 @@ var fields = require('couchtypes/fields');
 
 exports.idField = function(idRegExp) {
   var idValidation = function(doc, value) {
+    if(doc.hasOwnProperty('_deleted') && doc._deleted === true) {
+      return true;
+    }
     var mustBe = RegExp(idRegExp.source.replace(/<([a-z_]*)>/g, function (match, p1) {
         return doc[p1];
       }

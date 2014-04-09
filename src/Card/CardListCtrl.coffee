@@ -1,5 +1,5 @@
 angular.module('card').
-controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, socket, url) ->
+controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, socket, url, $q) ->
   $scope.login       = login
   $scope.lists       = ['ideas', 'estimated', 'funded', 'todo', 'doing', 'done']
   $scope.project     = $route.current.locals.project
@@ -14,10 +14,15 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
     socket.emit('setUsername', name)
   )
   socket.emit('setProject', $scope.project.id)
-  socket.emit('setLang', window.navigator.language)
   socket.emit('getAll', window.navigator.language)
 
   socket.on('addCard', (data)->
+    $scope.cards.push(data)
+    $scope.langs  = cardUtils.getLangs($scope.cards)
+    $scope.nbCard = $scope.cards.length
+  )
+
+  socket.on('setCard', (data)->
     found = false
     for card, i in $scope.cards
       if card.id == data.id
@@ -29,6 +34,18 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
     $scope.langs  = cardUtils.getLangs($scope.cards)
     $scope.nbCard = $scope.cards.length
   )
+
+  $scope.saveVote = (id, check) ->
+    defer = $q.defer()
+    if login.isConnect()
+      socket.emit('setVote', {
+        id:      id
+        check:   check
+        author:  login.getName()
+        element: 'card'
+      })
+    defer.resolve()
+    return defer.promise
 
   # If the user change of lang
   $scope.$on('LangBarChangeLanguage', ($event, lang) ->
@@ -69,10 +86,11 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
       notification.setAlert('You need to fill the field', 'danger')
       return false
 
-    socket.emit('saveCard', {
+    socket.emit('newCard', {
       project_id:  $scope.project.id
       title:       $scope.newcard.title
-      lang:        window.navigator.language
+      lang:        $scope.currentLang
+      author:      login.getName()
     })
 
 
