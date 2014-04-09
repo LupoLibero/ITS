@@ -6,5 +6,6 @@ Thumbs.db
 .DS_STORE
 /static/vendor/
 static/*.js
+static/bots
 static/js
 .kansorc
