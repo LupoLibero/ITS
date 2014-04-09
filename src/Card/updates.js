@@ -4,14 +4,24 @@ var registerTranslation = require('../Translation/utils').registerTranslation;
 var updateActivity      = require('../Activity/utils').updateActivity;
 
 exports.card_create = function(doc, req) {
-  var attr;
-  var form = JSON.parse(req.body);
+  var form;
+  try {
+    form = JSON.parse(req.body);
+  } catch(e){
+    form = req.query;
+  }
+  log(form);
+
   if(doc !== null){
     throw({forbidden: '345: New Card only'});
   } else {
+    id     = form.id || form.project_id+'.'+req.uuid.substr(req.uuid.length-4);
+    author = req.userCtx.name || form.author;
+
+    form.id          = id;
     form.type        = 'card';
-    form._id         = form.type + ':' + form.id;
-    form.author      = req.userCtx.name;
+    form._id         = form.type+':'+id;
+    form.author      = author;
     form.created_at  = new Date().getTime();
     form.votes       = {};
     form.description = {};

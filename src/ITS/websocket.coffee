@@ -3,6 +3,7 @@ Q      = require('q')
 cradle = require('cradle')
 db     = new(cradle.Connection)('http://127.0.0.1', 5984, { cache: false }).database('lupolibero')
 view   = Q.nbind(db.view, db)
+update = Q.nbind(db.update, db)
 
 getCards = (project)->
   return view('its/card_all')
@@ -54,10 +55,6 @@ getVote = (result) ->
       if result.hasOwnProperty(username)
         card.hasVote        = true
         card.vote[username] = result[username]
-
-      if result.hasOwnProperty(username)
-        card.hasVote        = true
-        card.vote[username] = result[username]
       else
         card.hasVote = false
 
@@ -66,6 +63,32 @@ getVote = (result) ->
       defer.reject(err)
   )
 
+  return defer.promise
+
+onlyVote = (result) ->
+  card     = result[0]
+  lang     = result[1]
+  username = result[2]
+  defer = Q.defer()
+  card = {
+    id:       card.id
+    vote:     card.vote
+    rank:     card.rank
+    hasVote:  card.hasVote
+  }
+  defer.resolve([card, lang, username])
+  return defer.promise
+
+onlyVote = (result) ->
+  card     = result[0]
+  lang     = result[1]
+  username = result[2]
+  defer = Q.defer()
+  card = {
+    id:       card.id
+    rank:     card.rank
+  }
+  defer.resolve([card, lang, username])
   return defer.promise
 
 getWorkflow = (result)->
@@ -115,6 +138,8 @@ io.sockets.on('connection', (socket)->
     lang = data
 
   socket.on 'getAll', (data)->
+    lang = data
+
     getCards(project).then( (cards)->
       cards.forEach( (card) ->
 
@@ -140,11 +165,32 @@ io.sockets.on('connection', (socket)->
           .then(onlyTitle)
           .then(
             (card)-> #Success
-              socket.emit('addCard', card[0])
+              socket.emit('setCard', card[0])
             ,(err)-> #Error
               console.log err
           )
       )
+    )
+  socket.on 'newCard', (data) ->
+    console.log data
+    promise = update('its/card_create', '', data).then(
+      (data) -> #Success
+        console.log data
+      ,(err) -> #Error
+        console.log err
+    )
+
+  socket.on 'setVote', (data) ->
+    if not data.check
+      promise = update('its/vote_create', '', data)
+    else
+      promise = update('its/vote_delete', "vote:card:#{data.id}-#{username}")
+
+    promise.then(
+      (data) ->
+        console.log data
+      ,(err) ->
+        console.log err
     )
 
 ) #Socket on connection

@@ -21,7 +21,7 @@
         </p>
         <span ng-show="card.cost_estimate && !card.payment">{{ card.cost_estimate }}€</span>
         <span ng-show="card.payment">{{ card.payment }}€/{{ card.cost_estimate }}€</span>
-        <vote id="card.id" element="card" check="card.hasVote"></vote>
+        <vote save="saveVote(card.id, card.hasVote)" check="card.hasVote"></vote>
       </div>
 
       <!-- Add Card -->

@@ -20,7 +20,7 @@ exports.card = new Type('card', {
     updated_at: fields.number({
       required: false
     }),
-    id: idField(/<project_id>\.\d+/),
+    id: idField(/<project_id>\..*/),
     init_lang: fields.string(),
     project_id: fields.string(),
     description: translatableField({
