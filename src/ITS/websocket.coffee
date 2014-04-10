@@ -53,10 +53,7 @@ getVote = (result) ->
       card.rank = Object.keys(result).length
       card.vote = {}
       if result.hasOwnProperty(username)
-        card.hasVote        = true
-        card.vote[username] = result[username]
-      else
-        card.hasVote = false
+        card.vote = username
 
       defer.resolve([card, lang, username])
     ,(err)-> #Success

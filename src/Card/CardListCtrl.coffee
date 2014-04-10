@@ -22,6 +22,9 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
     $scope.nbCard = $scope.cards.length
   )
 
+  $scope.hasVote = (vote) ->
+    return vote == login.getName()
+
   socket.on('setCard', (data)->
     found = false
     for card, i in $scope.cards
