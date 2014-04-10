@@ -71,19 +71,6 @@ onlyVote = (result) ->
     id:       card.id
     vote:     card.vote
     rank:     card.rank
-    hasVote:  card.hasVote
-  }
-  defer.resolve([card, lang, username])
-  return defer.promise
-
-onlyVote = (result) ->
-  card     = result[0]
-  lang     = result[1]
-  username = result[2]
-  defer = Q.defer()
-  card = {
-    id:       card.id
-    rank:     card.rank
   }
   defer.resolve([card, lang, username])
   return defer.promise
