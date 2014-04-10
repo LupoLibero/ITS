@@ -9,5 +9,4 @@ angular.module('card', [
   'vote'
   'subscription'
   'directive'
-  'longpolling'
 ])
