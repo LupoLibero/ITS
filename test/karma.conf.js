@@ -1,29 +1,29 @@
-// Karma configuration
-// Generated on Wed Feb 26 2014 16:46:19 GMT+0100 (CET)
-
 module.exports = function(config) {
   config.set({
-    // base path, that will be used to resolve files and exclude
     basePath: '../',
-    // frameworks to use
     frameworks: ['jasmine'],
-    // list of files / patterns to load in the browser
     files: [
       // Vendor
+      'static/vendor/jquery/dist/jquery.js',
       'static/vendor/angular/angular.js',
       'static/vendor/angular-mocks/angular-mocks.js',
-      'static/vendor/{,*/}*.min.js',
-      'static/vendor/angular-couchdb/couch.js',
       'static/vendor/spin.js/spin.js',
+      'static/vendor/{,*/}dist/*.js',
+      'static/vendor/{,*/}*.js',
       // Script
-      'coffee/main.coffee',
-      'coffee/**/*.coffee',
+      'static/js/main.js',
       // Test
-      'test/unit/**/*Spec.coffee',
+      'src/**/test/*Spec.coffee',
     ],
-    // list of files to exclude
     exclude: [
+      'static/vendor/{,*/}gulpfile.js',
+      'static/vendor/{,*/}Gruntfile.js',
+      'static/vendor/{,*/}*.min.js',
+      'static/vendor/{,*/}*-min.js',
+      'static/vendor/{,*/}dist/*.min.js',
+      'static/vendor/{,*/}dist/*-min.js',
     ],
+
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
     reporters: ['dots'],
