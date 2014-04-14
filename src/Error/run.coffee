@@ -2,10 +2,12 @@ angular.module('error').
 run( ($rootScope, notification, Local)->
   $rootScope.$on('DatabaseError', ($event, error)->
     message = null
+    console.log error
     if not error.status || error.status == 500
       error = error.reason.replace(/.*{forbidden:"(.*)"}.*\n?.*/gm, '$1')
     else
-      error = error.data.reason
+      if error.data?.hasOwnProperty('reason')
+        error = error.data.reason
 
     error = (if isNaN(parseInt(error)) then error else parseInt(error))
 
