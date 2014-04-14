@@ -79,6 +79,8 @@ exports.card_all = {
         title:       doc.title,
         init_lang:   doc.init_lang,
         type:        doc.type,
+        type:        doc.type,
+        description: doc.description,
         avail_langs: Object.keys(doc.title),
       });
     }

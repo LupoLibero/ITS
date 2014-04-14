@@ -99,51 +99,20 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
 
   $scope.$watch($route.current.params.card_num, (card_num) ->
     if card_num != undefined
-      modal = $modal.open({
+      $modal.open({
         templateUrl: 'partials/card/show.html'
         controller:  'CardCtrl'
         keyboard:    false
         resolve:
-          parent: ($q) ->
-            defer      = $q.defer()
-            card_num   = $route.current.params.card_num
-            project_id = $route.current.params.project_id
-            found      = false
-
-            for card in $scope.cards
-              if card.id == "#{project_id}.#{card_num}"
-                defer.resolve(card)
-                found = true
-
-            defer.reject() if not found
+          card: ($q, socket, $route) ->
+            defer = $q.defer()
+            socket.emit('getCard', $route.current.params.card_num)
+            socket.on('getCard', (data) ->
+              console
+              defer.resolve(data)
+            )
             return defer.promise
-          card_default: (Card, $route) ->
-            card_num   = $route.current.params.card_num
-            project_id = $route.current.params.project_id
-            return Card.view({
-              view: 'get'
-              startkey: ['default', "#{project_id}.#{card_num}"]
-              endkey:   ['default', "#{project_id}.#{card_num}"]
-            })
-          card: (Card, $route) ->
-            card_num   = $route.current.params.card_num
-            project_id = $route.current.params.project_id
-            language   = window.navigator.language
-            return Card.view({
-              view: 'get'
-              startkey: [language, "#{project_id}.#{card_num}"]
-              endkey:   [language, "#{project_id}.#{card_num}"]
-            })
-          comments: (Comment, $route) ->
-            card_num   = $route.current.params.card_num
-            project_id = $route.current.params.project_id
-            return Comment.all({
-              startkey: ["card:#{project_id}.#{card_num}", 0]
-              endkey:   ["card:#{project_id}.#{card_num}", {}]
-            })
-      })
-
-      modal.result.then( (->), ->
+      }).result.then( (->), ->
         url.redirect('card.list', {
           project_id: $route.current.locals.project.id
         })

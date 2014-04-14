@@ -1,40 +1,38 @@
 angular.module('card').
-controller('CardCtrl', (parent, card, card_default, comments, $document, $scope, $modalInstance,  $q, Card, Comment, login) ->
+controller('CardCtrl', (card, socket, $document, $scope, $modalInstance,  $q, Card, Comment, login) ->
 
-  parent.activity = []
+  $scope.card = card
+  $scope.card.activity = []
+
+  socket.emit('getActivity', card.id)
+  socket.on('addActivity', (data) ->
+    $scope.card.activity.push(data)
+  )
 
   $document.bind('keypress', ($event) ->
     if $event.keyCode == 27
       target = $event.target.tagName.toLowerCase()
       unless target in ['input', 'textarea']
-        $modalInstance.dismiss()
+        $scope.close()
   )
-
-  for element in card_default
-    if element.hasOwnProperty('activity')
-      parent.activity.push(element.activity[0])
-    else
-      parent = angular.extend(parent, element)
-
-  $scope.card = angular.extend(parent, card[0])
 
   $scope.close = ->
     $modalInstance.dismiss()
 
-  $scope.saveTitle = (value) ->
-    return $scope.save('title', value)
-  $scope.saveDescription = (value) ->
-    return $scope.save('description', value)
+  $scope.saveTitle = (value, rev, lang) ->
+    return $scope.save('title', value, rev, lang)
+  $scope.saveDescription = (value, rev, lang) ->
+    return $scope.save('description', value, rev, lang)
 
-  $scope.save = (field, value) ->
+  $scope.save = (field, value, rev, lang) ->
     defer = $q.defer()
     Card.update({
       update:  'update_field'
       id:      $scope.card.id
       element: field
       value:   value
-      lang:    $scope.card.lang
-      _rev:    $scope.card._rev
+      lang:    lang
+      _rev:    rev
     }).then(
       (data) -> #Success
         defer.resolve(data)
@@ -43,27 +41,26 @@ controller('CardCtrl', (parent, card, card_default, comments, $document, $scope,
     )
     return defer.promise
 
-  $scope.comments = comments
-
-  $scope.newComment=
-    message: ''
-    parent_id: ''
+  $scope.keyOnNewComment = ($event) ->
+    if ($event.keyCode == 13 and $event.ctrlKey) || $event.keyCode == 10
+      $scope.addComment()
 
   $scope.addComment = ->
-    if $scope.newComment.message != ''
+    console.log $scope.newComment
+    if $scope.newComment? and $scope.newComment != ''
       $scope.loading = true
       Comment.update({
         update: 'create'
 
-        message:     $scope.newComment.message
-        parent_id:   $scope.card._id
+        message:     $scope.newComment
+        parent_id:   "card:#{$scope.card.id}"
       }).then(
         (data) -> #Success
-          data.author   = login.getName()
-          data.message  = $scope.newComment.message
+          data.author       = login.getName()
+          data.message      = $scope.newComment
+          $scope.newComment = ''
+          $scope.loading    = false
           $scope.comments.unshift(data)
-          $scope.newComment.message = ''
-          $scope.loading = false
         ,(err) -> #Error
           $scope.loading = false
       )
