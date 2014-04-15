@@ -47,7 +47,6 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
       socket.emit('setVote', {
         id:      id
         check:   check
-        author:  login.getName()
         element: 'card'
       })
     defer.resolve()

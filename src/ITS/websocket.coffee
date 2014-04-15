@@ -1,33 +1,93 @@
-io     = require('socket.io').listen(8800)
-Q      = require('q')
-cradle = require('cradle')
-db     = new(cradle.Connection)('http://127.0.0.1', 5984, { cache: false }).database('lupolibero')
-view   = Q.nbind(db.view, db)
-update = Q.nbind(db.update, db)
-change = Q.nbind(db.change, db)
+host     = '127.0.0.1'
+port     = 5984
+database = 'lupolibero'
+
+io      = require('socket.io').listen(8800)
+http    = require('http')
+Q       = require('q')
+cradle  = require('cradle')
+db      = new(cradle.Connection)("http://#{host}", port, { cache: false }).database(database)
+view    = Q.nbind(db.view, db)
+changes = Q.nbind(db.changes, db)
+
+update = (doc, id = '', data = {}, headers = {}) ->
+  defer      = Q.defer()
+  design     = doc.split('/')[0]
+  updateName = doc.split('/')[1]
+  method     = (if id is '' then 'POST' else 'PUT')
+
+  req = http.request({
+    hostname:  host
+    method:    method
+    port:      port
+    path:      "/#{database}/_design/#{design}/_update/#{updateName}/#{id}"
+    headers:   headers
+  }, (res)->
+    res.setEncoding('utf8')
+    res.on('data', (body)->
+      try
+        body = JSON.parse(body)
+
+      data = {
+        response: body
+        status:   res.statusCode
+      }
+
+      if res.headers.hasOwnProperty('x-couch-update-newrev')
+        data.rev = res.headers['x-couch-update-newrev']
+      if res.headers.hasOwnProperty('x-couch-id')
+        data.id  = res.headers['x-couch-id']
+
+      if res.statusCode.toString()[0] > 3
+        defer.reject(data)
+      else
+        defer.resolve(data)
+    )
+  )
+
+  req.write(JSON.stringify(data))
+  req.end()
+  return defer.promise
+
 
 getCards = (project)->
   return view('its/card_all')
 
 getCard = (card, lang, username)->
   defer = Q.defer()
-  card.num = card.id.split('.')[1]
 
-  if card.title.hasOwnProperty(lang)
-    card.title      = card.title[lang]
-    card.title.lang = lang
-  else
-    card.title      = card.title[card.init_lang]
-    card.title.lang = card.init_lang
+  if typeof card == 'string'
+    view('its/card_all', {
+      key: card
+    }).then(
+      (data)->
+        data = data[0].value
+        getCard(data, lang, username).then(
+          (data)-> #Success
+            defer.resolve(data)
+          ,(err)-> #Error
+            defer.reject(err)
+        )
+      ,(err)->
+        defer.reject(err)
+    )
+  else if typeof card == 'object'
+    card.num = card.id.split('.')[1]
+    if card.title.hasOwnProperty(lang)
+      card.title      = card.title[lang]
+      card.title.lang = lang
+    else
+      card.title      = card.title[card.init_lang]
+      card.title.lang = card.init_lang
 
-  if card.description.hasOwnProperty(lang)
-    card.description      = card.description[lang]
-    card.description.lang = lang
-  else
-    card.description      = card.description[card.init_lang]
-    card.description.lang = card.init_lang
+    if card.description.hasOwnProperty(lang)
+      card.description      = card.description[lang]
+      card.description.lang = lang
+    else
+      card.description      = card.description[card.init_lang]
+      card.description.lang = card.init_lang
 
-  defer.resolve([card, lang, username])
+    defer.resolve([card, lang, username])
   return defer.promise
 
 withoutDescription = (result) ->
@@ -43,7 +103,7 @@ onlyTitle = (result) ->
   card     = result[0]
   lang     = result[1]
   username = result[2]
-  defer = Q.defer()
+  defer    = Q.defer()
   card = {
     id:     card.id
     lang:   card.lang
@@ -56,6 +116,11 @@ getVote = (result) ->
   card     = result[0]
   lang     = result[1]
   username = result[2]
+
+  if typeof card != 'object'
+    card = {
+      id: card
+    }
 
   defer = Q.defer()
   view('its/vote_all', {
@@ -83,7 +148,7 @@ onlyVote = (result) ->
   card     = result[0]
   lang     = result[1]
   username = result[2]
-  defer = Q.defer()
+  defer    = Q.defer()
   card = {
     id:       card.id
     vote:     card.vote
@@ -141,6 +206,7 @@ io.sockets.on('connection', (socket)->
   project  = ''
   lang     = ''
   username = ''
+  cookie   = socket.handshake.headers.cookie
   store('', username, socket)
 
   socket.on 'disconnect', ->
@@ -148,7 +214,6 @@ io.sockets.on('connection', (socket)->
 
   socket.on 'setUsername', (data)->
     store(username, data, socket)
-    console.log users
     username = data
   socket.on 'setProject',  (data)->
     project = data
@@ -175,18 +240,13 @@ io.sockets.on('connection', (socket)->
     )
 
   socket.on 'getCard', (num)->
-    getCards(project).then( (cards)->
-      cards.forEach( (card) ->
-        if card.id == "#{project}.#{num}"
-          getCard(card, lang, username)
-            .then(
-              (card)-> #Success
-                socket.emit('getCard', card[0])
-              ,(err)-> #Error
-                console.log err
-            )
+    getCard("#{project}.#{num}", lang, username)
+      .then(
+        (card)-> #Success
+          socket.emit('getCard', card[0])
+        ,(err)-> #Error
+          console.log err
       )
-    )
 
   socket.on 'getActivity', (id)->
     view('its/activity_all', {
@@ -218,4 +278,62 @@ io.sockets.on('connection', (socket)->
       )
     )
 
+  socket.on 'newCard', (data) ->
+    console.log lang, username
+    update('its/card_create', '', data, {
+      cookie: cookie
+    }).then(
+      (data)-> #Success
+        id = data.id.split(':')[1]
+        getCard(id, lang, username)
+          .then(withoutDescription)
+          .then(getVote)
+          .then(getWorkflow)
+          .then(
+            (data)-> #Success
+              io.sockets.emit('addCard', data[0])
+            ,(err)-> #Error
+              console.log err
+          )
+      ,(err)-> #Error
+        console.log err
+    )
+
+  socket.on 'setVote', (data) ->
+    promise = null
+    console.log update
+    if not data.check
+      promise = update('its/vote_create', '', {
+        object_id: data.id
+        element:   data.element
+      }, {
+        cookie: cookie
+      })
+    else
+      promise = update('its/vote_delete', "vote:card:#{data.id}-#{username}", {}, {
+        cookie: cookie
+      })
+
+    promise.then(
+      -> #Succes
+        console.log 'success', data
+        getVote([data.id, lang, username])
+          .then(onlyVote)
+          .then(
+            (data)->
+              data = data[0]
+              socket.emit('setCard', data)
+              delete data.vote
+              socket.broadcast.emit('setCard', data)
+            ,(err)->
+              console.log err
+          )
+      ,(err)-> #Error
+        console.log err
+    )
 )
+
+process.on 'uncaughtException', (err) ->
+  console.error('An uncaughtException was found, the program will end.')
+  console.error(err)
+  process.exit(1)
