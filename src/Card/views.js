@@ -87,53 +87,6 @@ exports.card_all = {
   }
 };
 
-exports.card_get = {
-  map: function(doc) {
-    var change;
-    var translation = require('views/lib/translation').translation();
-    if (doc.type) {
-      switch(doc.type) {
-        case 'card':
-          translation.emitTranslatedDoc(
-            [doc.id, translation._keyTag],
-            {
-              _rev:         doc._rev,
-              _id:          doc._id,
-              id:           doc.id,
-              description:  doc.description,
-              created_at:   doc.created_at,
-              updated_at:   doc.updated_at,
-              init_lang:    doc.init_lang,
-            },
-            {
-              id: false,
-              type: false,
-              description:true
-            }
-          );
-          for (change in doc.activity) {
-            emit([doc.id, 'default', doc.activity[change].date], {activity: [doc.activity[change]]})
-          }
-          break;
-        case 'comment':
-          emit([doc.parent_id.split(':')[1], 'default', doc.created_at], {activity: [doc]});
-          break;
-      }
-    }
-  }
-}
-
-exports.card_ids = {
-  map: function(doc) {
-    if(doc.type && doc.type == "card" && doc.project_id && doc.id){
-      var splitId = doc.id.split('.');
-      if(splitId.length == 2)
-        emit(doc.project_id, parseInt(splitId[1]));
-    }
-  },
-  reduce: "_stats"
-}
-
 exports.card_votes = {
   map: function(doc) {
     if(doc.type){
@@ -146,4 +99,3 @@ exports.card_votes = {
   },
   reduce: "_sum"
 }
-

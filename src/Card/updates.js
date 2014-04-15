@@ -4,19 +4,12 @@ var registerTranslation = require('../Translation/utils').registerTranslation;
 var updateActivity      = require('../Activity/utils').updateActivity;
 
 exports.card_create = function(doc, req) {
-  var form;
-  try {
-    form = JSON.parse(req.body);
-  } catch(e){
-    form = req.query;
-  }
-  log(form);
-
+  var form = JSON.parse(req.body);
   if(doc !== null){
     throw({forbidden: '345: New Card only'});
   } else {
     id     = form.id || form.project_id+'.'+req.uuid.substr(req.uuid.length-4);
-    author = req.userCtx.name || form.author;
+    author = req.userCtx.name;
 
     form.id          = id;
     form.type        = 'card';

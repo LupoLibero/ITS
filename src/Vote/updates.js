@@ -1,12 +1,12 @@
 exports.vote_create = function(doc, req) {
   var form;
-  if(req.body === "") {
-    form = req.query;
-  } else {
+  try {
     form = JSON.parse(req.body);
+  } catch(e) {
+    form = req.query;
   }
   if(doc === null) {
-    var author = req.userCtx.name || form.author;
+    var author = req.userCtx.name;
 
     var doc = {};
     doc.type         = 'vote';
