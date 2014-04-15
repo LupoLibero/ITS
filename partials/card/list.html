@@ -6,7 +6,7 @@
       {{ list }}
     </header>
     <content>
-      <div ng-repeat="card in cards |list:list |orderBy:'rank'">
+      <div ng-repeat="card in cards |list:list |orderBy:'-rank'">
         <header>
           <span style="background-color:white">{{ card.num }}</span>
           <span class="pull-right"><b>{{ card.rank || 0 }}</b></span>
