@@ -13,9 +13,12 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
   $scope.$on('SessionChanged', ($event, name)->
     socket.emit('setUsername', name)
   )
-  socket.emit('setProject', $scope.project.id)
-  socket.emit('getAll', window.navigator.language)
+  socket.on('connect', ->
+    socket.emit('setUsername', login.getName())
+    socket.emit('setProject', $scope.project.id)
+  )
 
+  socket.emit('getAll', $scope.currentLang)
   socket.on('addCard', (data)->
     $scope.cards.push(data)
     $scope.langs  = cardUtils.getLangs($scope.cards)
