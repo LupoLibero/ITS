@@ -11,7 +11,7 @@ controller('CardCtrl', (card, socket, $document, $scope, $modalInstance,  $q, Ca
 
   socket.emit('getActivity', card.id)
   socket.on('addActivity', (data) ->
-    $scope.card.activity.push(data)
+    $scope.card.activity.unshift(data)
   )
 
   $document.bind('keypress', ($event) ->
@@ -43,25 +43,14 @@ controller('CardCtrl', (card, socket, $document, $scope, $modalInstance,  $q, Ca
 
   $scope.keyOnNewComment = ($event) ->
     if ($event.keyCode == 13 and $event.ctrlKey) || $event.keyCode == 10
-      $scope.addComment()
+      text = $event.target.value
+      $scope.addComment(text)
 
-  $scope.addComment = ->
-    console.log $scope.newComment
-    if $scope.newComment? and $scope.newComment != ''
-      $scope.loading = true
-      Comment.update({
-        update: 'create'
-
-        message:     $scope.newComment
-        parent_id:   "card:#{$scope.card.id}"
-      }).then(
-        (data) -> #Success
-          data.author       = login.getName()
-          data.message      = $scope.newComment
-          $scope.newComment = ''
-          $scope.loading    = false
-          $scope.comments.unshift(data)
-        ,(err) -> #Error
-          $scope.loading = false
-      )
+  $scope.addComment = (comment)->
+    console.log comment
+    if comment? and comment != ''
+      socket.emit('newComment', {
+        message:   comment
+        parent_id: "card:#{$scope.card.id}"
+      })
 )

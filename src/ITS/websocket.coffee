@@ -250,14 +250,23 @@ io.sockets.on('connection', (socket)->
       )
 
   socket.on 'getActivity', (id)->
+    view('its/comment_all', {
+      startkey: ["card:#{id}", 0]
+      endkey:   ["card:#{id}", {}]
+    }).then(
+      (data)-> #Success
+        data.forEach (comment)->
+          socket.emit('addActivity', comment)
+      ,(err)-> #Error
+        console.log err
+    )
     view('its/activity_all', {
       startkey: ["card:#{id}", 0]
       endkey:   ["card:#{id}", {}]
     }).then(
       (data)-> #Success
-        data.forEach( (activity)->
+        data.forEach (activity)->
           socket.emit('addActivity', activity)
-        )
       ,(err)-> #Error
         console.log err
     )
@@ -299,6 +308,21 @@ io.sockets.on('connection', (socket)->
             ,(err)-> #Error
               console.log err
           )
+      ,(err)-> #Error
+        console.log err
+    )
+
+  socket.on 'newComment', (data) ->
+    update('its/comment_create', '', data, {
+      cookie: cookie
+    }).then(
+      (data)-> #Success
+        db.get(data.id, (err, res)->
+          if err
+            console.log err
+          else
+            socket.emit('addActivity', res)
+        )
       ,(err)-> #Error
         console.log err
     )

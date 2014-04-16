@@ -7,11 +7,11 @@
 <div class="modal-body">
   <p><edit-field type="textarea" rev="card._rev" ng-model="card.description.content" lang="card.description.lang" save="saveDescription(value, rev, lang)"></edit-field></p>
   <hr/>
-  <form ng-submit="addComment()">
-    <textarea ng-keypress="keyOnNewComment($event)" ng-disabled="loading" ng-model="newComment" name="test"></textarea>
+  <form ng-submit="addComment(newComment)">
+    <textarea ng-keypress="keyOnNewComment($event)" ng-disabled="loading" ng-model="newComment"></textarea>
     <input type="submit" class="btn btn-primary"/>
   </form>
-  <div ng-repeat="comment in card.activity">
+  <div ng-repeat="comment in card.activity |orderBy:'-created_at'">
     <div class="activity" ng-show="comment.element">
       <p>Change on {{ comment.element }} by {{ comment.author }}</p>
     </div>
