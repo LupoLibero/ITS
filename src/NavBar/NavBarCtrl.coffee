@@ -9,10 +9,6 @@ controller('NavBarCtrl', ($scope, login, $modal, notification) ->
   # Get the session
   login.getInfo()
 
-  $scope.$on('SignOut', ->
-    $scope.$apply()
-  )
-
   # login User
   $scope.signIn = ->
     user     = $scope.loginform.user

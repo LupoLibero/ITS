@@ -1,9 +1,8 @@
 angular.module('login').
-factory('login', ($q, User, $rootScope, $timeout) ->
+factory('login', ($q, $rootScope, $timeout, $http) ->
   login = {
     actualUser: {}
 
-    session: require('session')
     users:   require('users')
 
     getName: ->
@@ -14,16 +13,20 @@ factory('login', ($q, User, $rootScope, $timeout) ->
 
     signIn: (user, password) ->
       defer = $q.defer()
-      _this = this
-      this.session.login(user, password, (err, response) ->
-        if not err
-          _this.actualUser = response
-          $rootScope.$broadcast('SignIn', _this.getName() )
-          $rootScope.$broadcast('SessionChanged', _this.getName())
-          defer.resolve(response)
-        else
+
+      $http.post("/_session", {
+        name:     user
+        password: password
+      }).then(
+        (data)=> #Success
+          @actualUser = data.data
+          $rootScope.$broadcast('SignIn', @getName() )
+          $rootScope.$broadcast('SessionChanged', @getName())
+          defer.resolve(data)
+        ,(err)-> #Error
           defer.reject(err)
       )
+
       return defer.promise
 
     signUp: (user) ->
@@ -45,40 +48,43 @@ factory('login', ($q, User, $rootScope, $timeout) ->
 
     signOut: ->
       defer = $q.defer()
-      _this = this
-      this.session.logout( (err, response) ->
-        if not err
-          _this.actualUser = {
-            name: response.name
-            role: response.role
+
+      $http.delete('/_session').then(
+        (data) => #Success
+          data = data.data
+          @actualUser = {
+            name: data.name
+            role: data.role
           }
           $rootScope.$broadcast('SignOut')
-          $rootScope.$broadcast('SessionChanged', _this.getName())
-          defer.resolve(response)
-        else
+          $rootScope.$broadcast('SessionChanged', @getName())
+          defer.resolve(data)
+        ,(err) => #Error
           defer.reject(err)
       )
+
       return defer.promise
 
     getInfo: ->
       defer = $q.defer()
-      _this = this
-      this.session.info( (err, info)->
-        if not err
-          info = info.userCtx
-          _this.actualUser = info
-          $timeout( ->
-            $rootScope.$broadcast('SessionStart', _this.getName())
-            $rootScope.$broadcast('SessionChanged', _this.getName())
-            if _this.isConnect()
-              $rootScope.$broadcast('SignIn', _this.getName())
+
+      $http.get('/_session').then(
+        (data) => #Success
+          data = data.data.userCtx
+          @actualUser = data
+          $timeout( =>
+            $rootScope.$broadcast('SessionStart', @getName())
+            $rootScope.$broadcast('SessionChanged', @getName())
+            if @isConnect()
+              $rootScope.$broadcast('SignIn', @getName())
             else
               $rootScope.$broadcast('SignOut')
-          ,100)
-          defer.resolve(info)
-        else
+          , 100)
+          defer.resolve(data)
+        ,(err) => #Error
           defer.reject(err)
       )
+
       return defer.promise
 
     isConnect: ->
