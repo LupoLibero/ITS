@@ -104,15 +104,20 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
         controller:  'CardCtrl'
         keyboard:    false
         resolve:
-          card: ($q, socket, $route) ->
+          card: ($q, socket, $route, $timeout) ->
             defer = $q.defer()
+
             socket.emit('getCard', $route.current.params.card_num)
-            socket.on('getCard', (data) ->
-              console
+            socket.on 'getCard', (data) ->
               defer.resolve(data)
-            )
+
+            $timeout(->
+              defer.reject()
+            ,1000)
+
             return defer.promise
       }).result.then( (->), ->
+        $scope.card_num = null
         url.redirect('card.list', {
           project_id: $route.current.locals.project.id
         })
