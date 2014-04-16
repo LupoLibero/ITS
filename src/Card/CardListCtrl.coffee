@@ -14,12 +14,11 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
     socket.emit('setUsername', name)
   )
   socket.on('connect', ->
-    $scope.cards = []
     socket.emit('setUsername', login.getName())
     socket.emit('setProject', $scope.project.id)
     socket.emit('setLang', $scope.currentLang)
-    socket.emit('getAll')
   )
+  socket.emit('getAll')
 
   socket.on('addCard', (data)->
     $scope.cards.push(data)
@@ -96,6 +95,8 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
       author:      login.getName()
     })
 
+    $scope.newcard.title = ''
+    $scope.showAddCard   = false
 
   $scope.$watch($route.current.params.card_num, (card_num) ->
     if card_num != undefined
