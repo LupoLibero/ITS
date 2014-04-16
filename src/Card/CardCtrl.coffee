@@ -4,6 +4,11 @@ controller('CardCtrl', (card, socket, $document, $scope, $modalInstance,  $q, Ca
   $scope.card = card
   $scope.card.activity = []
 
+  socket.on('setCard' (data)->
+    if data.id == $scope.card.id
+      $scope.card = angular.extend($scope.card, data)
+  )
+
   socket.emit('getActivity', card.id)
   socket.on('addActivity', (data) ->
     $scope.card.activity.push(data)
@@ -26,19 +31,14 @@ controller('CardCtrl', (card, socket, $document, $scope, $modalInstance,  $q, Ca
 
   $scope.save = (field, value, rev, lang) ->
     defer = $q.defer()
-    Card.update({
-      update:  'update_field'
+    socket.emit('updateField', {
       id:      $scope.card.id
       element: field
       value:   value
       lang:    lang
       _rev:    rev
-    }).then(
-      (data) -> #Success
-        defer.resolve(data)
-      ,(err) -> #Success
-        defer.reject(err)
-    )
+    })
+    defer.resolve()
     return defer.promise
 
   $scope.keyOnNewComment = ($event) ->

@@ -14,19 +14,18 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
     socket.emit('setUsername', name)
   )
   socket.on('connect', ->
+    $scope.cards = []
     socket.emit('setUsername', login.getName())
     socket.emit('setProject', $scope.project.id)
+    socket.emit('setLang', $scope.currentLang)
+    socket.emit('getAll')
   )
 
-  socket.emit('getAll', $scope.currentLang)
   socket.on('addCard', (data)->
     $scope.cards.push(data)
     $scope.langs  = cardUtils.getLangs($scope.cards)
     $scope.nbCard = $scope.cards.length
   )
-
-  $scope.hasVote = (vote) ->
-    return vote == login.getName()
 
   socket.on('setCard', (data)->
     found = false
@@ -41,6 +40,9 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
     $scope.nbCard = $scope.cards.length
   )
 
+  $scope.hasVote = (vote) ->
+    return vote == login.getName()
+
   $scope.saveVote = (id, check) ->
     defer = $q.defer()
     if login.isConnect()
@@ -54,7 +56,8 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
 
   # If the user change of lang
   $scope.$on('LangBarChangeLanguage', ($event, lang) ->
-    socket.emit('getTitle', lang)
+    socket.emit('setLang', lang)
+    socket.emit('getTitle')
   )
   # If the user translate something
   $scope.save = (id, field, text, from) ->
@@ -64,19 +67,14 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
         _rev = card._rev
         break
 
-    Card.update({
-      update: 'update_field'
-
+    socket.emit('updateField', {
       id:      id
       _rev:    _rev
       from:    from
       element: field
       value:   text
       lang:    $scope.currentLang
-    }).then(
-      (data) -> #Success
-        console.log "success"
-    )
+    })
 
   $scope.newcard= {
     title: ''

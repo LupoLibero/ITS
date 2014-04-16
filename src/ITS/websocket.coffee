@@ -218,11 +218,12 @@ io.sockets.on('connection', (socket)->
   socket.on 'setProject',  (data)->
     project = data
   socket.on 'setLang',     (data)->
+    if lang != ''
+      socket.leave(lang)
+    socket.join(data)
     lang = data
 
   socket.on 'getAll', (data)->
-    lang = data
-
     getCards(project).then( (cards)->
       cards.forEach( (card) ->
 
@@ -262,8 +263,6 @@ io.sockets.on('connection', (socket)->
     )
 
   socket.on 'getTitle', (data)->
-    lang = data
-
     getCards(project).then( (cards)->
       cards.forEach( (card) ->
 
@@ -278,8 +277,33 @@ io.sockets.on('connection', (socket)->
       )
     )
 
+  socket.on 'updateField', (value) ->
+    update('its/card_update_field', "card:#{value.id}", value, {
+      cookie: cookie
+    }).then(
+      (data)-> #Success
+        id = data.id.split(':')[1]
+        getCard(id, lang, username)
+          .then(
+            (data)-> #Success
+              data = data[0]
+              result = {
+                id: data.id
+              }
+              if value.element == 'title'
+                result.title = data.title
+              else if value.element == 'description'
+                result.description = data.description
+
+              io.sockets.in(lang).emit('setCard', result)
+            ,(err)-> #Error
+              console.log err
+          )
+      ,(err)-> #Error
+        console.log err
+    )
+
   socket.on 'newCard', (data) ->
-    console.log lang, username
     update('its/card_create', '', data, {
       cookie: cookie
     }).then(
@@ -301,7 +325,6 @@ io.sockets.on('connection', (socket)->
 
   socket.on 'setVote', (data) ->
     promise = null
-    console.log update
     if not data.check
       promise = update('its/vote_create', '', {
         object_id: data.id
@@ -316,7 +339,6 @@ io.sockets.on('connection', (socket)->
 
     promise.then(
       -> #Succes
-        console.log 'success', data
         getVote([data.id, lang, username])
           .then(onlyVote)
           .then(
