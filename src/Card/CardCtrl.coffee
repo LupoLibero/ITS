@@ -4,7 +4,7 @@ controller('CardCtrl', (card, socket, $document, $scope, $modalInstance,  $q, Ca
   $scope.card = card
   $scope.card.activity = []
 
-  socket.on('setCard' (data)->
+  socket.on('setCard', (data)->
     if data.id == $scope.card.id
       $scope.card = angular.extend($scope.card, data)
   )
