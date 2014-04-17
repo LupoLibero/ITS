@@ -271,10 +271,9 @@ io.sockets.on('connection', (socket)->
         console.log err
     )
 
-  socket.on 'getTitle', (data)->
+  socket.on 'getTitle', ->
     getCards(project).then( (cards)->
       cards.forEach( (card) ->
-
         getCard(card, lang, username)
           .then(onlyTitle)
           .then(
@@ -286,11 +285,12 @@ io.sockets.on('connection', (socket)->
       )
     )
 
-  socket.on 'updateField', (value) ->
+  socket.on 'updateField', (value, fn) ->
     update('its/card_update_field', "card:#{value.id}", value, {
       cookie: cookie
     }).then(
       (data)-> #Success
+        fn("Done:#{data.response}")
         id = data.id.split(':')[1]
         getCard(id, lang, username)
           .then(
@@ -309,14 +309,15 @@ io.sockets.on('connection', (socket)->
               console.log err
           )
       ,(err)-> #Error
-        console.log err
+        fn("Error:#{err.response}")
     )
 
-  socket.on 'newComment', (data) ->
+  socket.on 'newComment', (data, fn)->
     update('its/comment_create', '', data, {
       cookie: cookie
     }).then(
       (data)-> #Success
+        fn("Done:#{data.response}")
         db.get(data.id, (err, res)->
           if err
             console.log err
@@ -324,14 +325,15 @@ io.sockets.on('connection', (socket)->
             socket.emit('addActivity', res)
         )
       ,(err)-> #Error
-        console.log err
+        fn("Error:#{err.response}")
     )
 
-  socket.on 'newCard', (data) ->
+  socket.on 'newCard', (data, fn)->
     update('its/card_create', '', data, {
       cookie: cookie
     }).then(
       (data)-> #Success
+        fn("Done:#{data.response}")
         id = data.id.split(':')[1]
         getCard(id, lang, username)
           .then(withoutDescription)
@@ -344,11 +346,12 @@ io.sockets.on('connection', (socket)->
               console.log err
           )
       ,(err)-> #Error
-        console.log err
+        fn("Error:#{err.response}")
     )
 
-  socket.on 'setVote', (data) ->
+  socket.on 'setVote', (data, fn)->
     promise = null
+    console.log data
     if not data.check
       promise = update('its/vote_create', '', {
         object_id: data.id
@@ -362,7 +365,8 @@ io.sockets.on('connection', (socket)->
       })
 
     promise.then(
-      -> #Succes
+      (res)-> #Succes
+        fn("Done:#{res.response}")
         getVote([data.id, lang, username])
           .then(onlyVote)
           .then(
@@ -375,7 +379,7 @@ io.sockets.on('connection', (socket)->
               console.log err
           )
       ,(err)-> #Error
-        console.log err
+        fn("Error:#{err.response}")
     )
 )
 

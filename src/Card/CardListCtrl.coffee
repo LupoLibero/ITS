@@ -17,8 +17,9 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
     socket.emit('setUsername', login.getName())
     socket.emit('setProject', $scope.project.id)
     socket.emit('setLang', $scope.currentLang)
+    $scope.cards = []
+    socket.emit('getAll')
   )
-  socket.emit('getAll')
 
   socket.on('addCard', (data)->
     $scope.cards.push(data)
@@ -49,8 +50,14 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
         id:      id
         check:   check
         element: 'card'
-      })
-    defer.resolve()
+      }).then(
+        (data)-> #Success
+          defer.resolve()
+        ,(err)-> #Error
+          defer.reject()
+      )
+    else
+      defer.reject()
     return defer.promise
 
   # If the user change of lang
@@ -88,41 +95,51 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
       notification.setAlert('You need to fill the field', 'danger')
       return false
 
+    $scope.loading = true
     socket.emit('newCard', {
       project_id:  $scope.project.id
       title:       $scope.newcard.title
       lang:        $scope.currentLang
       author:      login.getName()
-    })
+    }).then(
+      (data) -> #Success
+        $scope.showAddCard   = false
+        $scope.loading       = false
+        $scope.newcard.title = ''
+      ,(err) -> #Error
+        $scope.loading      = false
+    )
 
     $scope.newcard.title = ''
     $scope.showAddCard   = false
 
-  $scope.$watch($route.current.params.card_num, (card_num) ->
-    if card_num != undefined
-      $modal.open({
-        templateUrl: 'partials/card/show.html'
-        controller:  'CardCtrl'
-        keyboard:    false
-        resolve:
-          card: ($q, socket, $route, $timeout) ->
-            defer = $q.defer()
+  # $scope.$watch($route.current.params.card_num, (card_num) ->
+  # )
 
-            socket.emit('getCard', $route.current.params.card_num)
-            socket.on 'getCard', (data) ->
-              defer.resolve(data)
+  card_num = $route.current.params.card_num
+  if card_num? and typeof card_num != 'undefined'
+    $modal.open({
+      templateUrl: 'partials/card/show.html'
+      controller:  'CardCtrl'
+      keyboard:    false
+      resolve:
+        card: ($q, socket, $route, $timeout) ->
+          defer = $q.defer()
 
-            $timeout(->
-              defer.reject()
-            ,1000)
+          socket.emit('getCard', $route.current.params.card_num)
+          socket.on 'getCard', (data) ->
+            defer.resolve(data)
 
-            return defer.promise
-      }).result.then( (->), ->
-        $scope.card_num = null
-        url.redirect('card.list', {
-          project_id: $route.current.locals.project.id
-        })
-      )
-  )
+          $timeout(->
+            defer.reject()
+          ,1000)
+
+          return defer.promise
+    }).result.then( (->), ->
+      $scope.card_num = null
+      url.redirect('card.list', {
+        project_id: $route.current.locals.project.id
+      })
+    )
 
 )
