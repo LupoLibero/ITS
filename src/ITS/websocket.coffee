@@ -94,6 +94,9 @@ getCard = (card, lang, username)->
       card.description      = card.description[card.init_lang]
       card.description.lang = card.init_lang
 
+    delete card.init_lang
+    delete card.type
+
     defer.resolve([card, lang, username])
   return defer.promise
 
@@ -238,11 +241,10 @@ io.sockets.on('connection', (socket)->
       cards.forEach( (card) ->
         getCard(card, lang, username)
           .then(withoutDescription)
-          .then(getVote)
           .then(getWorkflow)
           .then(
             (card)-> #Success
-              socket.emit('addCard', card[0])
+              socket.emit('setCard', card[0])
             ,(err)-> #Error
               console.log err
           )

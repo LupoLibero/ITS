@@ -4,7 +4,7 @@ factory('cardUtils', ->
     getLangs: (cards) ->
       langs = {}
       for card in cards
-        for lang in card.avail_langs
+        for lang in card.avail_langs || []
           if langs[lang]?
             langs[lang] += 1
           else
