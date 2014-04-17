@@ -1,9 +1,17 @@
 angular.module('login').
 factory('login', ($q, $rootScope, $timeout, $http) ->
   login = {
-    actualUser: {}
+    actualUser: {
+      name:     ''
+      password: ''
+      roles:    []
+    }
 
-    users:   require('users')
+    getPassword: ->
+      if this.isConnect()
+        return this.actualUser.password
+      else
+        return ''
 
     getName: ->
       if this.isConnect()
@@ -19,7 +27,9 @@ factory('login', ($q, $rootScope, $timeout, $http) ->
         password: password
       }).then(
         (data)=> #Success
-          @actualUser = data.data
+          data = data.data
+          data['password'] = password
+          @actualUser      = data
           $rootScope.$broadcast('SignIn', @getName() )
           $rootScope.$broadcast('SessionChanged', @getName())
           defer.resolve(data)
@@ -31,18 +41,23 @@ factory('login', ($q, $rootScope, $timeout, $http) ->
 
     signUp: (user) ->
       defer = $q.defer()
-      _this = this
       # Create the user inside _users db
-      this.users.create(user.name, user.password, {email: user.email}, (err, response) ->
-        if err
-          defer.reject(err)
-        else
-          _this.signIn(user.name, user.password).then(
+      $http.post('/_users/',{
+        _id:       "org.couchdb.user:#{user.name}"
+        name:      user.name
+        type:      "user"
+        roles:     []
+        password:  user.password
+      }).then(
+        (data)=> #Success
+          @signIn(user.name, user.password).then(
             (data) -> #Success
               defer.resolve(data)
             ,(err) -> #Error
               defer.reject(err)
           )
+        ,(err)-> #Error
+          defer.reject(err)
       )
       return defer.promise
 
@@ -53,8 +68,9 @@ factory('login', ($q, $rootScope, $timeout, $http) ->
         (data) => #Success
           data = data.data
           @actualUser = {
-            name: data.name
-            role: data.role
+            name:     data.name
+            password: ''
+            role:     data.role
           }
           $rootScope.$broadcast('SignOut')
           $rootScope.$broadcast('SessionChanged', @getName())
@@ -97,11 +113,9 @@ factory('login', ($q, $rootScope, $timeout, $http) ->
         return !this.isConnect()
 
     hasRole: (role) ->
-      if this.actualUser.hasOwnProperty('roles')
-        for piece in this.actualUser.roles
-          if role == piece or piece == 'admin'
-            return true
-      # Otherwise
+      for piece in this.actualUser.roles
+        if role == piece or piece == 'admin'
+          return true
       return false
   }
 

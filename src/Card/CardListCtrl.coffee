@@ -12,7 +12,11 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
 
   $scope.$on('SessionChanged', ($event, name)->
     socket.emit('setUsername', name)
+    socket.emit('setPassword', login.getPassword())
+    if login.isConnect()
+      socket.emit('getVote')
   )
+
   socket.on('connect', ->
     socket.emit('setUsername', login.getName())
     socket.emit('setProject', $scope.project.id)

@@ -15,6 +15,13 @@ update = (doc, id = '', data = {}, headers = {}) ->
   design     = doc.split('/')[0]
   updateName = doc.split('/')[1]
   method     = (if id is '' then 'POST' else 'PUT')
+  if headers.password? and headers.password != ''
+    console.log headers.user
+    console.log headers.password
+    basic = new Buffer("#{headers.user}:#{headers.password}").toString('base64')
+    headers = {
+      "Authorization": "Basic #{basic}"
+    }
 
   req = http.request({
     hostname:  host
@@ -206,6 +213,7 @@ io.sockets.on('connection', (socket)->
   project  = ''
   lang     = ''
   username = ''
+  password = ''
   cookie   = socket.handshake.headers.cookie
   store('', username, socket)
 
@@ -215,6 +223,8 @@ io.sockets.on('connection', (socket)->
   socket.on 'setUsername', (data)->
     store(username, data, socket)
     username = data
+  socket.on 'setPassword', (data)->
+    password = data
   socket.on 'setProject',  (data)->
     project = data
   socket.on 'setLang',     (data)->
@@ -226,7 +236,6 @@ io.sockets.on('connection', (socket)->
   socket.on 'getAll', (data)->
     getCards(project).then( (cards)->
       cards.forEach( (card) ->
-
         getCard(card, lang, username)
           .then(withoutDescription)
           .then(getVote)
@@ -285,9 +294,24 @@ io.sockets.on('connection', (socket)->
       )
     )
 
+  socket.on 'getVote', ->
+    getCards(project).then( (cards)->
+      cards.forEach( (card) ->
+        getVote([card.id, lang, username])
+          .then(
+            (card)-> #Success
+              socket.emit('setCard', card[0])
+            ,(err)-> #Error
+              console.log err
+          )
+      )
+    )
+
   socket.on 'updateField', (value, fn) ->
     update('its/card_update_field', "card:#{value.id}", value, {
-      cookie: cookie
+      cookie:   cookie
+      user:     username
+      password: password
     }).then(
       (data)-> #Success
         fn("Done:#{data.response}")
@@ -314,7 +338,9 @@ io.sockets.on('connection', (socket)->
 
   socket.on 'newComment', (data, fn)->
     update('its/comment_create', '', data, {
-      cookie: cookie
+      cookie:   cookie
+      user:     username
+      password: password
     }).then(
       (data)-> #Success
         fn("Done:#{data.response}")
@@ -330,7 +356,9 @@ io.sockets.on('connection', (socket)->
 
   socket.on 'newCard', (data, fn)->
     update('its/card_create', '', data, {
-      cookie: cookie
+      cookie:   cookie
+      user:     username
+      password: password
     }).then(
       (data)-> #Success
         fn("Done:#{data.response}")
@@ -357,11 +385,15 @@ io.sockets.on('connection', (socket)->
         object_id: data.id
         element:   data.element
       }, {
-        cookie: cookie
+        cookie:   cookie
+        user:     username
+        password: password
       })
     else
       promise = update('its/vote_delete', "vote:card:#{data.id}-#{username}", {}, {
-        cookie: cookie
+        cookie:   cookie
+        user:     username
+        password: password
       })
 
     promise.then(
@@ -379,7 +411,7 @@ io.sockets.on('connection', (socket)->
               console.log err
           )
       ,(err)-> #Error
-        fn("Error:#{err.response}")
+        fn("Error:#{JSON.stringify(err.response)}")
     )
 )
 
