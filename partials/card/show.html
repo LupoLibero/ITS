@@ -5,7 +5,7 @@
 </div>
 
 <div class="modal-body">
-  <p><edit-field type="textarea" rev="card._rev" ng-model="card.description.content" lang="card.description.lang" save="saveDescription(value, rev, lang)"></edit-field></p>
+  <editor ng-model="card.description.content"></editor>
   <hr/>
   <form ng-submit="addComment(newComment)">
     <textarea ng-keypress="keyOnNewComment($event)" ng-disabled="loading" ng-model="newComment"></textarea>

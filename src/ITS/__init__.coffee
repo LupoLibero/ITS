@@ -12,6 +12,7 @@ angular.module('its', [
   'error'
   'socket'
   'ngStorage'
+  'markdown'
 ])
 
 ng.value('db', {
