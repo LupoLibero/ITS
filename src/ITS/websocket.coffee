@@ -57,6 +57,25 @@ update = (doc, id = '', data = {}, headers = {}) ->
   return defer.promise
 
 
+getRandomChar = ->
+  chars = "1234567890abcdefghijklmnopqrstuvwxyz"
+  num   = Math.floor(Math.random() * chars.length)
+  return chars.charAt(num)
+
+createID = (ids, num=3, count=1) ->
+  id = ''
+  if count == 3
+    num++
+    count=1
+
+  for i in [num..1]
+    id += getRandomChar()
+
+  if ids.hasOwnProperty(id)
+    count++
+    return createID(ids, num, count)
+  return id
+
 getCards = (project)->
   return view('its/card_all')
 
@@ -201,6 +220,7 @@ getWorkflow = (result)->
   return defer.promise
 
 users = {}
+ids   = {}
 
 store = (prev, username, socket) ->
   if users[prev]
@@ -239,6 +259,7 @@ io.sockets.on('connection', (socket)->
   socket.on 'getAll', (data)->
     getCards(project).then( (cards)->
       cards.forEach( (card) ->
+        ids[card.id] = true
         getCard(card, lang, username)
           .then(withoutDescription)
           .then(getWorkflow)
@@ -357,6 +378,7 @@ io.sockets.on('connection', (socket)->
     )
 
   socket.on 'newCard', (data, fn)->
+    data.id = "#{data.project_id}.#{createID(ids)}"
     update('its/card_create', '', data, {
       cookie:   cookie
       user:     username

@@ -1,5 +1,5 @@
 angular.module('card').
-controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, socket, url, $q) ->
+controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, socket, url, $q, notification) ->
   $scope.login       = login
   $scope.lists       = ['ideas', 'estimated', 'funded', 'todo', 'doing', 'done']
   $scope.project     = $route.current.locals.project
