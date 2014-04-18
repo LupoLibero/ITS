@@ -12,17 +12,15 @@
   "bots": [
     "./modules/Login/role_setter.js",
     "./modules/Mailer/mailer.js",
-    "./modules/Notification/notification_creator.js"
+    "./modules/Notification/notification_creator.js",
+    "./static/bots/websocket.js"
   ],
   "dependencies": {
-    "db": null,
     "properties": null,
     "modules": null,
     "attachments": null,
-    "showdown": null,
     "base64": null,
     "couchtypes": null,
-    "users": null,
     "blocking-multi-shell": null,
     "md5": null
   }

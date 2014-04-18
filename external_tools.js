@@ -52,7 +52,7 @@ if (process.argv[2]) {
           body: 'node ' + filepath
         },
         function (err, res) {
-          // console.log(err, res);
+          console.log(err, res);
         }
       );
     }

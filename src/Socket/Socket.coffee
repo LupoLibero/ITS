@@ -7,7 +7,6 @@ factory('socket', ($location, $q, $timeout) ->
     emit: (event, data)->
       defer = $q.defer()
       @socket.emit(event, data, (message)->
-        console.log message
         message = message.split(':')
 
         if message[0] == "#{event} done"
