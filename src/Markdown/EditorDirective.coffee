@@ -4,11 +4,13 @@ directive('editor', ($filter)->
     restrict: 'E'
     scope: {
       ngModel: '='
+      saveF:   '&save'
+      rev:     '='
     }
     template: """
               <div>
-                <textarea ng-show="editMode || fsMode"  ng-model="ngModel" ng-change="change()"            ></textarea>
-                <span     ng-hide="!editMode || fsMode" bind-html-unsafe="markdown"                        ></span>
+                <textarea ng-show="editMode" ng-model="value" ng-change="change()"                       ></textarea>
+                <span     ng-hide="editMode" bind-html-unsafe="markdown"                                   ></span>
 
                 <button ng-click="preview()"    class="glyphicon glyphicon-eye-open"     ng-show="editMode"></button>
                 <button ng-click="edit()"       class="glyphicon glyphicon-pencil"       ng-hide="editMode"></button>
@@ -19,17 +21,38 @@ directive('editor', ($filter)->
               </div>
               """
     link: (scope, element, attrs) ->
-      scope.editMode = true
-      scope.fsMode   = false
+      scope.value       = angular.copy(scope.ngModel)
+      scope.markdown    = $filter('markdown')(scope.value)
+      scope.editMode    = false
+      scope.fsMode      = false
+      scope.haveChanged = false
+      scope.saverev     = null
 
       scope.change = ->
-        scope.markdown = $filter('markdown')(scope.ngModel)
+        scope.haveChanged = true
+        scope.saverev     = angular.copy(scope.rev)
+        scope.markdown    = $filter('markdown')(scope.value)
 
       scope.preview = ->
         scope.editMode = false
 
       scope.edit = ->
         scope.editMode = true
+
+      scope.save = ->
+        scope.saveF({
+          value: scope.value
+          rev:   scope.saverev
+        }).then(
+          (data)-> #Success
+            scope.editMode    = false
+            scope.haveChanged = false
+            scope.saverev     = null
+          ,(err)-> #Error
+        )
+
+      scope.cancel = ->
+        scope.value = angular.copy(scope.ngModel)
 
       scope.fullscreen = ->
         elem = element.find('div').get(0)

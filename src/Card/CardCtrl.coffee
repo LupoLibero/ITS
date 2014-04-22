@@ -37,8 +37,13 @@ controller('CardCtrl', (card, socket, $document, $scope, $modalInstance,  $q, Ca
       value:   value
       lang:    lang
       _rev:    rev
-    })
-    defer.resolve()
+    }).then(
+      (data)-> #Success
+        defer.resolve()
+      ,(err)-> #Error
+        defer.reject()
+        console.log err
+    )
     return defer.promise
 
   $scope.keyOnNewComment = ($event) ->
