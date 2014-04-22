@@ -9,8 +9,6 @@ exports.activityField = function(){
       update: function (newDoc, oldDoc, newValue, oldValue, userCtx) {
         var lastActivity = newValue.pop();
 
-        // assert(newValue.length >= 0, "Activity must be saved on update");
-
         assert(oldValue && _.isEqual(newValue, oldValue), "Old activity has been modified");
 
         assert(newDoc.hasOwnProperty(lastActivity.element)
@@ -21,7 +19,7 @@ exports.activityField = function(){
 
         assert(!isNaN(lastActivity.date), "3rd element must be a timestamp");
 
-        assert(_.isEqual(lastActivity.content, oldDoc[lastActivity.element]),
+        assert(_.isEqual(lastActivity.content, newDoc[lastActivity.element]),
             "Previous version is not correctly saved");
       },
     },

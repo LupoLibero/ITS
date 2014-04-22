@@ -9,16 +9,19 @@
   <hr/>
   <form ng-submit="addComment(newComment)">
     <textarea ng-keypress="keyOnNewComment($event)" ng-disabled="loading" ng-model="newComment"></textarea>
-    <input type="submit" class="btn btn-primary"/>
+    <input type="submit" class="btn btn-primary" />
   </form>
   <div ng-repeat="comment in card.activity |orderBy:'-created_at'">
-    <div class="activity" ng-show="comment.element">
-      <p>Change on {{ comment.element }} by {{ comment.author }}</p>
+    <div class="activity" ng-if="comment.element">
+      <p>Change on {{ comment.element }} by {{ comment.author }} the {{ comment.date |date }}</p>
     </div>
-    <div class="comment" ng-show="comment.message">
+    <div class="comment" ng-if="comment.message">
       <p>{{ comment.author }}</p>
       <p>{{ comment.message }}</p>
     </div>
+  </div>
+  <div class="activity">
+    <p>{{ card.author }} create this card the {{ card.created_at |date }}</p>
   </div>
 </div>
 

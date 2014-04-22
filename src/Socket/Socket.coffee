@@ -9,15 +9,15 @@ factory('socket', ($location, $q, $timeout) ->
       @socket.emit(event, data, (message)->
         message = message.split(':')
 
-        if message[0] == "#{event} done"
+        if message[0] == "Done"
           defer.resolve(message[1..-1].join())
-        else if message[0] == "#{event} error"
+        else if message[0] == "Error"
           defer.reject(message[1..-1].join())
       )
 
       $timeout( ->
         defer.reject('timeout')
-      ,1000)
+      ,3000)
       return defer.promise
 
     on: (event, callback)->

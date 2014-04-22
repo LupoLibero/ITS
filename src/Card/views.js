@@ -79,7 +79,8 @@ exports.card_all = {
         title:       doc.title,
         init_lang:   doc.init_lang,
         type:        doc.type,
-        type:        doc.type,
+        author:      doc.author,
+        created_at:  doc.created_at,
         description: doc.description,
         avail_langs: Object.keys(doc.title),
       });

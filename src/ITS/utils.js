@@ -15,6 +15,6 @@ exports.reExports = function (exports, path) {
 exports.hasRole = function (user) {
   return function (role) {
     var roles = user ? (user.roles || []): [];
-    return _.include(roles, role)
+    return _.include(roles, role);
   }
 }

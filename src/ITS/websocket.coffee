@@ -356,7 +356,7 @@ io.sockets.on('connection', (socket)->
               console.log err
           )
       ,(err)-> #Error
-        fn("Error:#{err.response}")
+        fn("Error:#{ JSON.stringify(err.response) }")
     )
 
   socket.on 'newComment', (data, fn)->
