@@ -1,16 +1,16 @@
 angular.module('card').
-config( ($routeProvider)->
-  $routeProvider
-    .when('/project/:project_id/:card_num?', {
+config( ($stateProvider)->
+  $stateProvider
+    .state('card', {
+      url:         '/project/:project_id',
       templateUrl: 'partials/card/list.html'
       controller:  'CardListCtrl'
-      name:        'card.list'
       resolve: {
-        project: (Project, $route) ->
+        project: (Project, $stateParams) ->
           return Project.getDoc({
-            id: $route.current.params.project_id
+            id: $stateParams.project_id
           })
-        config: ($http, db, $q) ->
+        config: ($http, $q, db)->
           defer = $q.defer()
           $http.get("#{db.url}/_design/#{db.name}/_view/config", {
             cache: true
@@ -23,5 +23,10 @@ config( ($routeProvider)->
           )
           return defer.promise
       }
+    })
+    .state('card.show', {
+      url:        '/:card_num'
+      controller: 'CardModalCtrl'
+      template:   ''
     })
 )

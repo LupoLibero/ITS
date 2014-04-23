@@ -1,4 +1,5 @@
 angular.module('card', [
+  'ui.router'
   'ngCouchDB'
   'activity'
   'ui.bootstrap'

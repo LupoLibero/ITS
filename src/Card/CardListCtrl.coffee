@@ -1,12 +1,12 @@
 angular.module('card').
-controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, socket, url, $q, notification) ->
+controller('CardListCtrl', ($scope, $state, cardUtils, login, socket, $q, notification) ->
   $scope.login       = login
   $scope.lists       = ['ideas', 'estimated', 'funded', 'todo', 'doing', 'done']
-  $scope.project     = $route.current.locals.project
+  $scope.project     = $state.$current.locals.globals.project
   $scope.cards       = []
   # Translate
   $scope.currentLang = window.navigator.language
-  $scope.allLangs    = $route.current.locals.config[1].value
+  $scope.allLangs    = $state.$current.locals.globals.config[1].value
   $scope.langs       = {}
   $scope.nbCard      = 0
 
@@ -86,6 +86,7 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
       lang:    $scope.currentLang
     })
 
+  $scope.showAddCard   = false
   $scope.newcard= {
     title: ''
   }
@@ -113,37 +114,4 @@ controller('CardListCtrl', ($scope, $route, cardUtils, $modal, login, Card, sock
       ,(err) -> #Error
         $scope.loading      = false
     )
-
-    $scope.newcard.title = ''
-    $scope.showAddCard   = false
-
-  # $scope.$watch($route.current.params.card_num, (card_num) ->
-  # )
-
-  card_num = $route.current.params.card_num
-  if card_num? and typeof card_num != 'undefined'
-    $modal.open({
-      templateUrl: 'partials/card/show.html'
-      controller:  'CardCtrl'
-      keyboard:    false
-      resolve:
-        card: ($q, socket, $route, $timeout) ->
-          defer = $q.defer()
-
-          socket.emit('getCard', $route.current.params.card_num)
-          socket.on 'getCard', (data) ->
-            defer.resolve(data)
-
-          $timeout(->
-            defer.reject()
-          ,1000)
-
-          return defer.promise
-    }).result.then( (->), ->
-      $scope.card_num = null
-      url.redirect('card.list', {
-        project_id: $route.current.locals.project.id
-      })
-    )
-
 )

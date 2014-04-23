@@ -1,6 +1,6 @@
 angular.module('its').
-config( ($routeProvider)->
+config( ($urlRouterProvider)->
   # $locationProvider.html5Mode(true)
-  $routeProvider
-    .otherwise({redirectTo: '/project'})
+  $urlRouterProvider
+    .otherwise('/project')
 )

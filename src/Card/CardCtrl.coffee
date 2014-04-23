@@ -1,5 +1,5 @@
 angular.module('card').
-controller('CardCtrl', (card, socket, $document, $scope, $modalInstance,  $q, Card, Comment, login) ->
+controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalInstance,  $q, login) ->
 
   $scope.card = card
   $scope.card.activity = []

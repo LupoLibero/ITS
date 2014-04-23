@@ -1,7 +1,6 @@
 angular.module('its', [
-  'ngRoute'
+  'ui.router'
   'dbSelect'
-  'url'
   'navbar'
   'project'
   'ngCouchDB'

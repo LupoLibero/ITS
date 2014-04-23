@@ -1,9 +1,6 @@
 [submodule "src/Notification"]
 	path = src/Notification
 	url = https://github.com/LupoLibero/couch-ng-Notification.git
-[submodule "src/Url"]
-	path = src/Url
-	url = https://github.com/LupoLibero/couch-ng-Url.git
 [submodule "src/Directives"]
 	path = src/Directives
 	url = https://github.com/LupoLibero/directives.git

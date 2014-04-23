@@ -12,7 +12,7 @@
           <span class="pull-right"><b>{{ card.rank || 0 }}</b></span>
         </header>
         <translation field="title" object="card" save="save(id, field, text, from)">
-          <a goto="card.list" project_id="{{ project.id }}" card_num="{{ card.num }}">
+          <a ui-sref="card.show({card_num: card.num})">
             {{ card.title.content }}
           </a>
         </translation>
@@ -35,4 +35,7 @@
       <button class="btn btn-link" ng-disabled="login.isNotConnect()" ng-hide="showAddCard" ng-click="showAddCard=true">Add card</button>
     </footer>
   </section>
+</div>
+
+<div ui-view>
 </div>

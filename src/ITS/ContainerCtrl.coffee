@@ -1,6 +1,6 @@
 angular.module('its').
 controller('ContainerCtrl', ($scope, $rootScope, notification, Local) ->
-  $scope.loader = true
+  $scope.loader = false
 
   $rootScope.saveTranslation = (key, text, lang) ->
     Local.update({

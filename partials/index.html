@@ -28,7 +28,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" goto="project.list">Lupo Libero</a>
+                <a class="navbar-brand" ui-sref="project">Lupo Libero</a>
             </div>
 
             <!-- Content -->
@@ -36,9 +36,9 @@
 
                 <!-- Links -->
                 <ul class="nav navbar-nav" id="bs-example-navbar-collapse-1">
-                    <li actual-link>
+                    <li ui-sref-active>
                       <translation save="saveTranslation(key, text, lang)">
-                        <a goto="project.list" translate>Home</a>
+                        <a ui-sref="project" translate>Home</a>
                       </translation>
                     </li>
                     <li class="dropdown">
@@ -52,7 +52,7 @@
                             <li><a href="#">Separated link</a></li>
                         </ul>
                     </li>
-                    <li actual-link><a go-to="blog">Blog</a></li>
+                    <li><a>Blog</a></li>
                 </ul>
 
                 <!-- Account -->
@@ -63,8 +63,8 @@
 
                 <!-- Login Form -->
                 <form class="form-group navbar-form navbar-right" role="login" ng-if="login.isNotConnect()" ng-submit="signIn()">
-                    <input  type="text"     class="form-control"   ng-model="loginform.user" placeholder="Email">
-                    <input  type="password" class="form-control"   ng-model="loginform.password" placeholder="Password">
+                    <input  type="text"     class="form-control"    ng-model="loginform.user"     placeholder="Email"    />
+                    <input  type="password" class="form-control"    ng-model="loginform.password" placeholder="Password" />
                     <button type="submit"   class="btn btn-default" translate>Sign In</button>
                     <button type="button"   class="btn btn-primary" ng-click="signup()" translate>Sign Up</button>
                 </form>
@@ -75,7 +75,7 @@
     </nav><!-- END: Navigation top Bar -->
 
     <div class="container" ng-controller="ContainerCtrl">
-      <div ng-view></div>
+      <div ui-view></div>
       <div ng-show="loader" id="loader"><div us-spinner></div></div>
 
       <footer>
@@ -95,12 +95,12 @@
     <script src="vendor/marked/lib/marked.js"                            ></script>
     <!-- Angular -->
     <script src="vendor/angular/angular.js"                              ></script>
-    <script src="vendor/angular-route/angular-route.js"                  ></script>
     <script src="vendor/angular-resource/angular-resource.js"            ></script>
     <script src="vendor/angular-sanitize/angular-sanitize.js"            ></script>
     <script src="vendor/angular-animate/angular-animate.js"              ></script>
     <!-- Angular Modules -->
     <script src="vendor/ngstorage/ngStorage.js"                          ></script>
+    <script src="vendor/angular-ui-router/release/angular-ui-router.js"  ></script>
     <script src="vendor/angular-bootstrap/ui-bootstrap-tpls.js"          ></script>
     <script src="vendor/angular-gettext/dist/angular-gettext.js"         ></script>
     <script src="vendor/angular-couchdb/couch.js"                        ></script>

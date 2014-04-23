@@ -1,10 +1,10 @@
 angular.module('project').
-config( ($routeProvider)->
-  $routeProvider
-    .when('/project', {
+config( ($stateProvider)->
+  $stateProvider
+    .state('project', {
+      url:         '/project'
       templateUrl: 'partials/project/list.html'
       controller:  'ProjectListCtrl'
-      name:        'project.list'
       resolve: {
         projects_default: (Project)->
           return Project.all({
