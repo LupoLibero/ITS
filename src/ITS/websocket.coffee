@@ -258,6 +258,9 @@ io.sockets.on('connection', (socket)->
 
   socket.on 'setUsername', (data)->
     store(username, data, socket)
+    if username != ''
+      socket.leave("username:#{username}")
+    socket.join("username:#{username}")
     username = data
   socket.on 'setPassword', (data)->
     password = data
@@ -265,8 +268,8 @@ io.sockets.on('connection', (socket)->
     project = data
   socket.on 'setLang',     (data)->
     if lang != ''
-      socket.leave(lang)
-    socket.join(data)
+      socket.leave("lang:#{data}")
+    socket.join("lang:#{data}")
     lang = data
 
   socket.on 'getAll', (data)->
@@ -365,7 +368,7 @@ io.sockets.on('connection', (socket)->
               else if value.element == 'description'
                 result.description = data.description
 
-              io.sockets.in(lang).emit('setCard', result)
+              io.sockets.in("lang:#{lang}").emit('setCard', result)
             ,(err)-> #Error
               console.log err
           )
@@ -442,7 +445,7 @@ io.sockets.on('connection', (socket)->
           .then(
             (data)->
               data = data[0]
-              socket.emit('setCard', data)
+              io.socket.in("username:#{username}").emit('setCard', data)
               delete data.vote
               socket.broadcast.emit('setCard', data)
             ,(err)->
