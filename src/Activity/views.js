@@ -9,8 +9,6 @@ exports.activity_all = {
           element:  activity.element,
           author:   activity.author,
           date:     activity.date,
-          _rev:     activity._rev,
-          content:  activity.content,
         };
         emit([doc._id, act.date], act);
       }
