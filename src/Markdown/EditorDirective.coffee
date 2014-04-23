@@ -9,8 +9,8 @@ directive('editor', ($filter)->
     }
     template: """
               <div>
-                <textarea ng-show="editMode" ng-model="value" ng-change="change()"                       ></textarea>
-                <span     ng-hide="editMode" bind-html-unsafe="markdown"                                   ></span>
+                <textarea ng-show="editMode" ng-model="value" ng-change="change()" ></textarea>
+                <span     ng-hide="editMode" bind-html-unsafe="markdown"           ></span>
 
                 <button ng-click="preview()"    class="glyphicon glyphicon-eye-open"     ng-show="editMode"></button>
                 <button ng-click="edit()"       class="glyphicon glyphicon-pencil"       ng-hide="editMode"></button>
@@ -27,6 +27,11 @@ directive('editor', ($filter)->
       scope.fsMode      = false
       scope.haveChanged = false
       scope.saverev     = null
+
+      scope.$watch('ngModel', ->
+        scope.value       = angular.copy(scope.ngModel)
+        scope.markdown    = $filter('markdown')(scope.value)
+      )
 
       scope.change = ->
         scope.haveChanged = true
@@ -52,7 +57,8 @@ directive('editor', ($filter)->
         )
 
       scope.cancel = ->
-        scope.value = angular.copy(scope.ngModel)
+        scope.value    = angular.copy(scope.ngModel)
+        scope.markdown = $filter('markdown')(scope.value)
 
       scope.fullscreen = ->
         elem = element.find('div').get(0)

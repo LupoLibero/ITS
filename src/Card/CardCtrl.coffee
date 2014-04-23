@@ -4,6 +4,7 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
   $scope.card = card
   $scope.card.activity = []
 
+  socket.emit('getDescription', card.id)
   socket.on('setCard', (data)->
     if data.id == $scope.card.id
       $scope.card = angular.extend($scope.card, data)
@@ -11,7 +12,8 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
 
   socket.emit('getActivity', card.id)
   socket.on('addActivity', (data) ->
-    $scope.card.activity.unshift(data)
+    if data._id == "card:#{$scope.card.id}"
+      $scope.card.activity.unshift(data)
   )
 
   $document.bind('keypress', ($event) ->

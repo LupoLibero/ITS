@@ -128,6 +128,19 @@ withoutDescription = (result) ->
   defer.resolve([card, lang, username])
   return defer.promise
 
+onlyDescription = (result) ->
+  card     = result[0]
+  lang     = result[1]
+  username = result[2]
+  defer    = Q.defer()
+  card = {
+    id:           card.id
+    lang:         card.lang
+    description:  card.description
+  }
+  defer.resolve([card, lang, username])
+  return defer.promise
+
 onlyTitle = (result) ->
   card     = result[0]
   lang     = result[1]
@@ -272,11 +285,12 @@ io.sockets.on('connection', (socket)->
       )
     )
 
-  socket.on 'getCard', (num)->
-    getCard("#{project}.#{num}", lang, username)
+  socket.on 'getDescription', (id)->
+    getCard(id, lang, username)
+      .then(onlyDescription)
       .then(
         (card)-> #Success
-          socket.emit('getCard', card[0])
+          socket.emit('setCard', card[0])
         ,(err)-> #Error
           console.log err
       )
