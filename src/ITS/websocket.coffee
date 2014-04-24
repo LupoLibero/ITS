@@ -418,9 +418,30 @@ io.sockets.on('connection', (socket)->
         fn("Error:#{err.response}")
     )
 
+  socket.on 'setSubscription', (data, fn)->
+    promise = null
+    user = {
+      user:     username
+      password: password
+      cookie:   cookie
+    }
+
+    if not data.check
+      promise = update('its/subscription_create', '', {
+        object_key: data.id
+      }, user)
+    else
+      promise = update('its/subscription_delete', "subscription:#{data.id}-#{username}", {}, user)
+
+    promise.then(
+      (res)-> #Succes
+        fn("Done:#{res.response}")
+      ,(err)-> #Error
+        fn("Error:#{JSON.stringify(err.response)}")
+    )
+
   socket.on 'setVote', (data, fn)->
     promise = null
-    console.log data
     if not data.check
       promise = update('its/vote_create', '', {
         object_id: data.id

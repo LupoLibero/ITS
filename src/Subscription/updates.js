@@ -15,7 +15,6 @@ exports.subscription_create = function(doc, req) {
 }
 
 exports.subscription_delete = function(doc, req) {
-  var form = JSON.parse(req.body);
   if (doc !== null) {
     return [{
       _id:      doc._id,
@@ -23,4 +22,5 @@ exports.subscription_delete = function(doc, req) {
       _deleted:  true,
     }, 'ok'];
   }
+  throw({forbidden: 'Not for creation'})
 }

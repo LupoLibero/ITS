@@ -53,6 +53,12 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
       text = $event.target.value
       $scope.addComment(text)
 
+  $scope.subscribe = (id, check)->
+    return socket.emit('setSubscription', {
+      id:    id
+      check: check
+    })
+
   $scope.addComment = (comment)->
     console.log comment
     if comment? and comment != ''

@@ -3,7 +3,8 @@ directive('subscribe', ($rootScope, login, Subscription) ->
   return {
     restrict: 'E'
     scope: {
-      id: '='
+      id:   '='
+      save: '&'
     }
     template: '<button class="btn btn-primary" ng-disabled="disable" ng-class="{active: value}" ng-click="click()">Subscribe</button>'
     link: (scope, element, attrs) ->
@@ -19,6 +20,8 @@ directive('subscribe', ($rootScope, login, Subscription) ->
         }).then(
           (data) -> #Success
             scope.value = true
+          ,(err) -> #Error
+            scope.value = false
         )
 
       if login.isConnect()
@@ -30,21 +33,12 @@ directive('subscribe', ($rootScope, login, Subscription) ->
       $rootScope.$on('SignOut',-> onSignOut())
 
       scope.click = ->
-        if not scope.value
-          Subscription.update({
-            update: 'create'
-            object_key: scope.id
-          }).then(
-            (data) -> #Success
-              scope.value = !scope.value
-          )
-        else
-          Subscription.update({
-            update: 'delete'
-            _id:    "subscription:#{scope.id}-#{login.getName()}"
-          }).then(
-            (data) -> #Success
-              scope.value = !scope.value
-          )
+        scope.save({
+          check: scope.value
+          id:    scope.id
+        }).then(
+          (data)-> #Success
+            scope.value = !scope.value
+        )
   }
 )
