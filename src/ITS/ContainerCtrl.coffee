@@ -1,15 +1,13 @@
 angular.module('its').
-controller('ContainerCtrl', ($scope, $rootScope, notification, Local) ->
+controller('ContainerCtrl', ($scope, $rootScope, notification, Local, socket) ->
   $scope.loader = false
 
   $rootScope.saveTranslation = (key, text, lang) ->
-    Local.update({
-      update: 'update'
-      id: lang
-
+    data = {
       key:  key
       text: text
-    })
+    }
+    return socket.emit('setTranslation', data)
 
   $rootScope.$on('LangBarChangeLanguage', ($event, lang) ->
     $rootScope.$broadcast('$ChangeLanguage', lang)

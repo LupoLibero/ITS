@@ -16,8 +16,6 @@ update = (doc, id = '', data = {}, headers = {}) ->
   updateName = doc.split('/')[1]
   method     = (if id is '' then 'POST' else 'PUT')
   if headers.password? and headers.password != ''
-    console.log headers.user
-    console.log headers.password
     basic = new Buffer("#{headers.user}:#{headers.password}").toString('base64')
     headers = {
       "Authorization": "Basic #{basic}"
@@ -55,7 +53,6 @@ update = (doc, id = '', data = {}, headers = {}) ->
   req.write(JSON.stringify(data))
   req.end()
   return defer.promise
-
 
 getRandomChar = ->
   chars = "1234567890abcdefghijklmnopqrstuvwxyz"
@@ -271,6 +268,19 @@ io.sockets.on('connection', (socket)->
       socket.leave("lang:#{data}")
     socket.join("lang:#{data}")
     lang = data
+
+  socket.on 'setTranslation', (data, fn)->
+    update('its/local_update', "local:#{lang}", data, {
+      user:     username
+      password: password
+      cookie:   cookie
+    }).then(
+      (data)-> #Success
+        console.log "done"
+        fn("Done:#{data.response}")
+      ,(err)-> #Error
+        fn("Error:#{JSON.stringify(err)}")
+    )
 
   socket.on 'getAll', (data)->
     getCards(project).then( (cards)->
