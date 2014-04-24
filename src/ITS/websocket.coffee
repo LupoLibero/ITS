@@ -282,6 +282,15 @@ io.sockets.on('connection', (socket)->
         fn("Error:#{JSON.stringify(err)}")
     )
 
+  socket.on 'getCard', (data)->
+    getCard(card, lang, username)
+      .then(
+        (card)-> #Success
+          socket.emit('card', card[0])
+        ,(err)-> #Error
+          console.log err
+      )
+
   socket.on 'getAll', (data)->
     getCards(project).then( (cards)->
       cards.forEach( (card) ->

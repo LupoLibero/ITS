@@ -1,19 +1,36 @@
 angular.module('card').
-controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalInstance,  $q, login) ->
+controller('CardCtrl', (card, cards, socket, $document, $scope, $stateParams, $modalInstance,  $q, login) ->
 
-  $scope.card = card
-  $scope.card.activity = []
+  id = "#{$stateParams.project_id}.#{$stateParams.card_num}"
+  if card != undefined
+    $scope.card = card
+    $scope.card.activity = []
+    socket.emit('getDescription', card.id)
+  else
+    $scope.card = {}
+    socket.emit('getCard', id)
 
-  socket.emit('getDescription', card.id)
+  socket.on('card', (data)->
+    $scope.card = data
+  )
+
   socket.on('setCard', (data)->
-    if data.id == $scope.card.id
+    if data.id == id
       $scope.card = angular.extend($scope.card, data)
   )
 
-  socket.emit('getActivity', card.id)
+  socket.emit('getActivity', id)
   socket.on('addActivity', (data) ->
     if data._id == "card:#{$scope.card.id}"
-      $scope.card.activity.unshift(data)
+      found = false
+      for activity, i in $scope.card.activity
+        if activity.date == data.date
+          found = true
+          $scope.card.activity[i] = data
+          break
+
+      if not found
+        $scope.card.activity.unshift(data)
   )
 
   $document.bind('keypress', ($event) ->

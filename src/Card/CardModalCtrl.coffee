@@ -9,15 +9,11 @@ controller('CardModalCtrl', ($scope, $state, $modal)->
     resolve: {
       card: ($q, $stateParams)->
         defer = $q.defer()
-        found = false
-
         for card in $scope.$parent.cards
-          if card.num == $stateParams.card_num
+          if card.id == $stateParams.card_num
             defer.resolve(card)
-            break
-
-        defer.reject() if not found
-        return defer.promise
+        defer.resolve({})
+        return defer.resolve()
     }
   }).result.then( (->), ->
     $state.go('^')

@@ -25,7 +25,7 @@ config( ($stateProvider)->
       }
     })
     .state('card.show', {
-      url:        '/:card_num'
+      url:        '/{card_num:[0-9]+}{slash:\/?}{slug:.*}'
       controller: 'CardModalCtrl'
       template:   ''
     })
