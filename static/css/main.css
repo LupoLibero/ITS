@@ -19,7 +19,8 @@
   width: 100%;
 }
 .list {
-  width: 16%;
+  position: relative;
+  width: 250px;
   margin: 0 4px;
   float: left;
   border-radius: 5px;
