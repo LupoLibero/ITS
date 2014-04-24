@@ -15,6 +15,14 @@ module.exports = (grunt) ->
           'shell:kansoPush'
         ]
       }
+      bots: {
+        files: [
+          './bots/{,*/}*.coffee'
+        ]
+        tasks: [
+          'coffee:bots'
+        ]
+      }
     }
     concat: {
       dist: {
@@ -47,10 +55,10 @@ module.exports = (grunt) ->
         dest: 'temp/'
         ext: '.js'
       }
-      websocket: {
+      bots: {
         expand: true
-        cwd: './src/ITS/'
-        src: 'websocket.coffee'
+        cwd: './bots/'
+        src: '{,*/}*.coffee'
         dest: 'static/bots/'
         ext: '.js'
       }
@@ -62,6 +70,13 @@ module.exports = (grunt) ->
         cwd: 'src/'
         src: '*/*.js'
         dest: 'temp/'
+      }
+      bots: {
+        expand: true
+        filter: 'isFile'
+        cwd: 'bots/'
+        src: '*.json'
+        dest: 'static/bots/'
       }
     }
     clean: {

@@ -1,0 +1,44 @@
+db = require('../db')
+Q  = require('q')
+
+module.exports = {
+  set: (data, user)=>
+    return db.update('vote_create', '', {
+      object_id: data.id
+      element:   data.element
+    }, user)
+
+  unset: (data, user)=>
+    _id = "vote:card:#{data.id}-#{user.name}"
+    return db.update('its/vote_delete', _id, {}, user)
+
+  get: (result)=>
+    card     = result[0]
+    lang     = result[1]
+    username = result[2]
+
+    if typeof card != 'object'
+      card = { id: card }
+
+    defer = Q.defer()
+    db.view('vote_all', {
+      key: "card:#{card.id}"
+    }).then(
+      (data)-> #Success
+        result = {}
+        for row in data
+          for user, vote of row.value
+            result[user] = vote
+
+        card.rank = Object.keys(result).length
+        if result.hasOwnProperty(username)
+          card.vote = username
+        else
+          card.vote = ''
+
+        defer.resolve([card, lang, username])
+      ,(err)-> #Success
+        defer.reject(err)
+    )
+    return defer.promise
+}
