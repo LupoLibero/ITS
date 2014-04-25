@@ -87,16 +87,3 @@ exports.card_all = {
     }
   }
 };
-
-exports.card_votes = {
-  map: function(doc) {
-    if(doc.type){
-      if(doc.type == 'card_vote') {
-        if(doc.card_id && doc.user_id){
-          emit(doc.card_id, 1);
-        }
-      }
-    }
-  },
-  reduce: "_sum"
-}
