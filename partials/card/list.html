@@ -12,7 +12,7 @@
           <span class="pull-right"><b>{{ card.rank || 0 }}</b></span>
         </header>
         <translation field="title" object="card" save="save(id, field, text, from)">
-          <a ui-sref="card.show({card_num: card.num, slash: '/', slug: card.slug})">
+          <a ui-sref="card.show({card_num: card.num, dash: '-', slug: card.slug})">
             {{ card.title.content }}
           </a>
         </translation>
