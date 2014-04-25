@@ -21,14 +21,7 @@ controller('CardListCtrl', ($scope, $state, cardUtils, login, socket, $q, notifi
     socket.emit('setUsername', login.getName())
     socket.emit('setProject', $scope.project.id)
     socket.emit('setLang', $scope.currentLang)
-    $scope.cards = []
     socket.emit('getAll')
-  )
-
-  socket.on('addCard', (data)->
-    $scope.cards.push(data)
-    $scope.langs  = cardUtils.getLangs($scope.cards)
-    $scope.nbCard = $scope.cards.length
   )
 
   socket.on('setCard', (data)->

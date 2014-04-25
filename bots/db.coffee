@@ -19,10 +19,17 @@ module.exports = {
     defer  = Q.defer()
     method = (if id is '' then 'POST' else 'PUT')
 
-    basic = new Buffer("#{user.name}:#{user.password}").toString('base64')
-    headers = {
-      "Authorization": "Basic #{basic}"
-    }
+    if user.pass != '' and user.pass?
+      basic = new Buffer("#{user.name}:#{user.pass}").toString('base64')
+      headers = {
+        "Authorization": "Basic #{basic}"
+      }
+    else if user.name != '' and user.cookie != ''
+      headers = {
+        "Cookie": user.cookie
+      }
+    else
+      hearders = {}
 
     req = http.request({
       hostname:  config.host
@@ -48,10 +55,12 @@ module.exports = {
           data.id   = data._id.split(':')[1..-1].join(':')
 
         if res.statusCode.toString()[0] > 3
-          defer.reject(data)
+          defer.reject(JSON.stringify(data))
         else
           defer.resolve(data)
       )
     )
+    req.write(JSON.stringify(data))
+    req.end()
     return defer.promise
 }

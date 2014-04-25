@@ -7,7 +7,7 @@ getRandomChar = ->
   return chars.charAt(num)
 
 getLang = (card, element, lang)->
-  if card[element].hasOwnProperty(lang)
+  if card[element]?.hasOwnProperty(lang)
     card[element]      = card[element][lang]
     card[element].lang = lang
   else
@@ -37,38 +37,47 @@ module.exports = {
 
   create: (data, user, ids)=>
     data.id = "#{data.project_id}.#{createID(ids)}"
-    return db.update('its/card_create', '', data, user)
+    console.log data.id
+    return db.update('card_create', '', data, user)
 
   updateField: (value, user)=>
     return db.update('card_update_field', "card:#{value.id}", value, user)
 
-  get: (card, lang, username)=>
+  translate: (result)=>
     defer = Q.defer()
+    card  = result[0]
+    lang  = result[1]
+    user  = result[2]
 
-    console.log card
-    if typeof card == 'string'
-      db.view('card_all', {
-        key: card
-      }).then(
-        (data)->
-          return @get(data[0].value, lang, username)
-        ,(err)->
-          defer.reject(err)
-      )
-    else
-      card.num = card.id.split('.')[1]
-      getLang(card, 'title', lang)
-      getLang(card, 'description', lang)
+    card.num = card.id.split('.')[1]
+    getLang(card, 'title', lang)
+    getLang(card, 'description', lang)
 
-      delete card.init_lang
-      delete card.type
-      defer.resolve([card, lang, username])
+    delete card.init_lang
+    delete card.type
+    defer.resolve([card, lang, user])
+    return defer.promise
+
+  get: (result)=>
+    defer = Q.defer()
+    id    = result[0]
+    lang  = result[1]
+    user  = result[2]
+
+    db.view('card_all', {
+      key: id
+    }).then(
+      (data)->
+        defer.resolve([data[0].value, lang, user])
+      ,(err)->
+        defer.reject(err)
+    )
     return defer.promise
 
   withoutDescription: (result)=>
     defer = Q.defer()
     delete result[0].description
-    defer.resolve([card, lang, username])
+    defer.resolve(result)
     return defer.promise
 
   onlyTitle: (result)=>
@@ -94,10 +103,10 @@ module.exports = {
     return defer.promise
 
   getWorkflow: (result)=>
-    card     = result[0]
-    lang     = result[1]
-    username = result[2]
     defer = Q.defer()
+    card  = result[0]
+    lang  = result[1]
+    user  = result[2]
 
     db.view('card_workflow', {
       key: card.id
@@ -121,7 +130,7 @@ module.exports = {
         else
           card.payment = null
 
-        defer.resolve([card, lang, username])
+        defer.resolve([card, lang, user])
       ,(err)-> #Error
         defer.reject(err)
     )

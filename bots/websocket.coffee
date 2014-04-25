@@ -1,165 +1,126 @@
 io       = require('socket.io').listen(8800)
 Q        = require('q')
+Activity = require('./Model/Activity')
 Card     = require('./Model/Card')
 Comment  = require('./Model/Comment')
-Activity = require('./Model/Comment')
+Vote     = require('./Model/Vote')
 
 ids   = {}
 io.sockets.on('connection', (socket)->
   user = {
-    name:     ''
-    password: ''
+    name:   ''
+    pass:   ''
+    cookie: socket.handshake.headers.cookie
   }
   project  = ''
   lang     = ''
 
-  socket.on 'setUsername', (data)->
-    if user.name != ''
-      socket.leave("username:#{user.name}")
-    socket.join("username:#{user.name}")
-    user.name = data
+  socket.on 'setUsername', (req, fn)->
+    socket.leave("username:#{user.name}")
+    socket.join("username:#{req}")
+    user.name = req
 
-  socket.on 'setLang',     (data)->
-    if lang != ''
-      socket.leave("lang:#{data}")
-    socket.join("lang:#{data}")
-    lang = data
+  socket.on 'setLang', (req, fn)->
+    socket.leave("lang:#{lang}")
+    socket.join("lang:#{req}")
+    lang = req
 
-  socket.on 'setPassword', (data)->
-    user.password = data
+  socket.on 'setPassword', (req, fn)->
+    user.pass = req
 
-  socket.on 'setProject',  (data)->
-    project = data
+  socket.on 'setProject',  (req, fn)->
+    project = req
 
-  socket.on 'getAll', (data)->
-    Card.all(project).then( (cards)->
-      cards.forEach( (card) ->
+  socket.on 'getAll', (req, fn)->
+    Card.all(project).then (cards)->
+      cards.forEach (card) ->
         ids[card.id] = true
-        Card.get(card, lang, username)
+        Card.translate([card, lang, user])
           .then(Card.withoutDescription)
           .then(Card.getWorkflow)
           .then(
-            (card)-> #Success
-              socket.emit('setCard', card[0])
+            (data)-> #Success
+              socket.emit('setCard', data[0])
           )
-      )
-    )
 
-  socket.on 'getDescription', (id)->
-    Card.get(id, lang, username)
+  socket.on 'getDescription', (req, fn)->
+    Card.get([req, lang, user])
+      .then(Card.translate)
       .then(Card.onlyDescription)
       .then(
-        (card)-> #Success
-          socket.emit('setCard', card[0])
+        (data)-> #Success
+          socket.emit('setCard', data[0])
       )
 
-  socket.on 'getActivity', (id)->
-    Comment.all(id).then(
-      (data)-> #Success
-        data.forEach (comment)->
-          socket.emit('addActivity', comment)
-    )
-    Activity.get(id).then(
-      (data)-> #Success
-        data.forEach (activity)->
-          socket.emit('addActivity', activity)
-    )
+  socket.on 'getActivity', (req, fn)->
+    id = "card:#{req}"
+    Comment.all(id)
+      .then(
+        (data)-> #Success
+          data.forEach (comment)->
+            socket.emit('addActivity', comment)
+      )
+    Activity.all(id)
+      .then(
+        (data)-> #Success
+          data.forEach (activity)->
+            socket.emit('addActivity', activity)
+      )
 
-  socket.on 'getTitle', ->
-    Card.all(project).then( (cards)->
-      cards.forEach( (card) ->
-        Card.get(card, lang, username)
+  socket.on 'getTitle', (req, fn)->
+    Card.all(project).then (cards)->
+      cards.forEach  (card) ->
+        Card.translate([card, lang, user])
           .then(Card.onlyTitle)
           .then(
             (card)-> #Success
               socket.emit('setCard', card[0])
           )
-      )
-    )
 
-  socket.on 'getVote', ->
-    Card.all(project).then( (cards)->
-      cards.forEach( (card) ->
-        Vote.get([card.id, lang, username])
-          .then(
-            (card)-> #Success
-              socket.emit('setCard', card[0])
-          )
-      )
-    )
-
-  socket.on 'updateField', (value, fn) ->
-    Card.updateField(value, user).then(
-      (data)-> #Success
-        fn("Done:#{data.response}")
-        Card.get(value.id, lang, username)
-          .then(
-            (data)-> #Success
-              data = data[0]
-              result = {
-                id: data.id
-              }
-              result[value.element] = data[value.element]
-              io.sockets.in("lang:#{lang}").emit('setCard', result)
-            ,(err)-> #Error
-              console.log err
-          )
-      ,(err)-> #Error
-        fn("Error:#{ JSON.stringify(err.response) }")
-    )
-
-  socket.on 'newComment', (data, fn)->
-    Comment.create(data, user).then(
-      (data)-> #Success
-        fn("Done:#{data.response}")
-        db.get(data.id, (err, res)->
-          if err
-            console.log err
-          else
-            socket.emit('addActivity', res)
+  socket.on 'getVote', (req, fn)->
+    for id, value of ids
+      Vote.get([id, lang, user])
+        .then(
+          (card)-> #Success
+            socket.emit('setCard', card[0])
         )
-      ,(err)-> #Error
-        fn("Error:#{err.response}")
-    )
 
-  socket.on 'newCard', (data, fn)->
-    Card.create(data, user, ids).then(
+  socket.on 'updateField', (req, fn) ->
+    Card.updateField(req, user).then(
       (data)-> #Success
         fn("Done:#{data.response}")
-        getCard(data.id, lang, username)
-          .then(withoutDescription)
-          .then(Vote.get)
-          .then(getWorkflow)
-          .then(
-            (data)-> #Success
-              io.sockets.emit('addCard', data[0])
-          )
       ,(err)-> #Error
-        fn("Error:#{err.response}")
+        fn("Error:#{err}")
     )
 
-  socket.on 'setVote', (data, fn)->
+  socket.on 'newComment', (req, fn)->
+    Comment.create(req, user).then(
+      (data)-> #Success
+        fn("Done:#{data.response}")
+      ,(err)-> #Error
+        fn("Error:#{err}")
+    )
+
+  socket.on 'newCard', (req, fn)->
+    Card.create(req, user, ids).then(
+      (data)-> #Success
+        fn("Done:#{data.response}")
+      ,(err)-> #Error
+        fn("Error:#{err}")
+    )
+
+  socket.on 'setVote', (req, fn)->
     promise = null
-    if not data.check
-      promise = Vote.set(data, user)
+    if not req.check
+      promise = Vote.set(req, user)
     else
-      promise = Vote.unset(data, user)
+      promise = Vote.unset(req, user)
 
     promise.then(
-      (res)-> #Succes
-        fn("Done:#{res.response}")
-        Vote.get([data.id, lang, username])
-          .then(
-            (data)->
-              data = data[0]
-              io.socket.in("username:#{username}").emit('setCard', data)
-              delete data.vote
-              socket.broadcast.emit('setCard', data)
-            ,(err)->
-              console.log err
-          )
+      (data)-> #Succes
+        fn("Done:#{data.response}")
       ,(err)-> #Error
-        fn("Error:#{JSON.stringify(err.response)}")
+        fn("Error:#{err}")
     )
 )
 

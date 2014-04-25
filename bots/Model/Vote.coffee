@@ -10,31 +10,31 @@ module.exports = {
 
   unset: (data, user)=>
     _id = "vote:card:#{data.id}-#{user.name}"
-    return db.update('its/vote_delete', _id, {}, user)
+    return db.update('vote_delete', _id, {}, user)
 
   get: (result)=>
-    card     = result[0]
-    lang     = result[1]
-    username = result[2]
+    defer = Q.defer()
+    card  = result[0]
+    lang  = result[1]
+    user  = result[2]
 
     if typeof card != 'object'
       card = { id: card }
 
-    defer = Q.defer()
     db.view('vote_all', {
       key: "card:#{card.id}"
     }).then(
       (data)-> #Success
         result = {}
         for row in data
-          for user, vote of row.value
-            result[user] = vote
+          for username, vote of row.value
+            result[username] = vote
 
         card.rank = Object.keys(result).length
-        if result.hasOwnProperty(username)
-          card.vote = username
+        if result.hasOwnProperty(user.name)
+          card.vote = user.name
         else
-          card.vote = ''
+          card.vote = null
 
         defer.resolve([card, lang, username])
       ,(err)-> #Success
