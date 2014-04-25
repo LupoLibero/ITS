@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Lupo Libero's Issue Tracking System",
   "load": "src/ITS/app",
-  "modules": ["src", "views"],
+  "modules": ["src"],
   "attachments": ["static", "partials"],
   "shell": [
     "grunt compile",
