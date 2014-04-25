@@ -27,6 +27,7 @@ controller('CardListCtrl', ($scope, $state, cardUtils, login, socket, $q, notifi
   )
 
   socket.on('setCard', (data)->
+    data = cardUtils.generateSlug(data)
     found = false
     for card, i in $scope.cards
       if card.id == data.id
