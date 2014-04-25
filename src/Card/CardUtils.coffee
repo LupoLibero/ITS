@@ -14,8 +14,7 @@ factory('cardUtils', ->
     generateSlug: (card) ->
       if card.title?.content?
         slug = card.title.content
-        slug = slug.toLowerCase()
-        slug = slug.replace(' ', '-')
+        slug = window.slugg(slug)
         card.slug = slug
 
       return card
