@@ -1,0 +1,11 @@
+{
+  "name": "_auth",
+  "version": "0.0.1",
+  "description": "_auth design document for _users db",
+  "load": "lib/app",
+  "modules": ["lib"],
+  "dependencies": {
+    "properties": null,
+    "modules": null
+  }
+}
