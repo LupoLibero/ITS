@@ -9,8 +9,8 @@ directive('editor', ($filter)->
     }
     template: """
               <div>
-                <textarea ng-show="editMode" ng-model="value" ng-change="change()" ></textarea>
-                <span     ng-hide="editMode" bind-html-unsafe="markdown"           ></span>
+                <textarea ng-show="editMode" ng-model="value"            ng-keypress="change($event)" ></textarea>
+                <span     ng-hide="editMode" bind-html-unsafe="markdown" ng-dblclick="editMode=true"   ></span>
 
                 <button ng-click="preview()"    class="glyphicon glyphicon-eye-open"     ng-show="editMode"></button>
                 <button ng-click="edit()"       class="glyphicon glyphicon-pencil"       ng-hide="editMode"></button>
@@ -33,10 +33,17 @@ directive('editor', ($filter)->
         scope.markdown    = $filter('markdown')(scope.value)
       )
 
-      scope.change = ->
-        scope.haveChanged = true
-        scope.saverev     = angular.copy(scope.rev)
-        scope.markdown    = $filter('markdown')(scope.value)
+      scope.change = ($event)->
+        if $event.keyCode == 13 && $event.ctrlKey
+          scope.save()
+        else if $event.keyCode == 10 && $event.ctrlKey # For ctrl+enter for Chrome
+          scope.save()
+        else if $event.keyCode == 27
+          scope.editMode = false
+        else
+          scope.haveChanged = true
+          scope.saverev     = angular.copy(scope.rev)
+          scope.markdown    = $filter('markdown')(scope.value)
 
       scope.preview = ->
         scope.editMode = false
