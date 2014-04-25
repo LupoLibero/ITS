@@ -8,7 +8,7 @@ exports.card_create = function(doc, req) {
   if(doc !== null){
     throw({forbidden: '345: New Card only'});
   } else {
-    id     = form.id || form.project_id+'.'+req.uuid.substr(req.uuid.length-4);
+    id     = form.id;
     author = req.userCtx.name;
 
     form.id          = id;

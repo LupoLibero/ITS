@@ -8,11 +8,11 @@
 var cradle = require('cradle');
 var path   = require('path');
 var fs     = require('fs');
-var bots   = require('./kanso.json').bots;
+var bots   = require('../kanso.json').bots;
 var db;
 
 if( fs.existsSync('.kansorc') ) {
-  var rc = require('./.kansorc').env;
+  var rc = require('../.kansorc').env;
 }
 
 if (process.argv[2]) {
