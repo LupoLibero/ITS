@@ -21,6 +21,7 @@ module.exports = (grunt) ->
         ]
         tasks: [
           'coffee:bots'
+          'copy:bots'
         ]
       }
     }
@@ -76,7 +77,7 @@ module.exports = (grunt) ->
         filter: 'isFile'
         cwd: 'bots/'
         src: '*.json'
-        dest: 'static/bots/'
+        dest: 'static/bots'
       }
     }
     clean: {
@@ -135,6 +136,11 @@ module.exports = (grunt) ->
 
   grunt.registerTask('default', [
     'watch'
+  ])
+
+  grunt.registerTask('bots', [
+    'copy:bots'
+    'coffee:bots'
   ])
 
   grunt.registerTask('compile', [
