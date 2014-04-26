@@ -9,7 +9,8 @@
     "underscore": "~1.6.0",
     "crypto": "0.0.3",
     "nodemailer": "~0.6.1",
-    "socket.io": "~0.9.16"
+    "socket.io": "~0.9.16",
+    "properties": "^1.2.1"
   },
   "devDependencies": {
     "grunt-contrib-coffee": "~0.10.0",
