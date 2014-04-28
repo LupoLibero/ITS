@@ -9,3 +9,4 @@ static/*.js
 static/bots
 static/js
 .kansorc
+.vagrant/**

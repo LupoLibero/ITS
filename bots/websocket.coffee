@@ -3,6 +3,7 @@ Q        = require('q')
 Activity = require('./Model/Activity')
 Card     = require('./Model/Card')
 Comment  = require('./Model/Comment')
+Local    = require('./Model/Local')
 Vote     = require('./Model/Vote')
 
 ids   = {}
@@ -118,6 +119,14 @@ io.sockets.on('connection', (socket)->
 
     promise.then(
       (data)-> #Succes
+        fn("Done:#{data.response}")
+      ,(err)-> #Error
+        fn("Error:#{err}")
+    )
+
+  socket.on 'setTranslation', (data, fn)->
+    Local.set(data.key, data.text, lang, user).then(
+      (data)-> #Success
         fn("Done:#{data.response}")
       ,(err)-> #Error
         fn("Error:#{err}")
