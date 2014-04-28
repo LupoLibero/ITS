@@ -8,12 +8,10 @@ exports.card_create = function(doc, req) {
   if(doc !== null){
     throw({forbidden: '345: New Card only'});
   } else {
-    id     = form.id;
-    author = req.userCtx.name;
+    var author = req.userCtx.name;
 
-    form.id          = id;
     form.type        = 'card';
-    form._id         = form.type+':'+id;
+    form._id         = form.type+':'+form.id;
     form.author      = author;
     form.created_at  = new Date().getTime();
     form.votes       = {};
@@ -24,9 +22,8 @@ exports.card_create = function(doc, req) {
     form.init_lang   = form.lang;
 
     registerTranslation(form, form, 'card', 'title', form.lang, form.lang);
-    registerTranslation(form, form, 'card', 'description', form.lang, form.lang);
     // Add the vote of the creator
-    form.votes[req.userCtx.name] = true;
+    form.votes[author] = true;
     delete form.lang;
     return ([form, 'ok']);
   }

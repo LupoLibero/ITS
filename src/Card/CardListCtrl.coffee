@@ -107,6 +107,7 @@ controller('CardListCtrl', ($scope, $state, cardUtils, login, socket, $q, notifi
         $scope.loading       = false
         $scope.newcard.title = ''
       ,(err) -> #Error
+        console.log err
         $scope.loading      = false
     )
 )

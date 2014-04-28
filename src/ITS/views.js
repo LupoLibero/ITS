@@ -1,8 +1,5 @@
 var reExports = require('./utils').reExports;
 
-//exports['lib'] = require('../Translation/views/lib/translation');
-
-
 exports.config = {
   map: function(doc){
     if(doc._id == 'config'){
