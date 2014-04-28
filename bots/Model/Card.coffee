@@ -11,10 +11,10 @@ getLang = (card, element, lang)->
     card[element]      = card[element][lang]
     card[element].lang = lang
   else
-    card[element]      = card[element][card.init_lang]
+    card[element]      = card[element][card.init_lang] ? {}
     card[element].lang = card.init_lang
 
-createID = (ids={}, num=3, count=1)->
+createID = (ids={}, project, num=3, count=1)->
   id = ''
   if count == 3
     num++
@@ -23,21 +23,20 @@ createID = (ids={}, num=3, count=1)->
   for i in [num..1]
     id += getRandomChar()
 
-  if ids.hasOwnProperty(id)
+  if ids.hasOwnProperty("#{project}.#{id}")
     count++
-    return createID(ids, num, count)
+    return createID(ids, project, num, count)
   return id
 
 module.exports = {
   all: (project)=>
     return db.view('card_all', {
-      startkey: "#{project}."
-      endkey:   "#{project}.a"
+      startkey: [project, ""]
+      endkey:   [project, {}]
     })
 
   create: (data, user, ids)=>
-    data.id = "#{data.project_id}.#{createID(ids)}"
-    console.log data.id
+    data.id = "#{data.project_id}.#{createID(ids, data.project_id)}"
     return db.update('card_create', '', data, user)
 
   updateField: (value, user)=>
@@ -64,8 +63,9 @@ module.exports = {
     lang  = result[1]
     user  = result[2]
 
+    project = id.split('.')[0]
     db.view('card_all', {
-      key: id
+      key: [project, id]
     }).then(
       (data)->
         defer.resolve([data[0].value, lang, user])

@@ -73,7 +73,7 @@ exports.card_workflow = {
 exports.card_all = {
   map: function(doc) {
     if (doc.type && doc.type == 'card') {
-      emit(doc.id, {
+      emit([doc.project_id, doc.id], {
         id:          doc.id,
         _rev:        doc._rev,
         title:       doc.title,

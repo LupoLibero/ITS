@@ -15,7 +15,10 @@ exports.card_create = function(doc, req) {
     form.author      = author;
     form.created_at  = new Date().getTime();
     form.votes       = {};
-    form.description = {};
+    form.description = {
+      content: '',
+      rev: 1,
+    };
     form.activity    = [];
     form.list_id     = 'ideas';
     form.tag_list    = [];
