@@ -1,12 +1,39 @@
 io       = require('socket.io').listen(8800)
+db       = require('./db')
 Q        = require('q')
 Activity = require('./Model/Activity')
 Card     = require('./Model/Card')
 Comment  = require('./Model/Comment')
 Local    = require('./Model/Local')
 Vote     = require('./Model/Vote')
+ids      = {}
 
-ids   = {}
+db.changes({
+  since: "now"
+  include_docs: true
+}).on('change', (change)->
+  split = change.id.split(':')
+  type  = split[0]
+  id    = split[1..-1].join(':')
+  rev   = parseInt(change.doc._rev)
+  switch type
+    when "vote"
+      split   = id.split('-')
+      card_id = split[0].split(':')[1]
+      user    = split[1]
+      Vote.get([card_id, '', '']).then(
+        (data)-> #Success
+          delete data[0].vote
+          io.sockets.emit('setCard', data[0])
+          io.sockets.in("username:#{user}").emit('setCard', {
+            id:   data[0].id
+            vote: (if change.deleted then '' else user)
+          })
+        ,(err)-> #Error
+          console.log err
+      )
+)
+
 io.sockets.on('connection', (socket)->
   user = {
     name:   ''

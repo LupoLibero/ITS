@@ -5,6 +5,9 @@ cradle = require('cradle')
 db     = new(cradle.Connection)("http://#{config.host}", config.port, { cache: false }).database(config.database)
 
 module.exports = {
+  changes: (data) ->
+    return db.changes(data)
+
   view: (v, data = {}) ->
     defer = Q.defer()
     db.view("#{config.name}/#{v}", data, (err, data)->
