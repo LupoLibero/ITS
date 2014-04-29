@@ -14,7 +14,6 @@ exports.card_create = function(doc, req) {
     form._id         = form.type+':'+form.id;
     form.author      = author;
     form.created_at  = new Date().getTime();
-    form.votes       = {};
     form.description = {
       content: '',
       rev: 1,
@@ -26,7 +25,6 @@ exports.card_create = function(doc, req) {
 
     registerTranslation(form, form, 'card', 'title', form.lang, form.lang);
     // Add the vote of the creator
-    form.votes[author] = true;
     delete form.lang;
     return ([form, 'ok']);
   }
