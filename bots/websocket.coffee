@@ -27,6 +27,20 @@ db.changes({
         ,(err)-> #Error
           console.log err
       )
+    when "card"
+      if rev == 1 #NewCard
+        ids[doc.id] = true
+        Card.get([doc, doc.init_lang, ''])
+          .then(Card.translate)
+          .then(Card.withoutDescription)
+          .then(Card.getWorkflow)
+          .then(
+            (data)-> #Success
+              card = data[0]
+              io.sockets.emit('setCard', data[0])
+            ,(err)-> #Error
+              console.log err
+          )
 )
 
 io.sockets.on('connection', (socket)->
