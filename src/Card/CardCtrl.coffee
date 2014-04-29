@@ -26,12 +26,11 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
 
   socket.emit('getActivity', card_id)
   socket.on('addActivity', (data) ->
-    if data._id == "card:#{$scope.card.id}"
+    if data.parent_id ? data._id == "card:#{$scope.card.id}"
       found = false
-      for activity, i in $scope.card.activity
-        if activity.date == data.date
+      for activity in $scope.card.activity
+        if activity == data
           found = true
-          $scope.card.activity[i] = data
           break
 
       if not found
