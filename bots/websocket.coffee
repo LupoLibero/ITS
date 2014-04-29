@@ -12,22 +12,17 @@ db.changes({
   since: "now"
   include_docs: true
 }).on('change', (change)->
-  split = change.id.split(':')
-  type  = split[0]
-  id    = split[1..-1].join(':')
-  rev   = parseInt(change.doc._rev)
-  switch type
+  doc = change.doc
+  rev = parseInt(doc._rev)
+  switch doc.type
     when "vote"
-      split   = id.split('-')
-      card_id = split[0].split(':')[1]
-      user    = split[1]
-      Vote.get([card_id, '', '']).then(
+      Vote.get([doc.voted_doc_id, '', '']).then(
         (data)-> #Success
           delete data[0].vote
           io.sockets.emit('setCard', data[0])
-          io.sockets.in("username:#{user}").emit('setCard', {
+          io.sockets.in("username:#{doc.voter}").emit('setCard', {
             id:   data[0].id
-            vote: (if change.deleted then '' else user)
+            vote: (if change.deleted then '' else doc.voter)
           })
         ,(err)-> #Error
           console.log err
