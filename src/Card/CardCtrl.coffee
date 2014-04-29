@@ -5,9 +5,12 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
   card_id     = "#{$stateParams.project_id}.#{$stateParams.card_num}"
 
   socket.emit('setShow', card_id)
-  socket.on('connect', ->
-    socket.emit('setShow', card_id)
-  )
+  # TODO: find something else
+  # socket.on('connect', ->
+  #   socket.emit('setShow', card_id)
+  #   socket.emit('getDescription', card_id)
+  #   socket.emit('getActivity', card_id)
+  # )
 
   $scope.card.activity = []
 
