@@ -107,7 +107,7 @@ io.sockets.on('connection', (socket)->
 
   socket.on 'getVote', (req, fn)->
     for id, value of ids
-      Vote.get([id, lang, user])
+      Vote.get(["card:#{id}", lang, user])
         .then(
           (card)-> #Success
             socket.emit('setCard', card[0])
