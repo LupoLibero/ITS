@@ -15,21 +15,24 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
   $scope.card.activity = []
 
   if card != undefined
-    $scope.card = card
+    angular.extend($scope.card, card)
 
   socket.emit('getDescription', card_id)
 
   socket.on('setCard', (data)->
     if data.id == card_id
-      $scope.card = angular.extend($scope.card, data)
+      angular.extend($scope.card, data)
   )
 
   socket.emit('getActivity', card_id)
   socket.on('addActivity', (data) ->
+    id = data.parent_id ? data._id
     if data.parent_id ? data._id == "card:#{$scope.card.id}"
       found = false
       for activity in $scope.card.activity
-        if activity == data
+        activity_date = activity.date ? activity.create_at
+        data_date     = data.date     ? data.created_at
+        if activity_date == data_date
           found = true
           break
 
