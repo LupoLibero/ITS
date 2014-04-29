@@ -58,6 +58,10 @@ db.changes({
       else
         lastActivity     = doc.activity[doc.activity.length-1]
         field            = lastActivity.element
+        lastActivity._id = doc._id
+        delete lastActivity.content
+        delete lastActivity._rev
+        io.sockets.in("show:#{doc._id}").emit('addActivity', lastActivity)
         for lang, content of doc[field]
           content.lang  = lang
           result        = {}
