@@ -71,6 +71,8 @@ db.changes({
             io.sockets.in("lang:#{lang}").emit('setCard', result)
           else if field == 'description'
             multiRoomFilter(["lang:#{lang}", "show:#{doc._id}"], 'setCard', result)
+    when "comment"
+      io.sockets.in("show:#{doc.parent_id}").emit('addActivity', doc)
 )
 
 io.sockets.on('connection', (socket)->
@@ -97,8 +99,8 @@ io.sockets.on('connection', (socket)->
     user.pass = req
 
   socket.on 'setShow', (req, fn)->
-    socket.leave("show:#{show}")
-    socket.join("show:#{req}")
+    socket.leave("show:card:#{show}")
+    socket.join("show:card:#{req}")
     show = req
 
   socket.on 'setProject',  (req, fn)->
