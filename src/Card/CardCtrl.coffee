@@ -4,6 +4,11 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
   $scope.card = {}
   card_id     = "#{$stateParams.project_id}.#{$stateParams.card_num}"
 
+  socket.emit('setShow', card_id)
+  socket.on('connect', ->
+    socket.emit('setShow', card_id)
+  )
+
   $scope.card.activity = []
 
   if card != undefined

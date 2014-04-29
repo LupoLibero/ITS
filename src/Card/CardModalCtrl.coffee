@@ -1,5 +1,5 @@
 angular.module('card').
-controller('CardModalCtrl', ($scope, $state, $modal)->
+controller('CardModalCtrl', ($scope, $state, $modal, socket)->
 
   card_num = $state.params.card_num
   $modal.open({
@@ -20,5 +20,6 @@ controller('CardModalCtrl', ($scope, $state, $modal)->
     }
   }).result.then( (->), ->
     $state.go('^')
+    socket.emit('setShow', '')
   )
 )

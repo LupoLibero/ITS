@@ -8,6 +8,20 @@ Local    = require('./Model/Local')
 Vote     = require('./Model/Vote')
 ids      = {}
 
+multiRoomFilter = (rooms, event, data)->
+  room  = rooms.pop()
+  for socket in io.sockets.clients(room)
+    found = true
+    for room in rooms
+      unless socket.id in socket.manager.rooms["/#{room}"]
+        found = false
+        break
+    if found
+      console.log 'socket is in rooms'
+      socket.emit(event, data)
+    else
+      console.log 'not in rooms'
+
 db.changes({
   since: "now"
   include_docs: true
@@ -41,6 +55,18 @@ db.changes({
             ,(err)-> #Error
               console.log err
           )
+      else
+        lastActivity     = doc.activity[doc.activity.length-1]
+        field            = lastActivity.element
+        for lang, content of doc[field]
+          content.lang  = lang
+          result        = {}
+          result.id     = doc.id
+          result[field] = content
+          if field == 'title'
+            io.sockets.in("lang:#{lang}").emit('setCard', result)
+          else if field == 'description'
+            multiRoomFilter(["lang:#{lang}", "show:#{doc._id}"], 'setCard', result)
 )
 
 io.sockets.on('connection', (socket)->
@@ -51,6 +77,7 @@ io.sockets.on('connection', (socket)->
   }
   project  = ''
   lang     = ''
+  show     = ''
 
   socket.on 'setUsername', (req, fn)->
     socket.leave("username:#{user.name}")
@@ -64,6 +91,11 @@ io.sockets.on('connection', (socket)->
 
   socket.on 'setPassword', (req, fn)->
     user.pass = req
+
+  socket.on 'setShow', (req, fn)->
+    socket.leave("show:#{show}")
+    socket.join("show:#{req}")
+    show = req
 
   socket.on 'setProject',  (req, fn)->
     project = req
