@@ -1,4 +1,4 @@
-db = require('../db')
+db = require('../db')()
 Q  = require('q')
 
 getRandomChar = ->
