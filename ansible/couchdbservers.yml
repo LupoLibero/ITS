@@ -1,0 +1,6 @@
+
+- hosts: couchdbservers
+  sudo: yes
+  roles:
+    - common
+    - couchdb

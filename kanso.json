@@ -7,13 +7,13 @@
   "attachments": ["static", "partials"],
   "shell": [
     "grunt compile",
-    "node ./bots/external_tools.js default"
+    "node ./bots/external_tools.js _url"
   ],
   "bots": [
-    "./bots/role_setter.js",
-    "./bots/mailer.js",
-    "./bots/notification_creator.js",
-    "./static/bots/websocket.js"
+    "node ./bots/role_setter.js",
+    "node ./bots/mailer.js",
+    "node ./bots/notification_creator.js",
+    "coffee ./static/bots/websocket.coffee"
   ],
   "dependencies": {
     "properties": null,

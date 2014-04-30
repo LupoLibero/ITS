@@ -1,0 +1,3 @@
+
+- include: couchdbservers.yml
+- include: proxyservers.yml

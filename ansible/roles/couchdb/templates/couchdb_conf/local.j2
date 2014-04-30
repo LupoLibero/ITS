@@ -1,0 +1,8 @@
+
+[httpd]
+bind_address = {{ couchdb_bind_ip | default("0.0.0.0") }}
+secure_rewrites = false
+
+[vhosts]
+;example.com = /database/
+lupolibero_org:{{ couchdb_port }} = /lupolibero/_design/its/_rewrite/

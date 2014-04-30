@@ -1,0 +1,58 @@
+
+# install & configure latest couchdb
+- include: ppa_prerequisites.yml
+- apt_repository: repo='ppa:couchdb/stable'
+- apt: pkg=couchdb
+
+- name: put couchdb config file
+  template: src=couchdb_conf/local.j2 dest=/etc/couchdb/local.d/lupolibero.ini
+  notify: restart couchdb
+
+- include: uri_prerequisites.yml
+- name: create db admin
+  uri: url="http://localhost:{{ couchdb_port }}/_config/admins/admin"
+       body={{ couchdb_admin_pwd | default("admin") | to_json }}
+       method=PUT
+       status_code=200,401
+  sudo: no
+
+#- uri: url="http://localhost:{{ couchdb_port }}/_users/org.couchdb.user:role_setter"
+#       body="name=role_setter&password={{ role_setter_pwd | default('role_setter') }}&roles=[]&type=user"
+#       method=PUT HEADER_Content-Type="application/x-www-form-urlencoded"
+#       user=admin password={{ couchdb_admin_pwd | default("admin") }}
+#       force_basic_auth=yes
+#  sudo: no
+
+
+# download and install bots
+- apt: pkg=git state=present
+- git: repo=https://github.com/lupolibero/ITS dest=/tmp/ITS recursive=no
+  sudo: no
+- shell: git checkout trelloLike chdir=/tmp/ITS
+  sudo: no
+
+- npm: path=/tmp/ITS production=yes
+  sudo: no
+
+- apt: pkg=coffeescript state=present
+
+- file: path=/apps/lupolibero.org state=directory
+
+- shell: cp -R /tmp/ITS/bots /apps/lupolibero.org/ creates=/apps/lupolibero.org/bots
+         creates=/apps/lupolibero.org/bots
+
+- shell: cp /tmp/ITS/bots/{{ item }} /apps/lupolibero.org/bots/
+         creates=/apps/lupolibero.org/bots/{{ item }}
+  with_items:
+    - config.json
+    - mailer.conf
+    - notification_creator.conf
+    - role_setter.conf
+
+- shell: cp -R /tmp/ITS/node_modules /apps/lupolibero.org/bots/
+         creates=/apps/lupolibero.org/bots/node_modules
+
+- shell: chown -R root:couchdb /apps/lupolibero.org/bots
+- shell: chmod -R go-w /apps/lupolibero.org/bots
+- shell: chmod -R o-r /apps/lupolibero.org/bots/*.conf
+- shell: chmod -R o-r /apps/lupolibero.org/bots/*.json

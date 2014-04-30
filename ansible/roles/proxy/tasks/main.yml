@@ -1,0 +1,16 @@
+
+
+
+# create a user for the proxy
+
+
+- name: create directory /apps/lupolibero.org
+  file: path=/apps/lupolibero.org state=directory
+
+#- template
+#- shell: chown -R root:couchdb /apps/lupolibero.org/
+#- shell: chmod -R go-w /apps/lupolibero.org/
+
+
+#- npm: path=/tmp/ITS production=yes
+#  sudo: no

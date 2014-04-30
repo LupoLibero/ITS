@@ -22,6 +22,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # config.vm.network "forwarded_port", guest: 80, host: 8080
 
+  config.vm.network "forwarded_port", guest: 5984, host: 55984
+  config.vm.network "forwarded_port", guest: 80, host: 50080
+
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
@@ -120,6 +123,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   #
   #   chef.validation_client_name = "ORGNAME-validator"
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "antible/playbook.yml"
+    ansible.playbook = "antible/site.yml"
+    ansible.groups = {
+      "couchdbservers" => ["default"],
+      "proxyservers" => ["default"]
+    }
   end
 end

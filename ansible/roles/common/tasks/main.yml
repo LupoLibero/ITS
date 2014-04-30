@@ -1,0 +1,13 @@
+
+# upgrade system
+- name: install aptitude
+  apt: pkg=aptitude
+
+- name: upgrade system
+  apt: upgrade=safe update_cache=yes cache_valid_time=3600
+
+
+# install latest node
+- include: ppa_prerequisites.yml
+- apt_repository: repo='ppa:chris-lea/node.js'
+- apt: pkg=nodejs
