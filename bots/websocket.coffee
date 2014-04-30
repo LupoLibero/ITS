@@ -8,30 +8,70 @@ Local    = require('./Model/Local')
 Vote     = require('./Model/Vote')
 ids      = {}
 
+multiRoomFilter = (rooms, event, data)->
+  room  = rooms.pop()
+  for socket in io.sockets.clients(room)
+    found = true
+    for room in rooms
+      clients = socket.manager.rooms["/#{room}"] ? []
+      unless socket.id in clients
+        found = false
+        break
+    if found
+      socket.emit(event, data)
+
 db.changes({
   since: "now"
   include_docs: true
 }).on('change', (change)->
-  split = change.id.split(':')
-  type  = split[0]
-  id    = split[1..-1].join(':')
-  rev   = parseInt(change.doc._rev)
-  switch type
+  doc = change.doc
+  rev = parseInt(doc._rev)
+  switch doc.type
     when "vote"
-      split   = id.split('-')
-      card_id = split[0].split(':')[1]
-      user    = split[1]
-      Vote.get([card_id, '', '']).then(
+      Vote.get([doc.voted_doc_id, '', '']).then(
         (data)-> #Success
           delete data[0].vote
           io.sockets.emit('setCard', data[0])
-          io.sockets.in("username:#{user}").emit('setCard', {
+          io.sockets.in("username:#{doc.voter}").emit('setCard', {
             id:   data[0].id
-            vote: (if change.deleted then '' else user)
+            vote: (if change.deleted then '' else doc.voter)
           })
         ,(err)-> #Error
           console.log err
       )
+    when "card"
+      if rev == 1 #NewCard
+        ids[doc.id] = true
+        Card.get([doc, doc.init_lang, ''])
+          .then(Card.translate)
+          .then(Card.withoutDescription)
+          .then(Card.getWorkflow)
+          .then(
+            (data)-> #Success
+              card = data[0]
+              io.sockets.emit('setCard', data[0])
+            ,(err)-> #Error
+              console.log err
+          )
+      else
+        lastActivity     = doc.activity[doc.activity.length-1]
+        field            = lastActivity.element
+        lastActivity._id = doc._id
+        delete lastActivity.content
+        delete lastActivity._rev
+        io.sockets.in("show:#{doc._id}").emit('addActivity', lastActivity)
+        for lang, content of doc[field]
+          content.lang  = lang
+          result        = {}
+          result.id     = doc.id
+          result._rev   = doc._rev
+          result[field] = content
+          if field == 'title'
+            io.sockets.in("lang:#{lang}").emit('setCard', result)
+          else if field == 'description'
+            multiRoomFilter(["lang:#{lang}", "show:#{doc._id}"], 'setCard', result)
+    when "comment"
+      io.sockets.in("show:#{doc.parent_id}").emit('addActivity', doc)
 )
 
 io.sockets.on('connection', (socket)->
@@ -42,6 +82,7 @@ io.sockets.on('connection', (socket)->
   }
   project  = ''
   lang     = ''
+  show     = ''
 
   socket.on 'setUsername', (req, fn)->
     socket.leave("username:#{user.name}")
@@ -55,6 +96,11 @@ io.sockets.on('connection', (socket)->
 
   socket.on 'setPassword', (req, fn)->
     user.pass = req
+
+  socket.on 'setShow', (req, fn)->
+    socket.leave("show:card:#{show}")
+    socket.join("show:card:#{req}")
+    show = req
 
   socket.on 'setProject',  (req, fn)->
     project = req
@@ -107,7 +153,7 @@ io.sockets.on('connection', (socket)->
 
   socket.on 'getVote', (req, fn)->
     for id, value of ids
-      Vote.get([id, lang, user])
+      Vote.get(["card:#{id}", lang, user])
         .then(
           (card)-> #Success
             socket.emit('setCard', card[0])

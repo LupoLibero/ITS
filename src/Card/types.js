@@ -29,7 +29,6 @@ exports.card = new Type('card', {
     title: translatableField(),
     list_id: fields.string(),
     tag_list: fields.array(),
-    votes: votingField(),
     activity: activityField(),
   },
 });

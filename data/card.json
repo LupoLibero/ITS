@@ -16,9 +16,6 @@
     "type": "card",
     "author": "bobby",
     "created_at": 1395395095774,
-    "votes": {
-      "bobby": true
-    },
     "description": {
       "fr": {
         "content": "French desc",
@@ -54,9 +51,6 @@
     "type": "card",
     "author": "bobby",
     "created_at": 1395395118856,
-    "votes": {
-      "bobby": true
-    },
     "description": {
       "fr": {
         "content": "",
