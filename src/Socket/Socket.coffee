@@ -2,7 +2,7 @@ angular.module('socket').
 factory('socket', ($location, $q, $timeout, $rootScope) ->
   host = $location.host()
   return {
-    socket: io.connect("//#{host}:8000")
+    socket: io.connect("//#{host}:80")
 
     emit: (event, data)->
       defer = $q.defer()
