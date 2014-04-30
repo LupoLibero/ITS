@@ -37,7 +37,7 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
           break
 
       if not found
-        $scope.card.activity.push(data)
+        $scope.card.activity.unshift(data)
   )
 
   $document.bind('keypress', ($event) ->

@@ -13,14 +13,12 @@ multiRoomFilter = (rooms, event, data)->
   for socket in io.sockets.clients(room)
     found = true
     for room in rooms
-      unless socket.id in socket.manager.rooms["/#{room}"]
+      clients = socket.manager.rooms["/#{room}"] ? []
+      unless socket.id in clients
         found = false
         break
     if found
-      console.log 'socket is in rooms'
       socket.emit(event, data)
-    else
-      console.log 'not in rooms'
 
 db.changes({
   since: "now"
@@ -66,6 +64,7 @@ db.changes({
           content.lang  = lang
           result        = {}
           result.id     = doc.id
+          result._rev   = doc._rev
           result[field] = content
           if field == 'title'
             io.sockets.in("lang:#{lang}").emit('setCard', result)

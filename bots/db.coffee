@@ -60,6 +60,11 @@ module.exports = {
         if res.statusCode.toString()[0] > 3
           defer.reject(JSON.stringify(data))
         else
+          data = {
+            reason:  body.reason?
+            error:   body.error?
+            status:  res.statusCode
+          }
           defer.resolve(data)
       )
     )
