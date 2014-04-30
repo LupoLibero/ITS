@@ -28,13 +28,12 @@
 - apt: pkg=git state=present
 - git: repo=https://github.com/lupolibero/ITS dest=/tmp/ITS recursive=no
   sudo: no
-- shell: git checkout trelloLike chdir=/tmp/ITS
+# FIXME
+- shell: git checkout trelloLike chdir=/tmp/ITS && git pull
   sudo: no
 
 - npm: path=/tmp/ITS production=yes
   sudo: no
-
-- apt: pkg=coffeescript state=present
 
 - file: path=/apps/lupolibero.org state=directory
 

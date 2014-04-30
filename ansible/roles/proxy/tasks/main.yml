@@ -2,15 +2,45 @@
 
 
 # create a user for the proxy
+# reduce rights
 
+
+- name: install coffeescript
+  apt: pkg=coffeescript state=present
+
+- name: "Install forever (to run Node.js app)."
+  npm: name=forever global=yes state=latest
+
+
+- name: remove directory /apps/lupolibero.org
+  file: path=/apps/lupolibero.org state=absent
 
 - name: create directory /apps/lupolibero.org
   file: path=/apps/lupolibero.org state=directory
 
+- copy: src=../../../../bots dest=/apps/lupolibero.org
+
+- copy: src=../../../../package.json dest=/apps/lupolibero.org/bots
+
+- npm: path=/apps/lupolibero.org/bots/ production=yes
+
+- shell: chown -R root:couchdb /apps/lupolibero.org
+- shell: chmod -R go-w /apps/lupolibero.org
+- shell: chmod -R o-r /apps/lupolibero.org/bots/*.conf
+- shell: chmod -R o-r /apps/lupolibero.org/bots/*.json
+
+- shell: coffee -c /apps/lupolibero.org/bots
+
+- name: "Check list of Node.js apps running."
+  command: forever list
+  register: forever_list
+  changed_when: false
+
+- name: "Stop example Node.js app."
+  command: forever stop /apps/lupolibero.org/bots/websocket.js
+  when: "forever_list.stdout.find('/apps/lupolibero.org/bots/websocket.js') != -1"
+
+- name: "Start example Node.js app."
+  command: forever start /apps/lupolibero.org/bots/websocket.js
+
 #- template
-#- shell: chown -R root:couchdb /apps/lupolibero.org/
-#- shell: chmod -R go-w /apps/lupolibero.org/
-
-
-#- npm: path=/tmp/ITS production=yes
-#  sudo: no
