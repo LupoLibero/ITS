@@ -15,15 +15,6 @@ module.exports = (grunt) ->
           'shell:kansoPush'
         ]
       }
-      bots: {
-        files: [
-          './bots/{,*/}*.coffee'
-        ]
-        tasks: [
-          'coffee:bots'
-          'copy:bots'
-        ]
-      }
     }
     concat: {
       dist: {
@@ -56,13 +47,6 @@ module.exports = (grunt) ->
         dest: 'temp/'
         ext: '.js'
       }
-      bots: {
-        expand: true
-        cwd: './bots/'
-        src: '{,*/}*.coffee'
-        dest: 'static/bots/'
-        ext: '.js'
-      }
     }
     copy: {
       dist: {
@@ -71,13 +55,6 @@ module.exports = (grunt) ->
         cwd: 'src/'
         src: '*/*.js'
         dest: 'temp/'
-      }
-      bots: {
-        expand: true
-        filter: 'isFile'
-        cwd: 'bots/'
-        src: '*.json'
-        dest: 'static/bots'
       }
     }
     clean: {
@@ -136,11 +113,6 @@ module.exports = (grunt) ->
 
   grunt.registerTask('default', [
     'watch'
-  ])
-
-  grunt.registerTask('bots', [
-    'copy:bots'
-    'coffee:bots'
   ])
 
   grunt.registerTask('compile', [
