@@ -22,4 +22,4 @@ exports.Project = new Type('project', {
       required: false
     })
   }
-}
+})

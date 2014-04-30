@@ -32,4 +32,4 @@ exports.comment = new Type('comment', {
       }
     }),
   }
-}
+})
