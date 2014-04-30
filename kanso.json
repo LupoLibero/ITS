@@ -12,8 +12,7 @@
   "bots": [
     "node ./bots/role_setter.js",
     "node ./bots/mailer.js",
-    "node ./bots/notification_creator.js",
-    "coffee ./static/bots/websocket.coffee"
+    "node ./bots/notification_creator.js"
   ],
   "dependencies": {
     "properties": null,
