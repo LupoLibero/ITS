@@ -35,7 +35,7 @@ proxyServer.on 'upgrade', (req, socket, head) ->
     socketio.ws(req, socket, head)
   ,1000)
 
-proxyServer.listen(8000)
+proxyServer.listen(80)
 
 multiRoomFilter = (rooms, event, data)->
   room  = rooms.pop()
