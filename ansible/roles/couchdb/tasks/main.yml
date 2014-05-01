@@ -11,9 +11,16 @@
 - include: uri_prerequisites.yml
 - name: create db admin
   uri: url="http://localhost:{{ couchdb_port }}/_config/admins/admin"
-       body={{ couchdb_admin_pwd | default("admin") | to_json }}
+       body='"{{ couchdb_admin_pwd | default("admin") }}"'
        method=PUT
        status_code=200,401
+  sudo: no
+
+- name: create lupolibero db
+  uri: url="http://localhost:{{ couchdb_port }}/lupolibero"
+       method=PUT user=admin password={{ couchdb_admin_pwd | default("admin") }}
+       force_basic_auth=yes
+       status_code=201,412
   sudo: no
 
 #- uri: url="http://localhost:{{ couchdb_port }}/_users/org.couchdb.user:role_setter"
@@ -50,6 +57,8 @@
 
 - shell: cp -R /tmp/ITS/node_modules /apps/lupolibero.org/bots/
          creates=/apps/lupolibero.org/bots/node_modules
+
+# cron or at for the mailer
 
 - shell: chown -R root:couchdb /apps/lupolibero.org/bots
 - shell: chmod -R go-w /apps/lupolibero.org/bots
