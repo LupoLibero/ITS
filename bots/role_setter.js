@@ -48,13 +48,6 @@ function isAuthorized (p) {
   var deferred = Q.defer();
   console.log('isAuthorized');
   require('excel-parser').parse({
-    inFile: path.join(__dirname, config.main.email_filename),
-    worksheet: config.main.worksheet,
-    skipEmpty: true,
-    //searchFor: {
-    //  term: [config.main.search_term],
-    //  type: 'loose'
-    //}
   }, function (err, records) {
     var email_list;
     if(err) {

@@ -7,7 +7,7 @@
   "attachments": ["static", "partials"],
   "shell": [
     "grunt compile",
-    "node ./bots/external_tools.js _url"
+    "coffee ./bots/external_tools.coffee default"
   ],
   "bots": [
     "node ./bots/role_setter.js",

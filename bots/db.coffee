@@ -5,7 +5,6 @@ cradle = require('cradle')
 
 module.exports = (dbname)->
   dbname ?= config.database
-  console.log dbname
   db      = new(cradle.Connection)("http://#{config.host}", config.port, { cache: false }).database(dbname)
   return {
     changes: (data) ->

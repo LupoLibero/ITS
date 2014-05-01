@@ -1,14 +1,15 @@
-io        = require('socket.io').listen(8800)
-db        = require('./db')()
-http      = require('http')
-httpProxy = require('http-proxy')
-Q         = require('q')
-Activity  = require('./Model/Activity')
-Card      = require('./Model/Card')
-Comment   = require('./Model/Comment')
-Local     = require('./Model/Local')
-Vote      = require('./Model/Vote')
-ids       = {}
+io           = require('socket.io').listen(8800)
+db           = require('./db')()
+http         = require('http')
+httpProxy    = require('http-proxy')
+Q            = require('q')
+Activity     = require('./Model/Activity')
+Card         = require('./Model/Card')
+Comment      = require('./Model/Comment')
+Subscription = require('./Model/Subscription')
+Local        = require('./Model/Local')
+Vote         = require('./Model/Vote')
+ids          = {}
 
 socketio = new httpProxy.createProxyServer({
   target: {
@@ -226,9 +227,23 @@ io.sockets.on('connection', (socket)->
         fn("Error:#{err}")
     )
 
-  socket.on 'setTranslation', (data, fn)->
-    Local.set(data.key, data.text, lang, user).then(
+  socket.on 'setTranslation', (req, fn)->
+    Local.set(req.key, req.text, lang, user).then(
       (data)-> #Success
+        fn("Done:#{data.response}")
+      ,(err)-> #Error
+        fn("Error:#{err}")
+    )
+
+  socket.on 'setSubscription', (req, fn)->
+    promise = null
+    if not req.check
+      promise = Subscription.set(req, user)
+    else
+      promise = Subscription.unset(req, user)
+
+    promise.then(
+      (data)-> #Succes
         fn("Done:#{data.response}")
       ,(err)-> #Error
         fn("Error:#{err}")

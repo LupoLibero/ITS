@@ -20,7 +20,7 @@ directive('pieChart', ->
         s.appendTo(element[0])
         half   = scope.size/2
         radius = scope.radius
-        x = 0 + Math.cos(Snap.rad(-90 + payment)) * radius
+        x = 0    + Math.cos(Snap.rad(-90 + payment)) * radius
         y = half + Math.sin(Snap.rad(-90 + payment)) * radius
 
         flag = (if payment > estimate then 1 else 0)
@@ -28,32 +28,13 @@ directive('pieChart', ->
         p.attr({
           fill: 'green'
         })
+
+        s.rect(10,10, scope.size/1.5, scope.size/3)
+        s.text(13,13,"test")
+
         p.hover(
-          ->
-            p.attr({
-              fill: 'red'
-            })
-          ->
-            p.attr({
-              fill: 'green'
-            })
+          -> #Enter
+          -> #Leave
         )
-
-        flag = (if flag == 1 then 0 else 1)
-        e = s.path("M#{half} #{half}v-#{radius} a#{radius} #{radius} 0 #{flag} 0 #{x} #{y} Z")
-        e.attr({
-          fill: 'blue'
-        })
-        e.hover(
-          ->
-            e.attr({
-              fill: 'red'
-            })
-          ->
-            e.attr({
-              fill: 'blue'
-            })
-        )
-
   }
 )
