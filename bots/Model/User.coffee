@@ -19,9 +19,17 @@ module.exports = {
     )
     return defer.promise
 
+  view: (name, data)=>
+    return db.view("user_#{name}", data)
+
   saveToken: (data)=>
     return db.update('user_field', "org.couchdb.user:#{data.subscriber}", {
       element: 'token'
       value:   data.token
+    })
+
+  addRole: (username, role)=>
+    return db.update('user_add_role', "org.couchdb.user:#{username}", {
+      role: role
     })
 }
