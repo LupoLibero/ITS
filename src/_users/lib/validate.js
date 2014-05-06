@@ -1,5 +1,5 @@
 
-exports.validate_doc_update = function(newDoc, oldDoc, userCtx) {
+exports.validate_doc_update = function(newDoc, oldDoc, userCtx, secObj) {
         if (newDoc._deleted === true) {
             // allow deletes by admins and matching users
             // without checking the other fields
