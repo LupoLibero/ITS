@@ -14,6 +14,19 @@ exports.user_create = function(doc, req) {
   }
 }
 
+exports.user_add_roles = function (doc, req) {
+  var form = JSON.parse(req.body);
+  if (doc !== null) {
+    if (!form.hasOwnProperty('role')
+    ) {
+      throw({forbidden: 'Request incomplete'});
+    }
+    doc.roles.push(form.role);
+    return [doc, 'ok'];
+  }
+  throw({forbidden: 'Not for user creation'});
+}
+
 exports.user_field = function (doc, req) {
   var form = JSON.parse(req.body);
   if (doc !== null) {
