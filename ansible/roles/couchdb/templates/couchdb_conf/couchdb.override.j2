@@ -1,0 +1,8 @@
+# fix chdir/cd issue
+
+script
+  HOME=/var/lib/couchdb
+  export HOME
+  cd $HOME
+  exec su couchdb -c /usr/bin/couchdb
+end script

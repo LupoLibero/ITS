@@ -1,2 +1,1 @@
----
-couchdb_port: 5984
+bots_directory: /apps/lupolibero.org/bots

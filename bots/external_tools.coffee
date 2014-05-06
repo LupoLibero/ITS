@@ -14,8 +14,6 @@ address = null
 kansorc = null
 name    = null
 
-console.log "Installation of bots in _config db"
-
 if fs.existsSync('.kansorc')
   kansorc = require('../.kansorc').env
 
@@ -36,6 +34,8 @@ if process.argv[2]
   address = address.match(/^http(?:s)?:\/\/.*\//)[0]
   # remove the last slash don't work otherwise
   address = address.substr(0, address.length-1)
+
+  console.log "Installation of bots in " + address.replace(/\/\/.*@/, '\/\/') + "/_config db"
 
   db = new(cradle.Connection)(address).database("_config")
   for bot in bots

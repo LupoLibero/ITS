@@ -128,5 +128,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       "couchdbservers" => ["default"],
       "proxyservers" => ["default"]
     }
+    ansible.extra_vars = {
+      "ansible_ssh_private_key_file" => '~/.vagrant.d/insecure_private_key'
+    }
   end
 end

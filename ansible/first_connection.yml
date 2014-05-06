@@ -1,0 +1,21 @@
+
+# must install sshpass on the local machine to be able to run ansible in password mode
+
+- hosts: all
+  tasks:
+    - name: create a new user
+      user: name=ansible state=present
+            groups=sudo shell=/bin/bash
+
+
+    - name: Create sudoers file backup
+      command: cp -f /etc/sudoers /etc/sudoers.bak
+
+    - name: Make sure ansible user is present in sudoers with NOPASSWD
+      lineinfile: dest=/etc/sudoers state=present regexp='^ansible ALL\=' line='ansible ALL=(ALL) NOPASSWD:ALL' validate='visudo -qcf %s'
+
+    - name: Locally generate ssh key
+      local_action: shell ssh-keygen -t rsa -b 4096 -f "$HOME/.ssh/id_rsa" -q -N "" creates=~/.ssh/id_rsa
+
+    - name: Add the public key to the servers authorized keys
+      authorized_key: user=ansible key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

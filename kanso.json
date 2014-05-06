@@ -6,8 +6,7 @@
   "modules": ["src"],
   "attachments": ["static", "partials"],
   "shell": [
-    "grunt compile",
-    "coffee ./bots/external_tools.coffee default"
+    "grunt compile"
   ],
   "bots": [
     "node ./bots/role_setter.js",

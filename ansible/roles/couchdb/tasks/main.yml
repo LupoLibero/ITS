@@ -5,10 +5,26 @@
 - apt: pkg=couchdb
 
 - name: put couchdb config file
-  template: src=couchdb_conf/local.j2 dest=/etc/couchdb/local.d/lupolibero.ini
+  template: src=couchdb_conf/couchdb.override.j2
+            dest=/etc/init/couchdb.override
   notify: restart couchdb
 
+- name: put couchdb config file
+  template: src=couchdb_conf/local.j2
+            dest=/etc/couchdb/local.d/lupolibero.ini
+  notify: restart couchdb
+
+# TODO: recup les bons rep
+- file: path={{ item }} owner=couchdb group=couchdb state=directory recurse=yes
+  with_items:
+    - /var/log/couchdb
+    - /var/lib/couchdb
+
+- name: restart couchdb
+  service: name=couchdb state=restarted
+
 - include: uri_prerequisites.yml
+
 - name: create db admin
   uri: url="http://localhost:{{ couchdb_port }}/_config/admins/admin"
        body='"{{ couchdb_admin_pwd | default("admin") }}"'
@@ -33,34 +49,34 @@
 
 # download and install bots
 - apt: pkg=git state=present
-- git: repo=https://github.com/lupolibero/ITS dest=/tmp/ITS recursive=no
-  sudo: no
-# FIXME
-- shell: git checkout trelloLike chdir=/tmp/ITS && git pull
-  sudo: no
 
-- npm: path=/tmp/ITS production=yes
-  sudo: no
+- name: create directory {{ bots_directory }}
+  file: path={{ bots_directory }} state=directory
 
-- file: path=/apps/lupolibero.org state=directory
-
-- shell: cp -R /tmp/ITS/bots /apps/lupolibero.org/ creates=/apps/lupolibero.org/bots
-         creates=/apps/lupolibero.org/bots
-
-- shell: cp /tmp/ITS/bots/{{ item }} /apps/lupolibero.org/bots/
-         creates=/apps/lupolibero.org/bots/{{ item }}
+- copy: src=../../../../bots/{{ item }} dest={{ bots_directory }}
   with_items:
     - config.json
-    - mailer.conf
-    - notification_creator.conf
+    - db.coffee
+    - mailer.coffee
+    - Model
+    - notification_creator.coffee
+    - role_setter.coffee
     - role_setter.conf
+  tags: deploy
 
-- shell: cp -R /tmp/ITS/node_modules /apps/lupolibero.org/bots/
-         creates=/apps/lupolibero.org/bots/node_modules
+- copy: src=../../../../package.json dest={{ bots_directory }}
+  tags: deploy
+
+- npm: path={{ bots_directory }}/ production=yes
+  tags: deploy
 
 # cron or at for the mailer
 
-- shell: chown -R root:couchdb /apps/lupolibero.org/bots
-- shell: chmod -R go-w /apps/lupolibero.org/bots
-- shell: chmod -R o-r /apps/lupolibero.org/bots/*.conf
-- shell: chmod -R o-r /apps/lupolibero.org/bots/*.json
+- shell: chown -R root:couchdb {{ bots_directory }}
+  tags: deploy
+- shell: chmod -R go-w {{ bots_directory }}
+  tags: deploy
+- shell: chmod -R o-r {{ bots_directory }}/*.conf
+  tags: deploy
+- shell: chmod -R o-r {{ bots_directory }}/*.json
+  tags: deploy

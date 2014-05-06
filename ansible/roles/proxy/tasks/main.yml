@@ -11,36 +11,50 @@
 - name: "Install forever (to run Node.js app)."
   npm: name=forever global=yes state=latest
 
+- name: create directory {{ proxy_directory }}
+  file: path={{ proxy_directory }} state=directory
+  tags: deploy
 
-- name: remove directory /apps/lupolibero.org
-  file: path=/apps/lupolibero.org state=absent
+- copy: src=../../../../bots/{{ item }} dest={{ proxy_directory }}
+  with_items:
+    - config.json
+    - db.coffee
+    - Model
+    - websocket.coffee
+  tags: deploy
 
-- name: create directory /apps/lupolibero.org
-  file: path=/apps/lupolibero.org state=directory
+- copy: src=../../../../package.json dest={{ proxy_directory }}
+  tags: deploy
 
-- copy: src=../../../../bots dest=/apps/lupolibero.org
+- npm: path={{ proxy_directory }}/ production=yes
+  tags: deploy
 
-- copy: src=../../../../package.json dest=/apps/lupolibero.org/bots
+- shell: chown -R root:couchdb {{ proxy_directory }}
+  tags: deploy
+- shell: chmod -R go-w {{ proxy_directory }}
+  tags: deploy
+- shell: chmod -R o-r {{ proxy_directory }}/*.json
+  tags: deploy
 
-- npm: path=/apps/lupolibero.org/bots/ production=yes
+- shell: coffee -c {{ proxy_directory }}
+  tags: deploy
 
-- shell: chown -R root:couchdb /apps/lupolibero.org
-- shell: chmod -R go-w /apps/lupolibero.org
-- shell: chmod -R o-r /apps/lupolibero.org/bots/*.conf
-- shell: chmod -R o-r /apps/lupolibero.org/bots/*.json
-
-- shell: coffee -c /apps/lupolibero.org/bots
+# TODO create a user for the proxy
+# TODO reduce rights
 
 - name: "Check list of Node.js apps running."
   command: forever list
   register: forever_list
   changed_when: false
+  tags: deploy
 
 - name: "Stop example Node.js app."
-  command: forever stop /apps/lupolibero.org/bots/websocket.js
-  when: "forever_list.stdout.find('/apps/lupolibero.org/bots/websocket.js') != -1"
+  command: forever stop {{ proxy_directory }}/websocket.js
+  when: "forever_list.stdout.find('{{ proxy_directory }}/websocket.js') != -1"
+  tags: deploy
 
 - name: "Start example Node.js app."
-  command: forever start /apps/lupolibero.org/bots/websocket.js
+  command: forever start {{ proxy_directory }}/websocket.js
+  tags: deploy
 
 #- template
