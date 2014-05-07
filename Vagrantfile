@@ -12,23 +12,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.hostmanager.ignore_private_ip = false
   config.hostmanager.include_offline = true
 
-  config.vm.define 'coudhdb.local' do |couchdb|
+  config.vm.define 'couchdb', primary:true do |couchdb|
     couchdb.vm.hostname = 'couchdb'
     couchdb.vm.network :private_network, ip: '192.168.42.10'
-    couchdb.hostmanager.aliases = %w(lupolibero.local couchdb.local)
+    couchdb.hostmanager.aliases = %w(lupolibero.local)
   end
-  #config.vm.network "forwarded_port", guest: 5984, host: 55984
-  #config.vm.network "forwarded_port", guest: 80, host: 50080
-
   config.vm.provision :hostmanager
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "ansible/site.yml"
     ansible.groups = {
-      "couchdbservers" => ["coudhdb.local"],
-      "proxyservers" => ["coudhdb.local"]
+      "couchdbservers" => ["couchdb"],
+      "proxyservers" => ["couchdb"]
     }
     ansible.extra_vars = {
-      "ansible_ssh_private_key_file" => '~/.vagrant.d/insecure_private_key'
+      "ansible_ssh_private_key_file" => '~/.vagrant.d/insecure_private_key',
+      "lupolibero_hostname" => 'lupolibero.local'
     }
+  end
+
+  config.vm.define 'winux', autostart: false do |winux|
+    winux.vm.hostname = 'winux'
+    winux.vm.network :private_network, ip: '192.168.42.9'
+    winux.vm.synced_folder "../", "/home/vagrant/projects/"
+    winux.vm.provision "shell", path: "winux_init.sh"
   end
 end

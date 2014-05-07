@@ -1,42 +1,56 @@
 
 # install & configure latest couchdb
-- include: ppa_prerequisites.yml
-- apt_repository: repo='ppa:couchdb/stable'
-- apt: pkg=couchdb
+- name: Install latest CouchDB 1/3 (install PPA prerequisites)
+  include: ppa_prerequisites.yml
 
-- name: put couchdb config file
+- name: Install latest CouchDB 2/3 (add CouchDB official PPA)
+  apt_repository: repo='ppa:couchdb/stable'
+
+- name: Install latest CouchDB 3/3 (aptitude install couchdb)
+  apt: pkg=couchdb
+
+- name: Configure CouchDB 1/3 (override Couchdb upstart script)
   template: src=couchdb_conf/couchdb.override.j2
             dest=/etc/init/couchdb.override
   notify: restart couchdb
 
-- name: put couchdb config file
+- name: Configure CouchDB 2/3 (add its.ini in couchdb config files)
   template: src=couchdb_conf/local.j2
-            dest=/etc/couchdb/local.d/lupolibero.ini
+            dest=/etc/couchdb/local.d/its.ini
   notify: restart couchdb
 
 # TODO: recup les bons rep
-- file: path={{ item }} owner=couchdb group=couchdb state=directory recurse=yes
+- name: Configure CouchDB 3/3 (set permissions)
+  file: path={{ item }} owner=couchdb group=couchdb state=directory recurse=yes
   with_items:
     - /var/log/couchdb
     - /var/lib/couchdb
 
-- name: restart couchdb
+- name: Restart CouchDB
   service: name=couchdb state=restarted
 
-- include: uri_prerequisites.yml
+- name: Install Ansible URI module prerequisites
+  include: uri_prerequisites.yml
 
-- name: create db admin
+- name: Create db admin
   uri: url="http://localhost:{{ couchdb_port }}/_config/admins/admin"
        body='"{{ couchdb_admin_pwd | default("admin") }}"'
        method=PUT
        status_code=200,401
   sudo: no
 
-- name: create lupolibero db
-  uri: url="http://localhost:{{ couchdb_port }}/lupolibero"
+- name: Create ITS db
+  uri: url="http://localhost:{{ couchdb_port }}/{{ its_db }}"
        method=PUT user=admin password={{ couchdb_admin_pwd | default("admin") }}
        force_basic_auth=yes
        status_code=201,412
+  sudo: no
+
+- name: Create vhost
+  uri: url="http://localhost:{{ couchdb_port }}/_config/vhosts/{{ its_hostname }}:{{ couchdb_port }}"
+       body='"/{{ its_db }}/_design/its/_rewrite/"'
+       method=PUT user=admin password={{ couchdb_admin_pwd | default("admin") }}
+       status_code=200 force_basic_auth=yes
   sudo: no
 
 #- uri: url="http://localhost:{{ couchdb_port }}/_users/org.couchdb.user:role_setter"
@@ -50,10 +64,11 @@
 # download and install bots
 - apt: pkg=git state=present
 
-- name: create directory {{ bots_directory }}
+- name: Create directory {{ bots_directory }}
   file: path={{ bots_directory }} state=directory
 
-- copy: src=../../../../bots/{{ item }} dest={{ bots_directory }}
+- name: Upload {{ bots_directory }}/{{ item }}
+  copy: src=../../../../bots/{{ item }} dest={{ bots_directory }}
   with_items:
     - config.json
     - db.coffee
@@ -61,22 +76,26 @@
     - Model
     - notification_creator.coffee
     - role_setter.coffee
-    - role_setter.conf
   tags: deploy
 
-- copy: src=../../../../package.json dest={{ bots_directory }}
+- name: Upload {{ bots_directory }}/package.json
+  copy: src=../../../../package.json dest={{ bots_directory }}
   tags: deploy
 
-- npm: path={{ bots_directory }}/ production=yes
+- name: npm install --production {{ bots_directory }}/
+  npm: path={{ bots_directory }}/ production=yes
   tags: deploy
 
 # cron or at for the mailer
 
-- shell: chown -R root:couchdb {{ bots_directory }}
+- name: Set owner root:couchdb for {{ bots_directory }}/*
+  file: owner=root group=couchdb recurse=yes state=directory path={{ bots_directory }}
   tags: deploy
-- shell: chmod -R go-w {{ bots_directory }}
+
+- name: Only root has write access to {{ bots_directory }}/*
+  shell: chmod -R go-w {{ bots_directory }}
   tags: deploy
-- shell: chmod -R o-r {{ bots_directory }}/*.conf
-  tags: deploy
-- shell: chmod -R o-r {{ bots_directory }}/*.json
+
+- name: Restrict read access to {{ bots_directory }}/config.json to root and couchdb group
+  shell: chmod -R o-r {{ bots_directory }}/config.json
   tags: deploy

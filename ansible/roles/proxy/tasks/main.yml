@@ -5,17 +5,18 @@
 # reduce rights
 
 
-- name: install coffeescript
+- name: Install coffeescript package
   apt: pkg=coffeescript state=present
 
 - name: "Install forever (to run Node.js app)."
   npm: name=forever global=yes state=latest
 
-- name: create directory {{ proxy_directory }}
+- name: Create directory {{ proxy_directory }}
   file: path={{ proxy_directory }} state=directory
   tags: deploy
 
-- copy: src=../../../../bots/{{ item }} dest={{ proxy_directory }}
+- name: Upload {{ proxy_directory }}/{{ item }}
+  copy: src=../../../../bots/{{ item }} dest={{ proxy_directory }}
   with_items:
     - config.json
     - db.coffee
@@ -23,38 +24,48 @@
     - websocket.coffee
   tags: deploy
 
-- copy: src=../../../../package.json dest={{ proxy_directory }}
+- name: Upload {{ proxy_directory }}/package.json
+  copy: src=../../../../package.json dest={{ proxy_directory }}
   tags: deploy
 
-- npm: path={{ proxy_directory }}/ production=yes
+- name: npm install --production {{ bots_directory }}/
+  npm: path={{ proxy_directory }}/ production=yes
   tags: deploy
 
-- shell: chown -R root:couchdb {{ proxy_directory }}
-  tags: deploy
-- shell: chmod -R go-w {{ proxy_directory }}
-  tags: deploy
-- shell: chmod -R o-r {{ proxy_directory }}/*.json
+- name: Set owner root:couchdb for {{ proxy_directory }}/*
+  file: owner=root group=couchdb recurse=yes state=directory path={{ bots_directory }}
   tags: deploy
 
-- shell: coffee -c {{ proxy_directory }}
+- name: Only root has write access to {{ proxy_directory }}/*
+  shell: chmod -R go-w {{ proxy_directory }}
+  tags: deploy
+
+- name: Restrict read access to {{ proxy_directory }}/config.json to root and couchdb group
+  shell: chmod -R o-r {{ proxy_directory }}/*.json
+  tags: deploy
+
+- name: Compile proxy coffee-script files (in {{ proxy_directory }})
+  shell: coffee -c {{ proxy_directory }}
   tags: deploy
 
 # TODO create a user for the proxy
 # TODO reduce rights
 
-- name: "Check list of Node.js apps running."
+- name: "Get list of Node.js daemons running"
   command: forever list
   register: forever_list
   changed_when: false
   tags: deploy
 
-- name: "Stop example Node.js app."
+- name: "Stop {{ proxy_directory }}/websocket.js daemon (if running)"
   command: forever stop {{ proxy_directory }}/websocket.js
   when: "forever_list.stdout.find('{{ proxy_directory }}/websocket.js') != -1"
   tags: deploy
 
-- name: "Start example Node.js app."
+- name: "Start {{ proxy_directory }}/websocket.js daemon"
   command: forever start {{ proxy_directory }}/websocket.js
   tags: deploy
+
+
 
 #- template
