@@ -1,4 +1,0 @@
----
-couchdb_port: 5984
-its_hostname: lupolibero.staging
-its_db: lupolibero

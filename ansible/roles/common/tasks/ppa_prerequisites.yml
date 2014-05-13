@@ -1,3 +1,0 @@
----
-- apt: pkg=python-software-properties
-  sudo: yes

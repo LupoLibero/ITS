@@ -19,7 +19,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   config.vm.provision :hostmanager
   config.vm.provision "ansible" do |ansible|
-    ansible.playbook = "ansible/site.yml"
+    ansible.playbook = "../deploying/site.yml"
     ansible.groups = {
       "couchdbservers" => ["couchdb"],
       "proxyservers" => ["couchdb"]
@@ -30,10 +30,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     }
   end
 
-  config.vm.define 'winux', autostart: false do |winux|
-    winux.vm.hostname = 'winux'
-    winux.vm.network :private_network, ip: '192.168.42.9'
-    winux.vm.synced_folder "../", "/home/vagrant/projects/"
-    winux.vm.provision "shell", path: "winux_init.sh"
+  config.vm.define 'manager', autostart: false do |manager|
+    manager.vm.hostname = 'manager'
+    manager.vm.network :private_network, ip: '192.168.42.9'
+    manager.vm.synced_folder "../", "/home/vagrant/projects/"
+    manager.vm.provision "shell", path: "manager_init.sh"
   end
 end

@@ -1,6 +1,0 @@
-
-- hosts: proxyservers
-  sudo: yes
-  roles:
-    - common
-    - proxy
