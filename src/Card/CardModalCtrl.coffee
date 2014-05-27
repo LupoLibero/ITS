@@ -19,7 +19,7 @@ controller('CardModalCtrl', ($scope, $state, $modal, socket)->
         return defer.promise
     }
   }).result.then( (->), ->
-    $state.go('^')
+    $state.go('card')
     socket.emit('setShow', '')
   )
 )

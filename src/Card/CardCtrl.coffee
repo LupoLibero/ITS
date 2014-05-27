@@ -40,6 +40,12 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
         $scope.card.activity.unshift(data)
   )
 
+  $scope.$on('$stateChangeSuccess', ($event, to)->
+    console.log to
+    if to.name != 'card.show'
+      $scope.close()
+  )
+
   $document.bind('keypress', ($event) ->
     if $event.keyCode == 27
       target = $event.target.tagName.toLowerCase()

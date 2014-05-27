@@ -101,6 +101,8 @@ db.changes({
             multiRoomFilter(["lang:#{lang}", "show:#{doc._id}"], 'setCard', result)
     when "comment"
       io.sockets.in("show:#{doc.parent_id}").emit('addActivity', doc)
+    when "notification"
+      io.sockets.in("username:#{doc.subscriber}").emit('notification', doc)
 )
 
 io.sockets.on('connection', (socket)->
@@ -207,6 +209,7 @@ io.sockets.on('connection', (socket)->
   socket.on 'newCard', (req, fn)->
     Card.create(req, user, ids).then(
       (data)-> #Success
+        Subscription.set(data._id, user)
         fn("Done:#{data.response}")
       ,(err)-> #Error
         fn("Error:#{err}")
@@ -252,4 +255,3 @@ io.sockets.on('connection', (socket)->
 process.on 'uncaughtException', (err) ->
   console.error('An uncaughtException was found, the program will end.')
   console.error(err)
-  process.exit(1)

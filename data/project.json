@@ -1,16 +1,30 @@
 [
   {
     "_id": "project:its",
-    "name": "Lupo Libero's Issue Tracking System",
-    "type": "project",
-    "prefix": "ITS",
-    "id": "its"
+    "id": "its",
+    "name": {
+      "fr": "Lupo Libero's Issue Tracking System",
+      "en": "Lupo Libero's Issue Tracking System"
+    },
+    "description": {
+      "fr": "Tracker",
+      "en": "ITS"
+    },
+    "init_lang": "en",
+    "type": "project"
   },
   {
     "_id": "project:net",
-    "name": "LupoLibero.net",
-    "type": "project",
-    "prefix": "NET",
-    "id": "net"
+    "id":  "net",
+    "name": {
+      "fr": "lupolibero.net",
+      "en": "lupolibero.net"
+    },
+    "description": {
+      "fr": "Cloud",
+      "en": "Cloud"
+    },
+    "init_lang": "en",
+    "type": "project"
   }
 ]
