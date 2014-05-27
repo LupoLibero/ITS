@@ -72,8 +72,7 @@ db.changes({
     when "card"
       if rev == 1 #NewCard
         ids[doc.id] = true
-        Card.get([doc, doc.init_lang, ''])
-          .then(Card.translate)
+        Card.translate([doc, doc.init_lang, ''])
           .then(Card.withoutDescription)
           .then(Card.getWorkflow)
           .then(
