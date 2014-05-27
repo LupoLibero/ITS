@@ -50,7 +50,9 @@ module.exports = (dbname)->
 
           data = {
             response: body
-            status:   res.statusCode
+            reason:  body.reason ? ''
+            error:   body.error  ? ''
+            status:  res.statusCode
           }
 
           if res.headers.hasOwnProperty('x-couch-update-newrev')
@@ -62,11 +64,6 @@ module.exports = (dbname)->
           if res.statusCode.toString()[0] > 3
             defer.reject(JSON.stringify(data))
           else
-            data = {
-              reason:  body.reason?
-              error:   body.error?
-              status:  res.statusCode
-            }
             defer.resolve(data)
         )
       )
