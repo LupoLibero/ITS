@@ -238,9 +238,9 @@ io.sockets.on('connection', (socket)->
   socket.on 'setSubscription', (req, fn)->
     promise = null
     if not req.check
-      promise = Subscription.set(req, user)
+      promise = Subscription.set(req._id, user)
     else
-      promise = Subscription.unset(req, user)
+      promise = Subscription.unset(req._id, user)
 
     promise.then(
       (data)-> #Succes

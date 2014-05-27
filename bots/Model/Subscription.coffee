@@ -7,12 +7,12 @@ module.exports = {
       endkey:   [id, {}]
     })
 
-  set: (req, user)=>
+  set: (_id, user)=>
     return db.update('subscription_create', '', {
-      object_key: req.id
+      object_key: _id
     }, user)
 
-  unset: (req, user)=>
+  unset: (_id, user)=>
     return db.update('subscription_delete',
-                    "subscription:#{req.id}-#{user.name}", {}, user)
+                     "subscription:#{_id}-#{user.name}", {}, user)
 }

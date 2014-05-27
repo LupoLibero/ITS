@@ -35,7 +35,7 @@ directive('subscribe', ($rootScope, login, Subscription) ->
       scope.click = ->
         scope.save({
           check: scope.value
-          id:    scope.id
+          _id:    scope.id
         }).then(
           (data)-> #Success
             scope.value = !scope.value

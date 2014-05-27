@@ -77,9 +77,9 @@ controller('CardCtrl', (card, socket, $document, $scope, $stateParams, $modalIns
       text = $event.target.value
       $scope.addComment(text)
 
-  $scope.subscribe = (id, check)->
+  $scope.subscribe = (_id, check)->
     return socket.emit('setSubscription', {
-      id:    id
+      _id:    _id
       check: check
     })
 

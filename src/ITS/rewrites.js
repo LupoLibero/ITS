@@ -11,5 +11,6 @@ module.exports = [
 	{from: ':db/',               to: '../../../:db/'},
 	{from: ':db/:id',            to: '../../../:db/:id'},
 	{from: '/:db/_design/:dd/*', to: '../../../:db/_design/:dd/*'},
+	{from: '/_design/:dd/*',     to: '../../:db/_design/:dd/*'},
 	{from: '/:db/:doc/:att',     to: '../../../:db/:doc/:att'},
 ];
